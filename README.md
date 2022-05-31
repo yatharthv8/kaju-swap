@@ -1,5 +1,5 @@
 # kaju-swap
-A small project where I try to implement UniswapV2 functionalities
+A small project where I try to implement UniswapV2 functionalities!
 
 ## Project setup
 ```
