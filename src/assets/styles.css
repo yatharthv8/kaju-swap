@@ -1,0 +1,69 @@
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  font-family: 'Inter custom', sans-serif;
+  background-color: rgb(233, 187, 187);
+  color: rgb(102, 59, 3);
+}
+
+header {
+  width: 100%;
+  height: 5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-sub-bars {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  padding: 1rem;
+  margin: 2rem auto;
+  max-width: 40rem;
+}
+
+p {
+  margin: 0;
+}
+
+li {
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+li h3 {
+  margin: 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+a {
+  /* font: inherit; */
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  display: inline-block;
+}
+
+a:hover,
+a:active {
+  background-color: #220a8d;
+}

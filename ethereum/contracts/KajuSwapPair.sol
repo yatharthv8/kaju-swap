@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.10;
 
 import "@rari-capital/solmate/src/tokens/ERC20.sol";
 import "../libraries/Math.sol";
@@ -33,6 +33,18 @@ contract Kajuswap is ERC20, Math {
 
     uint256 public price0CumulativeLast;
     uint256 public price1CumulativeLast;
+
+    function getReserves()
+        public
+        view
+        returns (
+            uint112,
+            uint112,
+            uint32
+        )
+    {
+        return (reserve0, reserve1, blockTimestampLast);
+    }
 
     event Burn(address indexed sender, uint256 amount0, uint256 amount1);
     event Mint(address indexed sender, uint256 amount0, uint256 amount1);
@@ -140,18 +152,6 @@ contract Kajuswap is ERC20, Math {
         );
     }
 
-    function getReserves()
-        public
-        view
-        returns (
-            uint112,
-            uint112,
-            uint32
-        )
-    {
-        return (reserve0, reserve1, blockTimestampLast);
-    }
-
     //
     //
     //
@@ -193,10 +193,10 @@ contract Kajuswap is ERC20, Math {
         address to,
         uint256 value
     ) private {
-        (bool success, bytes memory data) = token.call(
-            abi.encodeWithSignature("transfer(address,uint256)", to, value)
-        );
-        if (!success || (data.length != 0 && !abi.decode(data, (bool))))
-            revert TransferFailed();
+        //     (bool success, bytes memory data) = token.call(
+        //         abi.encodeWithSignature("transfer(address,uint256)", to, value)
+        //     );
+        //     if (!success || (data.length != 0 && !abi.decode(data, (bool))))
+        //         revert TransferFailed();
     }
 }
