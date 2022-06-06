@@ -1,12 +1,16 @@
 <template>
-  <TheHeader></TheHeader>
-  <Home></Home>
+  <div class="wrapper">
+    <TheHeader></TheHeader>
+    <router-view></router-view>
+    <TheFooter></TheFooter>
+  </div>
 </template>
 
 <script>
-import Home from "./views/Home.vue";
 import TheHeader from "./components/layout/TheHeader.vue";
+import TheFooter from "./components/layout/TheFooter.vue";
+
 export default {
-  components: { Home, TheHeader },
+  components: { TheHeader, TheFooter },
 };
 </script>
