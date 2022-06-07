@@ -1,3 +1,76 @@
 <template>
-  <div class="card"></div>
+  <div class="card">
+    <div class="form-header">
+      <div>Swap</div>
+      <div>Gear</div>
+    </div>
+    <div>
+      <input
+        type="number"
+        placeholder="0.0"
+        pattern="^[0-9]*[.,]?[0-9]*$"
+        name="token0"
+        id="token0"
+        v-model.trim="amountToken0"
+      />
+      <div>arrow</div>
+    </div>
+    <div>
+      <input
+        type="number"
+        placeholder="0.0"
+        pattern="^[0-9]*[.,]?[0-9]*$"
+        name="token1"
+        id="token1"
+        v-model.trim="amountToken1"
+      />
+    </div>
+    <div v-if="displayConnectWalletButton">
+      <WalletConnectButton
+        @toggle-connect-wallet-button="showOrHideCWB"
+        class="swap-button"
+      ></WalletConnectButton>
+    </div>
+    <div v-else-if="!swapActive">
+      <button class="swap-button">Enter Amount</button>
+    </div>
+    <div v-else><button class="swap-button">Swap</button></div>
+  </div>
 </template>
+
+<script>
+import WalletConnectButton from "../components/UI/WalletConnectButton.vue";
+
+export default {
+  components: { WalletConnectButton },
+  data() {
+    return {
+      swapActive: false,
+      amountToken0: null,
+      amountToken1: null,
+      displayConnectWalletButton: true,
+    };
+  },
+  methods: {
+    showOrHideCWB() {
+      this.displayConnectWalletButton = !this.displayConnectWalletButton;
+    },
+  },
+  watch: {
+    amountToken0() {
+      if (this.amountToken0 > 0 || this.amountToken1 > 0) {
+        this.swapActive = true;
+      } else {
+        this.swapActive = false;
+      }
+    },
+    amountToken1() {
+      if (this.amountToken1 > 0 || this.amountToken0 > 0) {
+        this.swapActive = true;
+      } else {
+        this.swapActive = false;
+      }
+    },
+  },
+};
+</script>
