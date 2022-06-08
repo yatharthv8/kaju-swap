@@ -56,8 +56,9 @@ button:hover {
   color: var(--button-text-hover-color);
 }
 
-button:active {
+button:focus {
   background-color: var(--button-normal-color);
+  color: var(--button-text-hover-color);
 }
 
 header {
@@ -226,6 +227,7 @@ a:hover {
 
 .pools-page-header {
   display: inherit;
+  align-items: center ;
   justify-content: space-between;
 }
 
