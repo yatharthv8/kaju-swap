@@ -27,16 +27,14 @@
         <div class="nav-item">Network</div>
       </div>
       <div
-        v-if="displayConnectWalletButton"
+        v-if="$store.state.displayConnectWalletButton"
         class="nav-item-container nav-item"
       >
         <div class="wallet-info">Eth amt</div>
         <div class="wallet-info">Address</div>
       </div>
       <div v-else class="nav-item-container">
-        <WalletConnectButton
-          @toggle-connect-wallet-button="showOrHideCWB"
-        ></WalletConnectButton>
+        <WalletConnectButton @click="showOrHideCWB()"></WalletConnectButton>
       </div>
       <button class="side-dropdown" @click="showOrHideDropdown()">
         :
@@ -59,21 +57,24 @@ export default {
   components: { WalletConnectButton },
   data() {
     return {
-      displayConnectWalletButton: false,
       displayDropdown: "none",
     };
   },
   methods: {
-    showOrHideCWB() {
-      this.displayConnectWalletButton = !this.displayConnectWalletButton;
-      console.log("Event is emitted");
-    },
     showOrHideDropdown() {
       if (this.displayDropdown === "none") {
         this.displayDropdown = "block";
       } else {
         this.displayDropdown = "none";
       }
+    },
+    showOrHideCWB() {
+      console.log("comp from header>>", this.displayConnectWalletButtonHere);
+    },
+  },
+  computed: {
+    displayConnectWalletButtonHere() {
+      return this.$store.state.displayConnectWalletButton;
     },
   },
 };

@@ -7,6 +7,7 @@ const routes = [
     path: "/swap",
     name: "Swap",
     component: Swap,
+    alias: "/",
   },
   {
     path: "/pool",

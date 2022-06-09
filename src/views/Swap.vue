@@ -25,11 +25,8 @@
         v-model.trim="amountToken1"
       />
     </div>
-    <div v-if="displayConnectWalletButton">
-      <WalletConnectButton
-        @toggle-connect-wallet-button="showOrHideCWB"
-        class="swap-button"
-      ></WalletConnectButton>
+    <div v-if="!displayConnectWalletButtonHere">
+      <WalletConnectButton class="swap-button"></WalletConnectButton>
     </div>
     <div v-else-if="!swapActive">
       <button class="swap-button">Enter Amount</button>
@@ -48,12 +45,12 @@ export default {
       swapActive: false,
       amountToken0: null,
       amountToken1: null,
-      displayConnectWalletButton: true,
     };
   },
-  methods: {
-    showOrHideCWB() {
-      this.displayConnectWalletButton = !this.displayConnectWalletButton;
+  methods: {},
+  computed: {
+    displayConnectWalletButtonHere() {
+      return this.$store.state.displayConnectWalletButton;
     },
   },
   watch: {

@@ -10,10 +10,8 @@
 
     <div class="pools-page-card">
       <div>Your active V3 liquidity positions will appear here.</div>
-      <div v-if="displayConnectWalletButton">
-        <WalletConnectButton
-          @toggle-connect-wallet-button="showOrHideCWB"
-        ></WalletConnectButton>
+      <div v-if="!displayConnectWalletButtonHere">
+        <WalletConnectButton></WalletConnectButton>
       </div>
       <div v-else><button>Add Liquidity</button></div>
     </div>
@@ -41,13 +39,20 @@ import WalletConnectButton from "../components/UI/WalletConnectButton.vue";
 export default {
   components: { WalletConnectButton },
   data() {
-    return {
-      displayConnectWalletButton: true,
-    };
+    return {};
   },
   methods: {
-    showOrHideCWB() {
-      this.displayConnectWalletButton = !this.displayConnectWalletButton;
+    // showOrHideCWB() {
+    //   this.$store.dispatch("toggleConnectWalletButton");
+    // },
+  },
+  computed: {
+    displayConnectWalletButtonHere() {
+      console.log(
+        "CWBD in pool>>",
+        this.$store.state.displayConnectWalletButton
+      );
+      return this.$store.state.displayConnectWalletButton;
     },
   },
 };
