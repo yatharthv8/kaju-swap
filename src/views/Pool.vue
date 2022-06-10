@@ -10,7 +10,7 @@
 
     <div class="pools-page-card">
       <div>Your active V3 liquidity positions will appear here.</div>
-      <div v-if="!displayConnectWalletButtonHere">
+      <div v-if="!$store.state.displayConnectWalletButton">
         <WalletConnectButton></WalletConnectButton>
       </div>
       <div v-else><button>Add Liquidity</button></div>
@@ -41,19 +41,7 @@ export default {
   data() {
     return {};
   },
-  methods: {
-    // showOrHideCWB() {
-    //   this.$store.dispatch("toggleConnectWalletButton");
-    // },
-  },
-  computed: {
-    displayConnectWalletButtonHere() {
-      console.log(
-        "CWBD in pool>>",
-        this.$store.state.displayConnectWalletButton
-      );
-      return this.$store.state.displayConnectWalletButton;
-    },
-  },
+  methods: {},
+  computed: {},
 };
 </script>

@@ -5,31 +5,18 @@
 </template>
 
 <script>
-// import web3 from "../../../ethereum/web3.js";
-
 export default {
-  // data() {
-  //   return {
-
-  //   };
-  // },
+  data() {
+    return {};
+  },
   methods: {
     onConnect() {
-      console.log(
-        "CWBD in WCB>>",
-        this.$store.state.displayConnectWalletButton
-      );
-      this.$store.dispatch("toggleConnectWalletButton");
+      this.$store.dispatch("onConnect");
     },
   },
-  // updated() {
-  //   if (window.ethereum.isConnected()) {
-  //     this.toggleConnectWalletButton();
-  //     console.log(
-  //       "displayConnectWalletButton >> ",
-  //       this.displayConnectWalletButton
-  //     );
-  //   }
+  // created() {
+  //   this.$store.dispatch("isConnectedToProvider");
+  //   console.log("1");
   // },
 };
 </script>

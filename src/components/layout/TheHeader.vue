@@ -30,11 +30,11 @@
         v-if="$store.state.displayConnectWalletButton"
         class="nav-item-container nav-item"
       >
-        <div class="wallet-info">Eth amt</div>
-        <div class="wallet-info">Address</div>
+        <div class="wallet-info">{{ $store.state.balance }} rETH</div>
+        <div class="wallet-info">{{ $store.state.account0 }}</div>
       </div>
       <div v-else class="nav-item-container">
-        <WalletConnectButton @click="showOrHideCWB()"></WalletConnectButton>
+        <WalletConnectButton></WalletConnectButton>
       </div>
       <button class="side-dropdown" @click="showOrHideDropdown()">
         :
@@ -67,9 +67,6 @@ export default {
       } else {
         this.displayDropdown = "none";
       }
-    },
-    showOrHideCWB() {
-      console.log("comp from header>>", this.displayConnectWalletButtonHere);
     },
   },
   computed: {

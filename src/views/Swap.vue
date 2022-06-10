@@ -25,7 +25,7 @@
         v-model.trim="amountToken1"
       />
     </div>
-    <div v-if="!displayConnectWalletButtonHere">
+    <div v-if="!$store.state.displayConnectWalletButton">
       <WalletConnectButton class="swap-button"></WalletConnectButton>
     </div>
     <div v-else-if="!swapActive">
@@ -48,11 +48,7 @@ export default {
     };
   },
   methods: {},
-  computed: {
-    displayConnectWalletButtonHere() {
-      return this.$store.state.displayConnectWalletButton;
-    },
-  },
+  computed: {},
   watch: {
     amountToken0() {
       if (this.amountToken0 > 0 || this.amountToken1 > 0) {
