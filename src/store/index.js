@@ -12,11 +12,12 @@ const store = createStore({
       displayConnectWalletButton: false,
       account0: null,
       balance: null,
+      isLoading: false,
     };
   },
   mutations: {
     toggleConnectWalletButton(state) {
-      console.log("5");
+      // console.log("5");
       state.displayConnectWalletButton = !state.displayConnectWalletButton;
     },
   },
@@ -31,9 +32,10 @@ const store = createStore({
     //   }
     // },
     toggleConnectWalletButton(context) {
-      context.commit("toggleConnectWalletButton");
+      context.commit("toggleConnectWalletButton"); //Not the actual implementation. Needs some refactoring. Will do later
     },
     async onConnect(context) {
+      this.state.isLoading = true;
       if (typeof window.ethereum !== "undefined") {
         const provider = await detectEthereumProvider();
         if (provider) {
@@ -41,9 +43,14 @@ const store = createStore({
           if (accounts.length > 0) {
             context.dispatch("toggleConnectWalletButton");
             this.state.account0 = accounts[0];
-            this.state.balance = web3.utils
-              .fromWei(await web3.eth.getBalance(this.state.account0), "ether")
-              .toPrecision(2);
+            this.state.balance = parseFloat(
+              web3.utils.fromWei(
+                await web3.eth.getBalance(this.state.account0),
+                "ether"
+              )
+            ).toFixed(2);
+            // console.log("type of balance", typeof this.state.balance);
+            // this.state.balance = this.state.balance.toFixed(2);
           } else {
             if (window.ethereum.isMetaMask) {
               window.ethereum.request({ method: "eth_requestAccounts" });
@@ -60,6 +67,7 @@ const store = createStore({
         console.log("Please install a Wallet Provider");
         alert("Please install a Wallet Provider preferably Metamask.");
       }
+      this.state.isLoading = false;
     },
   },
 });

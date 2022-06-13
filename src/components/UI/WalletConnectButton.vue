@@ -1,5 +1,11 @@
 <template>
-  <button class="wallet-connect-button-eth-amt" @click="onConnect()">
+  <button
+    :class="{
+      'button-disabled': $store.state.isLoading,
+      'wallet-connect-button-eth-amt': !$store.state.isLoading,
+    }"
+    @click="onConnect()"
+  >
     Connect Wallet
   </button>
 </template>

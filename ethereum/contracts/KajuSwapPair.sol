@@ -48,6 +48,7 @@ contract KajuswapPair is ERC20, Math {
         address indexed to
     );
 
+    //Function to keep check on re-entracy vulnerability
     modifier lock() {
         require(!isEntered, "Kajuswap: You cannot Enter in the contract");
         isEntered = true;

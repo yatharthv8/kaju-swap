@@ -33,7 +33,7 @@ contract KajuswapFactory {
         bytes memory bytecode = type(KajuswapPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
-            pair := create2(0, add(bytecode, 32), mload(bytecode), salt) //Written in Yul. Used CREATE2 opcode as it doen's uses external state(nonce) for generating addressse
+            pair := create2(0, add(bytecode, 32), mload(bytecode), salt) //Written in Yul. Used CREATE2 opcode as it doesn't uses external state(nonce) for generating addresses
         }
 
         IKajuswapPair(pair).initialize(token0, token1);

@@ -2,28 +2,30 @@
   <div class="card">
     <div class="form-header">
       <div>Swap</div>
-      <div>Gear</div>
+      <div><gearSvg></gearSvg></div>
     </div>
-    <div>
-      <input
-        type="number"
-        placeholder="0.0"
-        pattern="^[0-9]*[.,]?[0-9]*$"
-        name="token0"
-        id="token0"
-        v-model.trim="amountToken0"
-      />
-      <div>arrow</div>
-    </div>
-    <div>
-      <input
-        type="number"
-        placeholder="0.0"
-        pattern="^[0-9]*[.,]?[0-9]*$"
-        name="token1"
-        id="token1"
-        v-model.trim="amountToken1"
-      />
+    <div class="main-swap">
+      <div>
+        <input
+          type="number"
+          placeholder="0.0"
+          pattern="^[0-9]*[.,]?[0-9]*$"
+          name="token0"
+          id="token0"
+          v-model.trim="amountToken0"
+        />
+      </div>
+      <downArrow></downArrow>
+      <div>
+        <input
+          type="number"
+          placeholder="0.0"
+          pattern="^[0-9]*[.,]?[0-9]*$"
+          name="token1"
+          id="token1"
+          v-model.trim="amountToken1"
+        />
+      </div>
     </div>
     <div v-if="!$store.state.displayConnectWalletButton">
       <WalletConnectButton class="swap-button"></WalletConnectButton>
@@ -37,9 +39,11 @@
 
 <script>
 import WalletConnectButton from "../components/UI/WalletConnectButton.vue";
+import gearSvg from "../assets/svg/gear.vue";
+import downArrow from "../assets/svg/downArrow.vue";
 
 export default {
-  components: { WalletConnectButton },
+  components: { WalletConnectButton, gearSvg, downArrow },
   data() {
     return {
       swapActive: false,

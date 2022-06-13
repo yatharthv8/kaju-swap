@@ -5,6 +5,7 @@
   --background-color : #ddb892;
   --button-normal-color : #b08968;
   --button-active-color : #75523b;
+  --button-inactive-color : #7a7068;
   --button-hover-color : #9c6644;
   --nav-container-color : #c9a077;
   --card-element-width : 30rem;
@@ -59,6 +60,11 @@ button:hover {
 button:focus {
   background-color: var(--button-normal-color);
   color: var(--button-text-hover-color);
+}
+
+.button-disabled {
+  background-color: var(--button-inactive-color);
+  color: var(--text-color);
 }
 
 header {
@@ -150,7 +156,11 @@ a:hover {
 }
 
 .wallet-info {
-  padding: 0rem 1.5rem;
+  padding: 0rem 0.5rem;
+  max-width: 8rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .side-dropdown {
@@ -198,6 +208,12 @@ a:hover {
   padding: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   margin: 2rem auto;
+}
+
+.main-swap {
+  align-items: center;
+  flex-direction: column;
+  display: inherit;
 }
 
 .form-header {
