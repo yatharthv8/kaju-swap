@@ -31,7 +31,7 @@ contract KajuswapFactory {
         if (pairs[token0][token1] != address(0)) revert PairExists();
 
         bytes memory bytecode = type(KajuswapPair).creationCode;
-        bytes32 salt = keccak256(abi.encodePacked(token0, token1));
+        bytes32 salt = keccak256(abi.encodePacked(token0, token1)); //sorted token addresses used as salt for consistency.
         assembly {
             pair := create2(0, add(bytecode, 32), mload(bytecode), salt) //Written in Yul. Used CREATE2 opcode as it doesn't uses external state(nonce) for generating addresses
         }

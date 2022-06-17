@@ -50,7 +50,7 @@ library KajuswapLibrary {
                             hex"ff",
                             factoryAddress,
                             keccak256(abi.encodePacked(token0, token1)),
-                            hex"" //This property will be updated afterwards
+                            hex"8b1cf0cceeb6345f0790476bfd43fdb0c7457c92ce4c15100a0be7851eaba7a1" //See ../abiBytecodePair.js for reference
                         )
                     )
                 )

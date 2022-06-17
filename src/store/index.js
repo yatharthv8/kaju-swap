@@ -58,7 +58,7 @@ const store = createStore({
               context.dispatch("toggleConnectWalletButton");
             } else {
               alert(
-                "Wallets other than Metamask are not supported at the moment! sorry for the inconviniece caused."
+                "Wallets other than Metamask are not supported at the moment! Sorry for the inconvinience caused."
               );
             }
           }

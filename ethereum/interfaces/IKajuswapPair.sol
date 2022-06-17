@@ -25,7 +25,6 @@ interface IKajuswapPair {
     function swap(
         uint256,
         uint256,
-        address,
-        bytes calldata
+        address
     ) external;
 }
