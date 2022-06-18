@@ -12,6 +12,9 @@ contract KajuswapFactory {
     mapping(address => mapping(address => address)) public pairs;
     address[] public allPairs;
 
+    bytes32 public constant INIT_CODE_HASH =
+        keccak256(abi.encodePacked(type(KajuswapPair).creationCode));
+
     event PairCreated(
         address indexed token0,
         address indexed token1,

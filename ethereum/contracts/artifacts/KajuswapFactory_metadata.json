@@ -1,0 +1,220 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "IdenticalAddresses",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "PairExists",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroAddress",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "token0",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "token1",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "pair",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "PairCreated",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "INIT_CODE_HASH",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "allPairs",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "tokenA",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "tokenB",
+						"type": "address"
+					}
+				],
+				"name": "createPair",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "pair",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "pairs",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/KajuswapFactory.sol": "KajuswapFactory"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@rari-capital/solmate/src/tokens/ERC20.sol": {
+			"keccak256": "0x0240f7703cff32a61ee3e9fbb339e09a944260432a9ef37debf3692b1a6c8049",
+			"license": "AGPL-3.0-only",
+			"urls": [
+				"bzz-raw://2d8b0c0158b1952a87c327d506a645040924a94c8f9f937184659f8a8e3b0759",
+				"dweb:/ipfs/QmZ9rGdkjRCk8zfr4xeH7Jh88tkWJNt9LvG1o2GcCm7Uqa"
+			]
+		},
+		"contracts/KajuswapFactory.sol": {
+			"keccak256": "0xd223693fb09d7353cdcb372a403b2ed5e3d7157b4d4a1cede25f1cb228bb1956",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://80ccf38edae33fc67b7df198e72990533f910b748c164c3580cf9f6abcf013f6",
+				"dweb:/ipfs/QmTprcoEJDoiRB4uJuQNmjxSRZUL9F832JT6vCMFS49PsS"
+			]
+		},
+		"contracts/KajuswapPair.sol": {
+			"keccak256": "0xc52f881110488595d72e04882898968ec6e51305364efe6253b68c571b3916b5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4152852e68a87b38cd08a623dae8ad710ca15bf0c4c053d64366532a7c5c0034",
+				"dweb:/ipfs/QmbPuh3yNme5YRdh99R71Rckjo6Zoka1s2shJvXgRKCExz"
+			]
+		},
+		"interfaces/IERC20.sol": {
+			"keccak256": "0xfddbc94c05b2231e566768735ed117e6c5d3bea6821c6a05b6b532db5baaa2fc",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9a70967baba86c464950fa9c805641c81f9e2713cff66c032b462f95893978c0",
+				"dweb:/ipfs/QmRcGQATjEdZ92qSS9gTGUN1U241WPqH8RcERBdtFCSt5Q"
+			]
+		},
+		"interfaces/IKajuswapPair.sol": {
+			"keccak256": "0x11ec5ca2c43764f52e7ecbec39bd1ef8b140be38d2699fb0f6b014e0c0d96dfa",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ee603c0dafb98d03c96ea7bec88dbba7d3655ae709e1bf22788e3dae3f084430",
+				"dweb:/ipfs/QmRTto16LKxfQmes6vXfKmDEgnccF1c3G9yoCpBcC1JK2A"
+			]
+		},
+		"libraries/Math.sol": {
+			"keccak256": "0xd91f09c6569f7989eb006db1ec29c688e118239de9b98bad60a6b08e41ab59d5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d18380e0f81132f4b0b0ee6d3549fe58dfa1de836d05335ac8b8414dc701782c",
+				"dweb:/ipfs/QmTNxGUGaCQNDoSgk7asoUAf754DNRJPyqmw4fCEcPfJ6A"
+			]
+		},
+		"libraries/UQ112x112.sol": {
+			"keccak256": "0x14a9a343f945c5e664cd7fafadb588ebd81b4927697e5c22aeaeed38df6c1cd2",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://a9c27a3be17d533fd9c19a74eb943659f8c882701699b2b3713d88af7091a9fa",
+				"dweb:/ipfs/QmXVYoPGBnPxXhnbr8JxkHgjeJ8HZNDjtyd1L5xNYEJ45q"
+			]
+		}
+	},
+	"version": 1
+}

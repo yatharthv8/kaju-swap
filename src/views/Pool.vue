@@ -11,7 +11,7 @@
     <div class="pools-page-card">
       <div>Your active V3 liquidity positions will appear here.</div>
       <div v-if="!$store.state.displayConnectWalletButton">
-        <WalletConnectButton></WalletConnectButton>
+        <wallet-connect-button></wallet-connect-button>
       </div>
       <div v-else><button>Add Liquidity</button></div>
     </div>
@@ -34,10 +34,8 @@
 </template>
 
 <script>
-import WalletConnectButton from "../components/UI/WalletConnectButton.vue";
-
 export default {
-  components: { WalletConnectButton },
+  components: {},
   data() {
     return {};
   },

@@ -3,6 +3,8 @@ import walletConnect from "./walletConnect/walletConnect.js";
 import web3 from "../../ethereum/web3.js";
 import detectEthereumProvider from "@metamask/detect-provider";
 
+const { ethereum } = window;
+
 const store = createStore({
   modules: {
     walletConnect: walletConnect,
@@ -36,7 +38,7 @@ const store = createStore({
     },
     async onConnect(context) {
       this.state.isLoading = true;
-      if (typeof window.ethereum !== "undefined") {
+      if (typeof ethereum !== "undefined") {
         const provider = await detectEthereumProvider();
         if (provider) {
           const accounts = await web3.eth.getAccounts();
@@ -52,8 +54,8 @@ const store = createStore({
             // console.log("type of balance", typeof this.state.balance);
             // this.state.balance = this.state.balance.toFixed(2);
           } else {
-            if (window.ethereum.isMetaMask) {
-              window.ethereum.request({ method: "eth_requestAccounts" });
+            if (ethereum.isMetaMask) {
+              ethereum.request({ method: "eth_requestAccounts" });
               console.log("The connected wallet is metamask");
               context.dispatch("toggleConnectWalletButton");
             } else {

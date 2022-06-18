@@ -34,7 +34,7 @@
         <div class="wallet-info">{{ $store.state.account0 }}</div>
       </div>
       <div v-else class="nav-item-container">
-        <WalletConnectButton></WalletConnectButton>
+        <wallet-connect-button></wallet-connect-button>
       </div>
       <button class="side-dropdown" @click="showOrHideDropdown()">
         :
@@ -51,10 +51,8 @@
 </template>
 
 <script>
-import WalletConnectButton from "../UI/WalletConnectButton.vue";
-
 export default {
-  components: { WalletConnectButton },
+  components: {},
   data() {
     return {
       displayDropdown: "none",

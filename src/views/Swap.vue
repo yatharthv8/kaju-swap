@@ -28,7 +28,7 @@
       </div>
     </div>
     <div v-if="!$store.state.displayConnectWalletButton">
-      <WalletConnectButton class="swap-button"></WalletConnectButton>
+      <wallet-connect-button class="swap-button"></wallet-connect-button>
     </div>
     <div v-else-if="!swapActive">
       <button class="swap-button">Enter Amount</button>
@@ -38,12 +38,11 @@
 </template>
 
 <script>
-import WalletConnectButton from "../components/UI/WalletConnectButton.vue";
 import gearSvg from "../assets/svg/gear.vue";
 import downArrow from "../assets/svg/downArrow.vue";
 
 export default {
-  components: { WalletConnectButton, gearSvg, downArrow },
+  components: { gearSvg, downArrow },
   data() {
     return {
       swapActive: false,
