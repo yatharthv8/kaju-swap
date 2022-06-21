@@ -40,6 +40,11 @@
 <script>
 import gearSvg from "../assets/svg/gear.vue";
 import downArrow from "../assets/svg/downArrow.vue";
+import ethFunc from "../ethereumFunctions.js";
+
+const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
+const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
+const Weth = ethFunc.getWeth(process.env.VUE_APP_WETH);
 
 export default {
   components: { gearSvg, downArrow },

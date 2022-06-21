@@ -24,15 +24,6 @@ const store = createStore({
     },
   },
   actions: {
-    // async isConnectedToProvider(context) {
-    //   console.log("2");
-    //   const accounts = await web3.eth.getAccounts();
-    //   console.log("3");
-    //   if (accounts.length > 0) {
-    //     context.dispatch("toggleConnectWalletButton");
-    //     console.log("4");
-    //   }
-    // },
     toggleConnectWalletButton(context) {
       context.commit("toggleConnectWalletButton"); //Not the actual implementation. Needs some refactoring. Will do later
     },

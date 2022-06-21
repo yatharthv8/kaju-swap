@@ -15,5 +15,6 @@ module.exports = {
       { endOfLine: "auto" },
       { usePrettierrc: true },
     ],
+    "no-unused-vars": "off",
   },
 };

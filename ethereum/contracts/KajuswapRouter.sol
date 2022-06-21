@@ -204,3 +204,9 @@ contract KajuswapRouter {
             revert SafeTransferFailed();
     }
 }
+
+//
+//
+//        LIBRARY FUNCTIONS
+//
+//
