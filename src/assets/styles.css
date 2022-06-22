@@ -46,6 +46,7 @@ button {
   cursor: pointer;
   background-color: var(--nav-container-color);
   border-radius: 1rem;
+  padding: 0.5rem 0.75rem;
   /* border-color: var(--button-active-color); */
   border: none;
   font: inherit;
@@ -80,10 +81,10 @@ input {
   background-color: var(--input-translucent-bg);
   border-style: none;
   border-radius: 1rem;
-  width: var(--card-element-width);
+  width: var(--card-element-width) - 5;
   height: 4rem;
   font-size: var(--input-element-font-size);
-  margin: 0.5rem 0;
+  margin: 0.5rem 0.25rem;
   padding-left: 1rem;
 }
 
@@ -104,6 +105,15 @@ a:hover {
   color: var(--button-text-hover-color);
 }
 
+dialog {
+  background-color: var(--background-color);
+}
+
+ul {
+  padding-inline-start: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+}
 
 /*----------------------Header Styling------------------------------*/
 
@@ -230,6 +240,24 @@ a:hover {
   margin: 0.25rem 0;
 }
 
+.inp-swap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 0.25rem;
+}
+
+select {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  background: var(--background-color);
+  color: #fff;
+  border: 1px solid var(--input-box-outline);
+  padding: 0.5rem;
+  border-radius: 1rem;
+}
+
 
 /*----------------------Pools Page Styling------------------------------*/
 
@@ -267,6 +295,8 @@ a:hover {
   padding: 0.5rem 0.5rem;
   
 }
+
+
 
 /*
 li {

@@ -15,6 +15,8 @@ const store = createStore({
       account0: null,
       balance: null,
       isLoading: false,
+      swapDialog: [false, null],
+      swapTokenSymbol: ["WETH", "UNI"],
     };
   },
   mutations: {
@@ -22,8 +24,21 @@ const store = createStore({
       // console.log("5");
       state.displayConnectWalletButton = !state.displayConnectWalletButton;
     },
+    openSwapDialog(state, payload) {
+      state.swapDialog[0] = true;
+      state.swapDialog[1] = payload;
+    },
+    closeSwapDialog(state) {
+      state.swapDialog[0] = false;
+    },
   },
   actions: {
+    closeSwapDialog(context) {
+      context.commit("closeSwapDialog");
+    },
+    openSwapDialog(context, payload) {
+      context.commit("openSwapDialog", payload);
+    },
     toggleConnectWalletButton(context) {
       context.commit("toggleConnectWalletButton"); //Not the actual implementation. Needs some refactoring. Will do later
     },

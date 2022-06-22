@@ -1,11 +1,14 @@
 <template>
+  <div v-if="$store.state.swapDialog[0]">
+    <dialog-vue></dialog-vue>
+  </div>
   <div class="card">
     <div class="form-header">
       <div>Swap</div>
       <div><gearSvg></gearSvg></div>
     </div>
     <div class="main-swap">
-      <div>
+      <div class="inp-swap">
         <input
           type="number"
           placeholder="0.0"
@@ -14,9 +17,12 @@
           id="token0"
           v-model.trim="amountToken0"
         />
+        <swapper-dropdown :swapDialNum="0">{{
+          $store.state.swapTokenSymbol[0]
+        }}</swapper-dropdown>
       </div>
       <downArrow></downArrow>
-      <div>
+      <div class="inp-swap">
         <input
           type="number"
           placeholder="0.0"
@@ -25,6 +31,9 @@
           id="token1"
           v-model.trim="amountToken1"
         />
+        <swapper-dropdown :swapDialNum="1">{{
+          $store.state.swapTokenSymbol[1]
+        }}</swapper-dropdown>
       </div>
     </div>
     <div v-if="!$store.state.displayConnectWalletButton">
@@ -40,14 +49,16 @@
 <script>
 import gearSvg from "../assets/svg/gear.vue";
 import downArrow from "../assets/svg/downArrow.vue";
-import ethFunc from "../ethereumFunctions.js";
+import * as ethFunc from "../ethereumFunctions.js";
+import DialogVue from "../components/Swapper/Dialog.vue";
+import SwapperDropdown from "../components/Swapper/SwapperDropdown.vue";
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 const Weth = ethFunc.getWeth(process.env.VUE_APP_WETH);
 
 export default {
-  components: { gearSvg, downArrow },
+  components: { gearSvg, downArrow, DialogVue, SwapperDropdown },
   data() {
     return {
       swapActive: false,
@@ -55,7 +66,11 @@ export default {
       amountToken1: null,
     };
   },
-  methods: {},
+  methods: {
+    // setDialNum(num) {
+    //   this.swapDialNum = num;
+    // }
+  },
   computed: {},
   watch: {
     amountToken0() {

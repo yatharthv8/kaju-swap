@@ -203,10 +203,48 @@ contract KajuswapRouter {
         if (!success || (data.length != 0 && !abi.decode(data, (bool))))
             revert SafeTransferFailed();
     }
-}
 
-//
-//
-//        LIBRARY FUNCTIONS
-//
-//
+    //
+    //
+    //        LIBRARY FUNCTIONS
+    //
+    //
+
+    function quote(
+        uint256 amountIn,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) public pure returns (uint256 amountOut) {
+        return KajuswapLibrary.quote(amountIn, reserveIn, reserveOut);
+    }
+
+    function getAmountOut(
+        uint256 amountIn,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) public pure returns (uint256 amountOut) {
+        return KajuswapLibrary.getAmountOut(amountIn, reserveIn, reserveOut);
+    }
+
+    function getAmountIn(
+        uint256 amountOut,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) public pure returns (uint256 amountIn) {
+        return KajuswapLibrary.getAmountIn(amountOut, reserveIn, reserveOut);
+    }
+
+    function getAmountsOut(uint256 amountIn, address[] memory path)
+        public
+        returns (uint256[] memory amounts)
+    {
+        return KajuswapLibrary.getAmountsOut(address(factory), amountIn, path);
+    }
+
+    function getAmountsIn(uint256 amountOut, address[] memory path)
+        public
+        returns (uint256[] memory amounts)
+    {
+        return KajuswapLibrary.getAmountsIn(address(factory), amountOut, path);
+    }
+}

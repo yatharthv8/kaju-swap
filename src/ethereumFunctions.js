@@ -43,26 +43,16 @@ export function doesTokenExist(ethAddress) {
 //    `address` - An Ethereum address of the token to check for (either a token or WETH)
 export async function getBalanceandSymbol(accountAddress, address) {
   try {
-    if (address === COINS.RINKEBYCoins[0].address) {
-      return {
-        balance: web3.utils.fromWei(
-          await web3.eth.getBalance(address),
-          "ether"
-        ),
-        symbol: COINS.RINKEBYCoins[0].abbr,
-      };
-    } else {
-      const token = new web3.eth.Contract(ERC20.abi, address);
-      return {
-        balance: web3.utils.fromWei(
-          await web3.eth.getBalance(accountAddress),
-          "ether"
-        ),
-        symbol: await token.symbol(),
-      };
-    }
+    const token = new web3.eth.Contract(ERC20.abi, address);
+    return {
+      balance: web3.utils.fromWei(
+        await web3.eth.getBalance(accountAddress),
+        "ether"
+      ),
+      symbol: await token.methods.symbol().call(),
+    };
   } catch (err) {
-    console.log("The getBalanceAndSymbol function had an error!", error);
+    console.log("The getBalanceAndSymbol function had an error!", err);
     return false;
   }
 }
