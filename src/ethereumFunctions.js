@@ -89,8 +89,8 @@ export async function getAmountOut(
       web3.utils.toWei(amountIn, "ether"),
       [token0Address, token1Address]
     );
-    const amount_out = web3.utils.toWei(values_out[1], "ether");
-    return Number(amount_out);
+    const amount_out = web3.utils.fromWei(values_out[1], "ether");
+    return amount_out;
   } catch {
     return false;
   }

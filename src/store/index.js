@@ -2,6 +2,11 @@ import { createStore } from "vuex";
 import walletConnect from "./walletConnect/walletConnect.js";
 import web3 from "../../ethereum/web3.js";
 import detectEthereumProvider from "@metamask/detect-provider";
+import * as ethFunc from "../ethereumFunctions.js";
+
+const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
+const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
+const Weth = ethFunc.getWeth(process.env.VUE_APP_WETH);
 
 const { ethereum } = window;
 
@@ -15,8 +20,17 @@ const store = createStore({
       account0: null,
       balance: null,
       isLoading: false,
-      swapDialog: [false, null],
+      swapDialog: {
+        bool: false,
+        DialnumAdd: [
+          process.env.VUE_APP_WETH,
+          "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+        ],
+      },
+      // symbolButtonIndex: null,
       swapTokenSymbol: ["WETH", "UNI"],
+      amountToken0: null,
+      amountToken1: null,
     };
   },
   mutations: {
@@ -24,20 +38,27 @@ const store = createStore({
       // console.log("5");
       state.displayConnectWalletButton = !state.displayConnectWalletButton;
     },
-    openSwapDialog(state, payload) {
-      state.swapDialog[0] = true;
-      state.swapDialog[1] = payload;
+    openSwapDialog(state) {
+      state.swapDialog.bool = true;
     },
     closeSwapDialog(state) {
-      state.swapDialog[0] = false;
+      state.swapDialog.bool = false;
     },
   },
   actions: {
+    fillToken1Amount() {
+      this.state.amountToken1 = ethFunc.getAmountOut(
+        this.state.swapDialog.DialnumAdd[0],
+        this.state.swapDialog.DialnumAdd[1],
+        this.state.amountToken0,
+        router
+      );
+    },
     closeSwapDialog(context) {
       context.commit("closeSwapDialog");
     },
-    openSwapDialog(context, payload) {
-      context.commit("openSwapDialog", payload);
+    openSwapDialog(context) {
+      context.commit("openSwapDialog");
     },
     toggleConnectWalletButton(context) {
       context.commit("toggleConnectWalletButton"); //Not the actual implementation. Needs some refactoring. Will do later

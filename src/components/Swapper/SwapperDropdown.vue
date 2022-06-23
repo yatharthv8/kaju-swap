@@ -1,15 +1,15 @@
 <template>
-  <button @click="openDialog(swapDialNum)">
+  <button @click="openDialog()">
     <slot></slot>
   </button>
 </template>
 
 <script>
 export default {
-  props: ["swapDialNum"],
+  props: [],
   methods: {
-    openDialog(num) {
-      this.$store.dispatch("openSwapDialog", num);
+    openDialog() {
+      this.$store.dispatch("openSwapDialog");
       // console.log(num);
     },
   },

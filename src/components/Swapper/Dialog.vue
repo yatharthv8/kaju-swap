@@ -15,7 +15,7 @@
       <ul
         v-for="coin in coins"
         :key="coin.address"
-        @click="changeTokenText(coin.address)"
+        @click="changeTokenText(coin.address, swapDialNum)"
       >
         {{
           coin.abbr
@@ -36,6 +36,7 @@ import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
 
 export default {
+  props: ["swapDialNum"],
   data() {
     return {
       coins: COINS.RINKEBYCoins,
@@ -46,15 +47,17 @@ export default {
     closeDialog() {
       this.$store.dispatch("closeSwapDialog");
     },
-    changeTokenText(tokenAddress) {
+    changeTokenText(tokenAddress, swapDialNum) {
+      console.log("swap dial num in CTT dialog.vue->", swapDialNum);
       this.submitAddress(tokenAddress);
     },
     async submitAddress(tokenAddress) {
       try {
         const accounts = await web3.eth.getAccounts();
         ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
-          this.$store.state.swapTokenSymbol[this.$store.state.swapDialog[1]] =
-            data.symbol;
+          this.$store.state.swapTokenSymbol[this.swapDialNum] = data.symbol;
+          this.$store.state.swapDialog.DialnumAdd[this.swapDialNum] =
+            tokenAddress;
           // console.log("token balance->", data.balance);
           // console.log("swapDial->", this.$store.state.swapDialog[1]);
         });
