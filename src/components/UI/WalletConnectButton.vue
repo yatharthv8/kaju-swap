@@ -18,6 +18,10 @@ export default {
   methods: {
     onConnect() {
       this.$store.dispatch("onConnect");
+      this.$store.dispatch("displayMaxTokenBalance", {
+        add: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+        ind: 0,
+      });
     },
   },
   // created() {

@@ -46,9 +46,10 @@ export default {
   methods: {
     closeDialog() {
       this.$store.dispatch("closeSwapDialog");
+      // this.$store.dispatch("displayMaxTokenBalance");
     },
-    changeTokenText(tokenAddress, swapDialNum) {
-      console.log("swap dial num in CTT dialog.vue->", swapDialNum);
+    changeTokenText(tokenAddress) {
+      // console.log("swap dial num in CTT dialog.vue->", swapDialNum);
       this.submitAddress(tokenAddress);
     },
     async submitAddress(tokenAddress) {
@@ -62,6 +63,10 @@ export default {
           // console.log("swapDial->", this.$store.state.swapDialog[1]);
         });
         this.$store.dispatch("closeSwapDialog");
+        this.$store.dispatch("displayMaxTokenBalance", {
+          add: tokenAddress,
+          ind: this.swapDialNum,
+        });
       } catch (err) {
         console.log("Invalid token address!");
       }

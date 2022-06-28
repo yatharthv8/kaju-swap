@@ -12,21 +12,27 @@
         <input
           type="number"
           placeholder="0.0"
-          pattern="^[0-9]*[.,]?[0-9]*$"
+          step="any"
+          min="0"
           name="token0"
           id="token0"
-          v-model.trim="amountToken0"
+          v-model.trim="$store.state.amountToken0"
         />
         <button @click="openDialog(0)">
           {{ $store.state.swapTokenSymbol[0] }}
         </button>
       </div>
+      <small v-if="$store.state.displayConnectWalletButton">
+        <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
+        {{ $store.state.tokenBalText[0] }}</small
+      >
       <downArrow></downArrow>
       <div class="inp-swap">
         <input
           type="number"
           placeholder="0.0"
-          pattern="^[0-9]*[.,]?[0-9]*$"
+          step="any"
+          min="0"
           name="token1"
           id="token1"
           v-model.trim="$store.state.amountToken1"
@@ -35,6 +41,9 @@
           {{ $store.state.swapTokenSymbol[1] }}
         </button>
       </div>
+      <!-- <small v-if="$store.state.displayConnectWalletButton"
+        ><span @click="fillInputWithMaxAmt()">MAX</span>: {{ $store.state.tokenBalText[1] }}</small
+      > -->
     </div>
     <div v-if="!$store.state.displayConnectWalletButton">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
@@ -42,7 +51,9 @@
     <div v-else-if="!swapActive">
       <button class="swap-button">Enter Amount</button>
     </div>
-    <div v-else><button class="swap-button">Swap</button></div>
+    <div v-else>
+      <button class="swap-button" @click="startSwap()">Swap</button>
+    </div>
   </div>
 </template>
 
@@ -63,7 +74,7 @@ export default {
     return {
       swapActive: false,
       symbolButtonIndex: null,
-      amountToken0: null,
+      // amountToken0: null,
       // amountToken1: null,
     };
   },
@@ -72,27 +83,48 @@ export default {
       this.symbolButtonIndex = num;
       this.$store.dispatch("openSwapDialog");
     },
+    startSwap() {
+      this.$store.dispatch("swapToken");
+    },
+    fillInputWithMaxAmt() {
+      // console.log("fillInp->", this.$store.state.tokenBalText[0]);
+      this.$store.state.amountToken0 = this.$store.state.tokenBalText[0];
+    },
   },
   computed: {},
   watch: {
-    amountToken0(newVal) {
-      if (newVal > 0 || this.amountToken1 > 0) {
-        console.log("from watcher->", newVal);
-        this.swapActive = true;
-        this.$store.state.amountToken0 = newVal;
-        this.$store.dispatch("fillToken1Amount");
+    "$store.state.amountToken0"(newVal) {
+      if (newVal != null) {
+        this.$store.dispatch("fillTokenAmount", 1);
+        if (this.$store.state.amountToken0) {
+          this.swapActive = true;
+        } else {
+          this.swapActive = false;
+        }
+        // console.log("Watcher->", newVal);
       } else {
         this.swapActive = false;
       }
     },
-    amountToken1(newVal) {
-      if (newVal > 0 || this.amountToken0 > 0) {
-        this.$store.state.amountToken1 = newVal;
-        this.swapActive = true;
-      } else {
-        this.swapActive = false;
-      }
-    },
+    // "$store.state.amountToken1"(newVal) {
+    //   if (newVal != null) {
+    //     this.$store.dispatch("fillTokenAmount", 0);
+    //     if (this.$store.state.amountToken1) {
+    //       this.swapActive = true;
+    //     } else {
+    //       this.swapActive = false;
+    //     }
+    //     // console.log("Watcher->", newVal);
+    //   } else {
+    //     this.swapActive = false;
+    //   }
+    // },
   },
 };
 </script>
+
+<style scoped>
+.max-amt {
+  cursor: pointer;
+}
+</style>

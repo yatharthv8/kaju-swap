@@ -31,6 +31,7 @@ const store = createStore({
       swapTokenSymbol: ["WETH", "UNI"],
       amountToken0: null,
       amountToken1: null,
+      tokenBalText: [0, 0],
     };
   },
   mutations: {
@@ -46,13 +47,42 @@ const store = createStore({
     },
   },
   actions: {
-    fillToken1Amount() {
-      this.state.amountToken1 = ethFunc.getAmountOut(
+    async swapToken() {
+      // try {
+      await ethFunc.swapTokens(
         this.state.swapDialog.DialnumAdd[0],
         this.state.swapDialog.DialnumAdd[1],
         this.state.amountToken0,
+        router,
+        this.state.account0
+      );
+      // console.log("here");
+      // } catch (err) {
+      //   return false;
+      // }
+    },
+    async fillTokenAmount(_, payload) {
+      let address0;
+      let address1;
+      if (payload === 1) {
+        address0 = this.state.swapDialog.DialnumAdd[0];
+        address1 = this.state.swapDialog.DialnumAdd[1];
+      } else {
+        address1 = this.state.swapDialog.DialnumAdd[0];
+        address0 = this.state.swapDialog.DialnumAdd[1];
+      }
+      this.state.amountToken1 = await ethFunc.getAmountOut(
+        address0,
+        address1,
+        this.state.amountToken0,
         router
       );
+    },
+    async displayMaxTokenBalance(_, payload) {
+      this.state.tokenBalText[payload.ind] = await ethFunc.getTokenBalance(
+        payload.add
+      );
+      // console.log("fill displayTokenBal->", payload, this.state.tokenBalText);
     },
     closeSwapDialog(context) {
       context.commit("closeSwapDialog");

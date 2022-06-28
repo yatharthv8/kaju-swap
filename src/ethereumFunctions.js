@@ -57,6 +57,22 @@ export async function getBalanceandSymbol(accountAddress, address) {
   }
 }
 
+export async function getTokenBalance(address) {
+  const token = new web3.eth.Contract(ERC20.abi, address);
+  const accounts = await web3.eth.getAccounts();
+  console.log(
+    "Token Bal->",
+    web3.utils.fromWei(
+      await token.methods.balanceOf(accounts[0]).call(),
+      "ether"
+    )
+  );
+  return web3.utils.fromWei(
+    await token.methods.balanceOf(accounts[0]).call(),
+    "ether"
+  );
+}
+
 //Swap function
 export async function swapTokens(
   token0Address,
@@ -66,16 +82,17 @@ export async function swapTokens(
   accountAddress
 ) {
   const path = [token0Address, token1Address];
-  const amountIn = web3.utils.toWei(amount, "ether"); //amount should be int, return BN.js instance.
-  const amountOut = await routerContract.getAmountsOut(amountIn, path);
+  const amountIn = web3.utils.toWei(String(amount), "ether"); //amount should be int, return BN.js instance.
+  const amountOut = await routerContract.methods.getAmountsOut(amountIn, path);
   const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
-  await token0.approve(routerContract.address, amountIn);
-  await routerContract.swapExactTokensForTokens(
+  await token0.methods.approve(routerContract.options.address, amountIn);
+  const a = await routerContract.methods.swapExactTokensForTokens(
     amountIn,
-    amountOut[1],
+    amountOut.arguments[0],
     path,
     accountAddress
   );
+  console.log("here1", a, routerContract.options.address);
 }
 
 export async function getAmountOut(
@@ -84,12 +101,21 @@ export async function getAmountOut(
   amountIn,
   routerContract
 ) {
+  // console.log(
+  //   "Eth Func GAO->",
+  //   typeof Number(
+  //     web3.utils.fromWei(web3.utils.toWei(String(amountIn), "ether"), "ether")
+  //   )
+  // );
+  // console.log("Y", amount_out);
   try {
-    const values_out = await routerContract.getAmountsOut(
-      web3.utils.toWei(amountIn, "ether"),
+    const values_out = await routerContract.methods.getAmountsOut(
+      web3.utils.toWei(String(amountIn), "ether"),
       [token0Address, token1Address]
     );
-    const amount_out = web3.utils.fromWei(values_out[1], "ether");
+    const amount_out = Number(
+      web3.utils.fromWei(values_out.arguments[0], "ether")
+    );
     return amount_out;
   } catch {
     return false;

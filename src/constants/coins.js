@@ -28,17 +28,13 @@ export const RINKEBYCoins = [
     address: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
     // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
   },
+  {
+    name: "Maker",
+    abbr: "MKR",
+    address: "0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85",
+    // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
+  },
 ];
-
-// async function getBalance(address) {
-//   const token = new web3.eth.Contract(ERC20.abi, address);
-//   const accounts = await web3.eth.getAccounts();
-//   return web3.utils.fromWei(
-//     await token.methods.balanceOf(accounts[0]).call(),
-//     "ether"
-//   );
-// }
-// console.log("Weth add->", RINKEBYCoins[0].address);
 
 const COINS = new Map();
 // COINS.set(chains.ChainId.MAINNET, MAINNETCoins);
