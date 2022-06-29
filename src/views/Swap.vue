@@ -1,6 +1,6 @@
 <template>
   <div v-if="$store.state.swapDialog.bool">
-    <dialog-vue :swapDialNum="symbolButtonIndex"></dialog-vue>
+    <swap-dialog-vue :swapDialNum="symbolButtonIndex"></swap-dialog-vue>
   </div>
   <div class="card">
     <div class="form-header">
@@ -55,13 +55,17 @@
       <button class="swap-button" @click="startSwap()">Swap</button>
     </div>
   </div>
+  <div class="card">
+    <bal-res-section></bal-res-section>
+  </div>
 </template>
 
 <script>
 import gearSvg from "../assets/svg/gear.vue";
 import downArrow from "../assets/svg/downArrow.vue";
 import * as ethFunc from "../ethereumFunctions.js";
-import DialogVue from "../components/Swapper/Dialog.vue";
+import SwapDialogVue from "../components/Swapper/SwapDialog.vue";
+import BalResSection from "../components/layout/BalResSection.vue";
 // import SwapperDropdown from "../components/Swapper/SwapperDropdown.vue";
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
@@ -69,7 +73,7 @@ const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 const Weth = ethFunc.getWeth(process.env.VUE_APP_WETH);
 
 export default {
-  components: { gearSvg, downArrow, DialogVue },
+  components: { gearSvg, downArrow, SwapDialogVue, BalResSection },
   data() {
     return {
       swapActive: false,

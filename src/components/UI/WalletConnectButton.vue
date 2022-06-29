@@ -17,10 +17,13 @@ export default {
   },
   methods: {
     onConnect() {
-      this.$store.dispatch("onConnect");
-      this.$store.dispatch("displayMaxTokenBalance", {
-        add: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
-        ind: 0,
+      this.$store.dispatch("onConnect").then(() => {
+        this.$store.dispatch("displayMaxTokenBalance", {
+          add: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+          ind: 0,
+        });
+        // console.log("here", this.$store.state.account0);
+        this.$store.dispatch("displayReserves");
       });
     },
   },

@@ -67,6 +67,7 @@ export default {
           add: tokenAddress,
           ind: this.swapDialNum,
         });
+        this.$store.dispatch("displayReserves");
       } catch (err) {
         console.log("Invalid token address!");
       }

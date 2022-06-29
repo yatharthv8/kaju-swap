@@ -27,11 +27,14 @@ const store = createStore({
           "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
         ],
       },
+      liqDialog: false,
       // symbolButtonIndex: null,
       swapTokenSymbol: ["WETH", "UNI"],
       amountToken0: null,
       amountToken1: null,
       tokenBalText: [0, 0],
+      tokenReserves: [0, 0],
+      selectedPoolLiq: null,
     };
   },
   mutations: {
@@ -47,6 +50,27 @@ const store = createStore({
     },
   },
   actions: {
+    async addLiquidity() {
+      await ethFunc.addLiquidity();
+    },
+    async displayReserves() {
+      // console.log("address->", this.state.account0);
+      const reserves = await ethFunc.getReserves(
+        this.state.swapDialog.DialnumAdd[0],
+        this.state.swapDialog.DialnumAdd[1],
+        factory,
+        this.state.account0
+      );
+      this.state.tokenReserves[0] = reserves[0];
+      this.state.tokenReserves[1] = reserves[1];
+      this.state.tokenBalText[0] = await ethFunc.getTokenBalance(
+        this.state.swapDialog.DialnumAdd[0]
+      );
+      this.state.tokenBalText[1] = await ethFunc.getTokenBalance(
+        this.state.swapDialog.DialnumAdd[1]
+      );
+      // this.state.selectedPoolLiq = reserves[2];
+    },
     async swapToken() {
       // try {
       await ethFunc.swapTokens(
