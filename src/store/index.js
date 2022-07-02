@@ -27,7 +27,6 @@ const store = createStore({
           "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
         ],
       },
-      liqDialog: false,
       // symbolButtonIndex: null,
       swapTokenSymbol: ["WETH", "UNI"],
       amountToken0: null,
@@ -35,6 +34,21 @@ const store = createStore({
       tokenBalText: [0, 0],
       tokenReserves: [0, 0],
       selectedPoolLiq: null,
+      liquidityPageVar: {
+        liqTokenSymbol: ["WETH", "UNI"],
+        liqTokenAmount0: null, //For inputing in the form
+        liqTokenAmount1: null, //For inputing in the form
+        liqTokenBal: [0, 0], //Token Balance in Wallet - Display in BalResLiq
+        liqTokenRes: [0, 0], //Token Reserves in Contract - Display in BalResLiq
+        liqDialog: {
+          //Dialog variable maintainence
+          bool: false,
+          DialnumAdd: [
+            process.env.VUE_APP_WETH,
+            "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+          ],
+        },
+      },
     };
   },
   mutations: {
@@ -45,30 +59,61 @@ const store = createStore({
     openSwapDialog(state) {
       state.swapDialog.bool = true;
     },
+    openLiqDialog(state) {
+      state.liquidityPageVar.liqDialog.bool = true;
+    },
     closeSwapDialog(state) {
       state.swapDialog.bool = false;
+    },
+    closeLiqDialog(state) {
+      state.liquidityPageVar.liqDialog.bool = false;
     },
   },
   actions: {
     async addLiquidity() {
-      await ethFunc.addLiquidity();
+      await ethFunc.addLiquidity(
+        this.state.liquidityPageVar.liqDialog.DialnumAdd[0],
+        this.state.liquidityPageVar.liqDialog.DialnumAdd[1],
+        this.state.liquidityPageVar.liqTokenAmount0,
+        this.state.liquidityPageVar.liqTokenAmount1,
+        0,
+        0,
+        router,
+        this.state.account0
+      );
     },
     async displayReserves() {
       // console.log("address->", this.state.account0);
-      const reserves = await ethFunc.getReserves(
+      const swapReserves = await ethFunc.getReserves(
         this.state.swapDialog.DialnumAdd[0],
         this.state.swapDialog.DialnumAdd[1],
         factory,
         this.state.account0
       );
-      this.state.tokenReserves[0] = reserves[0];
-      this.state.tokenReserves[1] = reserves[1];
+      const liqReserves = await ethFunc.getReserves(
+        this.state.liquidityPageVar.liqDialog.DialnumAdd[0],
+        this.state.liquidityPageVar.liqDialog.DialnumAdd[1],
+        factory,
+        this.state.account0
+      );
+      this.state.tokenReserves[0] = swapReserves[0];
+      this.state.tokenReserves[1] = swapReserves[1];
+      this.state.liquidityPageVar.liqTokenRes[0] = liqReserves[0];
+      this.state.liquidityPageVar.liqTokenRes[1] = liqReserves[1];
       this.state.tokenBalText[0] = await ethFunc.getTokenBalance(
         this.state.swapDialog.DialnumAdd[0]
       );
       this.state.tokenBalText[1] = await ethFunc.getTokenBalance(
         this.state.swapDialog.DialnumAdd[1]
       );
+      this.state.liquidityPageVar.liqTokenBal[0] =
+        await ethFunc.getTokenBalance(
+          this.state.liquidityPageVar.liqDialog.DialnumAdd[0]
+        );
+      this.state.liquidityPageVar.liqTokenBal[1] =
+        await ethFunc.getTokenBalance(
+          this.state.liquidityPageVar.liqDialog.DialnumAdd[1]
+        );
       // this.state.selectedPoolLiq = reserves[2];
     },
     async swapToken() {
@@ -84,6 +129,23 @@ const store = createStore({
       // } catch (err) {
       //   return false;
       // }
+    },
+    async fillLiqTokenAmt(_, payload) {
+      let address0;
+      let address1;
+      if (payload === 1) {
+        address0 = this.state.liquidityPageVar.liqDialog.DialnumAdd[0];
+        address1 = this.state.liquidityPageVar.liqDialog.DialnumAdd[1];
+      } else {
+        address1 = this.state.liquidityPageVar.liqDialog.DialnumAdd[0];
+        address0 = this.state.liquidityPageVar.liqDialog.DialnumAdd[1];
+      }
+      this.state.liquidityPageVar.liqTokenAmount1 = await ethFunc.getAmountOut(
+        address0,
+        address1,
+        this.state.liquidityPageVar.liqTokenAmount0,
+        router
+      );
     },
     async fillTokenAmount(_, payload) {
       let address0;
@@ -106,13 +168,22 @@ const store = createStore({
       this.state.tokenBalText[payload.ind] = await ethFunc.getTokenBalance(
         payload.add
       );
-      // console.log("fill displayTokenBal->", payload, this.state.tokenBalText);
+    },
+    async displayMaxTokenBalanceLiq(_, payload) {
+      this.state.liquidityPageVar.liqTokenBal[payload.ind] =
+        await ethFunc.getTokenBalance(payload.add);
     },
     closeSwapDialog(context) {
       context.commit("closeSwapDialog");
     },
+    closeLiqDialog(context) {
+      context.commit("closeLiqDialog");
+    },
     openSwapDialog(context) {
       context.commit("openSwapDialog");
+    },
+    openLiqDialog(context) {
+      context.commit("openLiqDialog");
     },
     toggleConnectWalletButton(context) {
       context.commit("toggleConnectWalletButton"); //Not the actual implementation. Needs some refactoring. Will do later

@@ -7,20 +7,21 @@ import "../libraries/UQ112x112.sol";
 import "../interfaces/IERC20.sol";
 
 error AlreadyInitialized();
-error BalanceOverflow();
-error InsufficientInputAmount();
-error InsufficientLiquidity();
-error InsufficientLiquidityBurned();
-error InsufficientLiquidityMinted();
-error InsufficientOutputAmount();
-error InvalidK();
-error TransferFailed();
+// error BalanceOverflow();
+// error InsufficientInputAmount();
+// error InsufficientLiquidity();
+// error InsufficientLiquidityBurned();
+// error InsufficientLiquidityMinted();
+// error InsufficientOutputAmount();
+// error InvalidK();
+// error TransferFailed();
 
 contract KajuswapPair is ERC20, Math {
     using UQ112x112 for uint224;
 
     uint256 constant MINIMUM_LIQUIDITY = 1000; //So that there is always some liquidity and the token prices don't start skyrocketing
 
+    address public factory;
     address public token0;
     address public token1;
 
@@ -68,12 +69,16 @@ contract KajuswapPair is ERC20, Math {
         return (reserve0, reserve1, blockTimestampLast);
     }
 
-    constructor() ERC20("Kajuswap Pair", "KAJU", 18) {} //Inherited the solmate ERC20 token implementation. Defining the name, symbol and decimals for the token.
+    constructor() ERC20("Kajuswap Pair", "KAJU", 18) {
+        factory = msg.sender;
+    } //Inherited the solmate ERC20 token implementation. Defining the name, symbol and decimals for the token.
 
     function initialize(address token0_, address token1_) public {
         //factory uses this at the time of token deployment
+        require(msg.sender == factory, "Kajuswap: FORBIDDEN"); // sufficient check
         if (token0 != address(0) || token1 != address(0))
-            revert AlreadyInitialized(); //exits from the function. Transaction fails on revert. Why use revert? : Gas used up is returned.
+            revert AlreadyInitialized(); 
+            //exits from the function. Transaction fails on revert. Why use revert? : Gas used up is returned.
         token0 = token0_;
         token1 = token1_;
     }
@@ -95,7 +100,8 @@ contract KajuswapPair is ERC20, Math {
             );
         }
 
-        if (liquidity <= 0) revert InsufficientLiquidityMinted();
+        // if (liquidity <= 0) revert InsufficientLiquidityMinted();
+        require(liquidity > 0, "Kajuswap: INSUFFICIENT_LIQUIDITY_MINTED");
 
         _mint(to, liquidity);
         _update(balance0, balance1, reserve0_, reserve1_);
@@ -114,7 +120,8 @@ contract KajuswapPair is ERC20, Math {
         amount0 = (liquidity * balance0) / totalSupply;
         amount1 = (liquidity * balance1) / totalSupply;
 
-        if (amount0 == 0 || amount1 == 0) revert InsufficientLiquidityBurned();
+        // if (amount0 == 0 || amount1 == 0) revert InsufficientLiquidityBurned();
+        require(amount0 > 0 && amount1 > 0, "Kajuswap: INSUFFICIENT_LIQUIDITY_BURNED");
 
         _burn(address(this), liquidity);
         _safeTransfer(token0, to, amount0);
@@ -132,13 +139,15 @@ contract KajuswapPair is ERC20, Math {
         uint256 amount1Out,
         address to
     ) public lock {
-        if (amount0Out == 0 && amount1Out == 0)
-            revert InsufficientOutputAmount();
+        // if (amount0Out == 0 && amount1Out == 0)
+        //     revert InsufficientOutputAmount();
+        require(amount0Out > 0 || amount1Out > 0, "Kajuswap: INSUFFICIENT_OUTPUT_AMOUNT");
 
         (uint112 reserve0_, uint112 reserve1_, ) = getReserves();
 
-        if (amount0Out > reserve0_ || amount1Out > reserve1_)
-            revert InsufficientLiquidity();
+        // if (amount0Out > reserve0_ || amount1Out > reserve1_)
+        //     revert InsufficientLiquidity();
+        require(amount0Out < reserve0_ && amount1Out < reserve1_, "Kajuswap: INSUFFICIENT_LIQUIDITY");
 
         if (amount0Out > 0) _safeTransfer(token0, to, amount0Out);
         if (amount1Out > 0) _safeTransfer(token1, to, amount1Out);
@@ -151,16 +160,18 @@ contract KajuswapPair is ERC20, Math {
         uint256 amount1In = balance1 > reserve1 - amount1Out
             ? balance1 - (reserve1 - amount1Out)
             : 0;
-        if (amount0In == 0 && amount1In == 0) revert InsufficientInputAmount();
+        // if (amount0In == 0 && amount1In == 0) revert InsufficientInputAmount();
+        require(amount0In > 0 || amount1In > 0, "Kajuswap: INSUFFICIENT_INPUT_AMOUNT");
 
         // Adjusted = balance before swap - swap fee; fee stays in the contract
         uint256 balance0Adjusted = (balance0 * 1000) - (amount0In * 3);
         uint256 balance1Adjusted = (balance1 * 1000) - (amount1In * 3);
 
-        if (
-            balance0Adjusted * balance1Adjusted <
-            uint256(reserve0_) * uint256(reserve1_) * (1000**2)
-        ) revert InvalidK();
+        // if (
+        //     balance0Adjusted * balance1Adjusted <
+        //     uint256(reserve0_) * uint256(reserve1_) * (1000**2)
+        // ) revert InvalidK();
+        require(balance0Adjusted * balance1Adjusted >= uint256(reserve0_) * uint256(reserve1_) * (1000**2), "Kajuswap: INVALID_K");
         _update(balance0, balance1, reserve0_, reserve1_);
         emit Swap(msg.sender, amount0Out, amount1Out, to);
     }
@@ -185,8 +196,9 @@ contract KajuswapPair is ERC20, Math {
         uint112 reserve0_,
         uint112 reserve1_
     ) private {
-        if (balance0 > type(uint112).max || balance1 > type(uint112).max)
-            revert BalanceOverflow();
+        // if (balance0 > type(uint112).max || balance1 > type(uint112).max)
+        //     revert BalanceOverflow();
+        require(balance0 <= type(uint112).max && balance1 <= type(uint112).max, "Kajuswap: OVERFLOW");
 
         unchecked {
             //to disbable overflow/underflow as timeElapsed and CumulativePrice calculation will be out of bounds
@@ -216,10 +228,15 @@ contract KajuswapPair is ERC20, Math {
         address to,
         uint256 value
     ) private {
+        // (bool success, bytes memory data) = token.call(
+        //     abi.encodeWithSignature("transfer(address,uint256)", to, value)
+        // );
+        // if (!success || (data.length != 0 && !abi.decode(data, (bool))))
+        //     revert TransferFailed();
+        
         (bool success, bytes memory data) = token.call(
-            abi.encodeWithSignature("transfer(address,uint256)", to, value)
+            abi.encodeWithSelector(bytes4(keccak256(bytes('transfer(address,uint256)'))), to, value)
         );
-        if (!success || (data.length != 0 && !abi.decode(data, (bool))))
-            revert TransferFailed();
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "Kajuswap: TRANSFER_FAILED");
     }
 }

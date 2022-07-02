@@ -16,46 +16,6 @@
 				"type": "error"
 			},
 			{
-				"inputs": [],
-				"name": "BalanceOverflow",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InsufficientInputAmount",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InsufficientLiquidity",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InsufficientLiquidityBurned",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InsufficientLiquidityMinted",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InsufficientOutputAmount",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InvalidK",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "TransferFailed",
-				"type": "error"
-			},
-			{
 				"anonymous": false,
 				"inputs": [
 					{
@@ -323,6 +283,19 @@
 						"internalType": "uint8",
 						"name": "",
 						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "factory",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -661,11 +634,11 @@
 			]
 		},
 		"contracts/KajuswapPair.sol": {
-			"keccak256": "0xc52f881110488595d72e04882898968ec6e51305364efe6253b68c571b3916b5",
+			"keccak256": "0xd02dfbd285495590f138230420467ed37a0e0335afe5af9e1c2914a579f59d45",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4152852e68a87b38cd08a623dae8ad710ca15bf0c4c053d64366532a7c5c0034",
-				"dweb:/ipfs/QmbPuh3yNme5YRdh99R71Rckjo6Zoka1s2shJvXgRKCExz"
+				"bzz-raw://966ea58e55ae03a0a69db444f3939c467802509bab5911e1f9f92661561b6b91",
+				"dweb:/ipfs/QmaPS1ydax7GN1BJf35at1a1G5T7VVzMLejKLPcsEKeMu1"
 			]
 		},
 		"interfaces/IERC20.sol": {

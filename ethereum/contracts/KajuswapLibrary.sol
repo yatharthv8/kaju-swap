@@ -5,9 +5,9 @@ import "../interfaces/IKajuswapPair.sol";
 import "../interfaces/IKajuswapFactory.sol";
 
 library KajuswapLibrary {
-    error InsufficientAmount();
-    error InsufficientLiquidity();
-    error InvalidPath();
+    // error InsufficientAmount(string error1);
+    // error InsufficientLiquidity(string error2);
+    // error InvalidPath(string error3);
 
     function getReserves(
         address factoryAddress,
@@ -28,8 +28,10 @@ library KajuswapLibrary {
         uint256 reserveIn,
         uint256 reserveOut
     ) public pure returns (uint256 amountOut) {
-        if (amountIn == 0) revert InsufficientAmount();
-        if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity();
+        // if (amountIn == 0) revert InsufficientAmount("InsufficientAmount");
+        // if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity("InsufficientLiquidity");
+        require(amountIn > 0, "KajuswapLibrary: INSUFFICIENT_AMOUNT");
+        require(reserveIn > 0 && reserveOut > 0, "KajuswapLibrary: INSUFFICIENT_LIQUIDITY");
 
         return (amountIn * reserveOut) / reserveIn;
     }
@@ -50,7 +52,7 @@ library KajuswapLibrary {
                             hex"ff",
                             factoryAddress,
                             keccak256(abi.encodePacked(token0, token1)),
-                            hex"ab66b891387a046b7fefca26f19f061e1ced0309d8009fc43808c517eaec6917" //See ../abiBytecodePair.js for reference
+                            hex"b68fbba50ceb1571c8d495ec425ba3b90ece4d1440852fd428fdd1439ca5a1d8" //See ../abiBytecodePair.js for reference
                         )
                     )
                 )
@@ -71,8 +73,10 @@ library KajuswapLibrary {
         uint256 reserveIn,
         uint256 reserveOut
     ) public pure returns (uint256) {
-        if (amountIn == 0) revert InsufficientAmount();
-        if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity();
+        // if (amountIn == 0) revert InsufficientAmount("InsufficientAmount");
+        // if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity("InsufficientLiquidity");
+        require(amountIn > 0, "KajuswapLibrary: INSUFFICIENT_AMOUNT");
+        require(reserveIn > 0 && reserveOut > 0, "KajuswapLibrary: INSUFFICIENT_LIQUIDITY");
 
         uint256 amountInWithFee = amountIn * 997;
         uint256 numerator = amountInWithFee * reserveOut;
@@ -86,7 +90,8 @@ library KajuswapLibrary {
         uint256 amountIn,
         address[] memory path
     ) public returns (uint256[] memory) {
-        if (path.length < 2) revert InvalidPath();
+        // if (path.length < 2) revert InvalidPath("InvalidPath");
+        require(path.length >= 2, "KajuswapLibrary: INVALID_PATH");
         uint256[] memory amounts = new uint256[](path.length);
         amounts[0] = amountIn;
 
@@ -107,8 +112,10 @@ library KajuswapLibrary {
         uint256 reserveIn,
         uint256 reserveOut
     ) public pure returns (uint256) {
-        if (amountOut == 0) revert InsufficientAmount();
-        if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity();
+        // if (amountOut == 0) revert InsufficientAmount("InsufficientAmount");
+        // if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity("InsufficientLiquidity");
+        require(amountOut > 0, "KajuswapLibrary: INSUFFICIENT_AMOUNT");
+        require(reserveIn > 0 && reserveOut > 0, "KajuswapLibrary: INSUFFICIENT_LIQUIDITY");
 
         uint256 numerator = reserveIn * amountOut * 1000;
         uint256 denominator = (reserveOut - amountOut) * 997;
@@ -121,7 +128,8 @@ library KajuswapLibrary {
         uint256 amountOut,
         address[] memory path
     ) public returns (uint256[] memory) {
-        if (path.length < 2) revert InvalidPath();
+        // if (path.length < 2) revert InvalidPath("InvalidPath");
+        require(path.length >= 2, "KajuswapLibrary: INVALID_PATH");
         uint256[] memory amounts = new uint256[](path.length);
         amounts[amounts.length - 1] = amountOut;
 

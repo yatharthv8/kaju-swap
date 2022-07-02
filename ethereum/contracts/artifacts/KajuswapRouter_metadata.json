@@ -17,31 +17,6 @@
 				"type": "constructor"
 			},
 			{
-				"inputs": [],
-				"name": "ExcessiveInputAmount",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InsufficientAAmount",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InsufficientBAmount",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "InsufficientOutputAmount",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "SafeTransferFailed",
-				"type": "error"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -381,19 +356,19 @@
 	},
 	"sources": {
 		"contracts/KajuswapLibrary.sol": {
-			"keccak256": "0xf7e7cb99d61dda03f101809171f0cc867ad1c208a52141292db7f09fd462bd70",
+			"keccak256": "0x085a87f9e3a41662744eeae2307079c55af5ccebc0a0e9d7b393fb17670ad1e6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://bd1efba7c0ade4f347378bc60fb4b978ca192487642d2a59e2472904dd39411b",
-				"dweb:/ipfs/QmR3SsPtVcg3xsuJZQyH7GNgGQprSdFMBeQLJF4Zr6V8vw"
+				"bzz-raw://e1565960ce4365b365af6b88e1ec422f886d8299f8b501a9b4e472b7fa299159",
+				"dweb:/ipfs/QmPjTD7W79u6PQ8Bs4QcNZ4WLCp2o7JD9b91435h5iocTr"
 			]
 		},
 		"contracts/KajuswapRouter.sol": {
-			"keccak256": "0x038eb904dd1e27e51e5d041d274373e08249b3a412523aad097f27e4abc1364d",
+			"keccak256": "0xa6feea391607645521ccb0d6e37db2a1ab85549dba1477bd17e8d96f7ed02532",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://99f473896efb0f2455a752e0e9a4b0a7be7e2b3e08a9f8b084395be31d9bcee4",
-				"dweb:/ipfs/QmafEQV7EG776QkTNDUnZU1euvu1CKvzwXmiJn6rR5tLr9"
+				"bzz-raw://a52299a078436fefc04e81a9f69b233b77df758d13faf6fb94aad8909f4edce6",
+				"dweb:/ipfs/QmdQUUcqtRWGC8WQZkktZoF9qi8puiL4Vnry3Ki3qhdzqq"
 			]
 		},
 		"interfaces/IKajuswapFactory.sol": {

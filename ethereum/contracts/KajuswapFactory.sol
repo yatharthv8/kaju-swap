@@ -5,9 +5,9 @@ import "./KajuswapPair.sol";
 import "../interfaces/IKajuswapPair.sol";
 
 contract KajuswapFactory {
-    error IdenticalAddresses();
-    error ZeroAddress();
-    error PairExists();
+    // error IdenticalAddresses();
+    // error ZeroAddress();
+    // error PairExists();
 
     mapping(address => mapping(address => address)) public pairs;
     address[] public allPairs;
@@ -26,12 +26,15 @@ contract KajuswapFactory {
         public
         returns (address pair)
     {
-        if (tokenA == tokenB) revert IdenticalAddresses();
+        // if (tokenA == tokenB) revert IdenticalAddresses();
+        require(tokenA != tokenB, "Kajuswap: IDENTICAL_ADDRESSES");
         (address token0, address token1) = tokenA < tokenB
             ? (tokenA, tokenB)
             : (tokenB, tokenA);
-        if (token0 == address(0)) revert ZeroAddress();
-        if (pairs[token0][token1] != address(0)) revert PairExists();
+        // if (token0 == address(0)) revert ZeroAddress();
+        // if (pairs[token0][token1] != address(0)) revert PairExists();
+        require(token0 != address(0), "Kajuswap: ZERO_ADDRESS");
+        require(pairs[token0][token1] == address(0), "Kajuswap: PAIR_EXISTS");
 
         bytes memory bytecode = type(KajuswapPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1)); //sorted token addresses used as salt for consistency.

@@ -6,21 +6,6 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [],
-				"name": "IdenticalAddresses",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "PairExists",
-				"type": "error"
-			},
-			{
-				"inputs": [],
-				"name": "ZeroAddress",
-				"type": "error"
-			},
-			{
 				"anonymous": false,
 				"inputs": [
 					{
@@ -168,19 +153,19 @@
 			]
 		},
 		"contracts/KajuswapFactory.sol": {
-			"keccak256": "0xd223693fb09d7353cdcb372a403b2ed5e3d7157b4d4a1cede25f1cb228bb1956",
+			"keccak256": "0x8ccf4fe053222208a4e97f31eeb3be59498c29028a4c7897df5e72dea0e7fb7d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://80ccf38edae33fc67b7df198e72990533f910b748c164c3580cf9f6abcf013f6",
-				"dweb:/ipfs/QmTprcoEJDoiRB4uJuQNmjxSRZUL9F832JT6vCMFS49PsS"
+				"bzz-raw://22ece24265c42ba1428e52d6bfd03de5db41e77d5e4521d4d1c60fffbe771c95",
+				"dweb:/ipfs/QmUaWx3k8HJsKnFzGp7qpTwXCrVACfogXeZXrf5vAfDCQz"
 			]
 		},
 		"contracts/KajuswapPair.sol": {
-			"keccak256": "0xc52f881110488595d72e04882898968ec6e51305364efe6253b68c571b3916b5",
+			"keccak256": "0xd02dfbd285495590f138230420467ed37a0e0335afe5af9e1c2914a579f59d45",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4152852e68a87b38cd08a623dae8ad710ca15bf0c4c053d64366532a7c5c0034",
-				"dweb:/ipfs/QmbPuh3yNme5YRdh99R71Rckjo6Zoka1s2shJvXgRKCExz"
+				"bzz-raw://966ea58e55ae03a0a69db444f3939c467802509bab5911e1f9f92661561b6b91",
+				"dweb:/ipfs/QmaPS1ydax7GN1BJf35at1a1G5T7VVzMLejKLPcsEKeMu1"
 			]
 		},
 		"interfaces/IERC20.sol": {

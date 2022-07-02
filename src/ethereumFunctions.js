@@ -262,23 +262,34 @@ export async function addLiquidity(
   const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
   const token1 = new web3.eth.Contract(ERC20.abi, token1Address);
 
-  const token0Decimals = await getDecimals(token0);
-  const token1Decimals = await getDecimals(token1);
+  // const token0Decimals = await getDecimals(token0);
+  // const token1Decimals = await getDecimals(token1);
 
-  const amountIn0 = ethers.utils.parseUnits(amount0, token0Decimals);
-  const amountIn1 = ethers.utils.parseUnits(amount1, token1Decimals);
+  // const amountIn0 = ethers.utils.parseUnits(String(amount0), token0Decimals);
+  // const amountIn1 = ethers.utils.parseUnits(String(amount1), token1Decimals);
+  const amountIn0 = web3.utils.toWei(String(amount0), "ether");
+  const amountIn1 = web3.utils.toWei(String(amount1), "ether");
 
-  const amount0Min = ethers.utils.parseUnits(amount0min, token0Decimals);
-  const amount1Min = ethers.utils.parseUnits(amount1min, token1Decimals);
+  // const amount0Min = ethers.utils.parseUnits(
+  //   String(amount0min),
+  //   token0Decimals
+  // );
+  // const amount1Min = ethers.utils.parseUnits(
+  //   String(amount1min),
+  //   token1Decimals
+  // );
+  const amount0Min = web3.utils.toWei(String(amount0min), "ether");
+  const amount1Min = web3.utils.toWei(String(amount1min), "ether");
 
-  await token0.approve(routerContract.address, amountIn0);
-  await token1.approve(routerContract.address, amountIn1);
+  await token0.methods.approve(routerContract.options.address, amountIn0);
+  await token1.methods.approve(routerContract.options.address, amountIn1);
 
   // const wethAddress = await routerContract.WETH();
 
-  console.log([
-    address0,
-    address1,
+  console.log("addLiquidity->", [
+    token0,
+    token0Address,
+    token1Address,
     amountIn0,
     amountIn1,
     amount0Min,
@@ -287,9 +298,9 @@ export async function addLiquidity(
   ]);
 
   // Token + Token
-  await routerContract.addLiquidity(
-    address0,
-    address1,
+  await routerContract.methods.addLiquidity(
+    token0Address,
+    token1Address,
     amountIn0,
     amountIn1,
     amount0Min,
@@ -310,8 +321,8 @@ export async function addLiquidity(
 //    `accountAddress` - An Ethereum address of the current user's account
 //    `provider` - The current provider
 export async function removeLiquidity(
-  address0,
-  address1,
+  token0Address,
+  token1Address,
   liquidity_tokens,
   amount0min,
   amount1min,
@@ -347,24 +358,38 @@ export async function removeLiquidity(
   const pairAddress = await factory.getPair(token0Address, token1Address);
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
 
-  await pair.approve(routerContract.address, liquidity);
+  await pair.methods.approve(routerContract.address, liquidity);
 
   console.log([
-    address0,
-    address1,
+    token0Address,
+    token1Address,
     Number(liquidity),
     Number(amount0Min),
     Number(amount1Min),
     account,
   ]);
   // Token + Token
-  await routerContract.removeLiquidity(
-    address0,
-    address1,
+  await routerContract.methods.removeLiquidity(
+    token0Address,
+    token1Address,
     liquidity,
     amount0Min,
     amount1Min,
     account
   );
   // }
+}
+
+export async function getDecimals(token) {
+  const decimals = await token.methods
+    .decimals()
+    .call()
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      console.log("No tokenDecimals function for this token, set to 0");
+      return 0;
+    });
+  return decimals;
 }

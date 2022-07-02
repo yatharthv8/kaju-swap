@@ -105,7 +105,7 @@ export default {
         } else {
           this.swapActive = false;
         }
-        // console.log("Watcher->", newVal);
+        console.log("Watcher->", newVal);
       } else {
         this.swapActive = false;
       }

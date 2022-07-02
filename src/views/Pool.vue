@@ -1,5 +1,4 @@
 <template>
-  <div v-if="$store.state.liqDialog"><liq-dialog></liq-dialog></div>
   <div class="pools-page-container">
     <div class="pools-page-header">
       <div>Pools Overview</div>
@@ -14,7 +13,11 @@
       <div v-if="!$store.state.displayConnectWalletButton">
         <wallet-connect-button></wallet-connect-button>
       </div>
-      <div v-else><button @click="openAddLiqDia()">Add Liquidity</button></div>
+      <div v-else>
+        <router-link to="/addLiquidity">
+          <button>Add Liquidity</button></router-link
+        >
+      </div>
     </div>
     <div class="pool-page-card-footers">
       <a
@@ -35,19 +38,11 @@
 </template>
 
 <script>
-import LiqDialog from "../components/Liquidity/LiqDialog.vue";
-
 export default {
-  props: ["showDialog"],
-  components: { LiqDialog },
   data() {
     return {};
   },
-  methods: {
-    openAddLiqDia() {
-      this.$store.state.liqDialog = true;
-    },
-  },
+  methods: {},
   computed: {},
 };
 </script>

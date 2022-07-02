@@ -1,0 +1,149 @@
+{
+	"compiler": {
+		"version": "0.8.15+commit.e14f2714"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountOut",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reserveIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reserveOut",
+						"type": "uint256"
+					}
+				],
+				"name": "getAmountIn",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reserveIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reserveOut",
+						"type": "uint256"
+					}
+				],
+				"name": "getAmountOut",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reserveIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reserveOut",
+						"type": "uint256"
+					}
+				],
+				"name": "quote",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountOut",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/KajuswapLibrary.sol": "KajuswapLibrary"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/KajuswapLibrary.sol": {
+			"keccak256": "0x085a87f9e3a41662744eeae2307079c55af5ccebc0a0e9d7b393fb17670ad1e6",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e1565960ce4365b365af6b88e1ec422f886d8299f8b501a9b4e472b7fa299159",
+				"dweb:/ipfs/QmPjTD7W79u6PQ8Bs4QcNZ4WLCp2o7JD9b91435h5iocTr"
+			]
+		},
+		"interfaces/IKajuswapFactory.sol": {
+			"keccak256": "0x0cd270d14aed6323aac2f575dfecfc56fb5ddb3f3ae29270c1d2c95adf680d04",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://ae26971e4bee51ed2cb084e7459f1091d064398a84aeee3fe956cb8843c99efd",
+				"dweb:/ipfs/QmUCBAyxUTfzquJn5igFuLexEkRz2NyQr14uF8Djsbvqyz"
+			]
+		},
+		"interfaces/IKajuswapPair.sol": {
+			"keccak256": "0x11ec5ca2c43764f52e7ecbec39bd1ef8b140be38d2699fb0f6b014e0c0d96dfa",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ee603c0dafb98d03c96ea7bec88dbba7d3655ae709e1bf22788e3dae3f084430",
+				"dweb:/ipfs/QmRTto16LKxfQmes6vXfKmDEgnccF1c3G9yoCpBcC1JK2A"
+			]
+		}
+	},
+	"version": 1
+}

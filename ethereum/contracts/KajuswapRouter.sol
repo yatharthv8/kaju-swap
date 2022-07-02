@@ -5,18 +5,32 @@ import "../interfaces/IKajuswapPair.sol";
 import "../interfaces/IKajuswapFactory.sol";
 import "./KajuswapLibrary.sol";
 
+// import "hardhat/console.sol";
+
 contract KajuswapRouter {
-    error ExcessiveInputAmount();
-    error InsufficientAAmount();
-    error InsufficientBAmount();
-    error InsufficientOutputAmount();
-    error SafeTransferFailed();
+    // error ExcessiveInputAmount(string error1);
+    // error InsufficientAAmount(string error2);
+    // error InsufficientBAmount(string error3);
+    // error InsufficientOutputAmount(string error4);
+    // error SafeTransferFailed(string error5, address PA, address A);
 
     IKajuswapFactory factory;
+
+    // address public PA;
+    // address public A;
+    // address public B;
 
     constructor(address factoryAddress) {
         factory = IKajuswapFactory(factoryAddress);
     }
+
+    // function giveAddressses() public view returns (
+    //         address,
+    //         address,
+    //         address
+    //     ) {
+    //     return (PA, A, B);
+    // }
 
     function addLiquidity(
         address tokenA,
@@ -50,8 +64,14 @@ contract KajuswapRouter {
             tokenA,
             tokenB
         );
-        _safeTransferFrom(tokenA, msg.sender, pairAddress, amountA);
-        _safeTransferFrom(tokenB, msg.sender, pairAddress, amountB);
+
+        // PA = pairAddress;
+        // A = tokenA;
+        // B = tokenB;
+        // console.log("PairAddress :", pairAddress);
+
+        _safeTransferFrom(tokenA, pairAddress, amountA);
+        _safeTransferFrom(tokenB, pairAddress, amountB);
         liquidity = IKajuswapPair(pairAddress).mint(to);
     }
 
@@ -70,8 +90,10 @@ contract KajuswapRouter {
         );
         IKajuswapPair(pair).transferFrom(msg.sender, pair, liquidity);
         (amountA, amountB) = IKajuswapPair(pair).burn(to);
-        if (amountA < amountAMin) revert InsufficientAAmount();
-        if (amountB < amountBMin) revert InsufficientBAmount();
+        // if (amountA < amountAMin) revert InsufficientAAmount("InsufficientAAmount");
+        // if (amountB < amountBMin) revert InsufficientBAmount("InsufficientBAmount");
+        require(amountA >= amountAMin, "KajuswapRouter: INSUFFICIENT_A_AMOUNT");
+        require(amountB >= amountBMin, "KajuswapRouter: INSUFFICIENT_B_AMOUNT");
     }
 
     function swapExactTokensForTokens(
@@ -85,11 +107,14 @@ contract KajuswapRouter {
             amountIn,
             path
         );
-        if (amounts[amounts.length - 1] < amountOutMin)
-            revert InsufficientOutputAmount();
+        // if (amounts[amounts.length - 1] < amountOutMin)
+        // revert InsufficientOutputAmount("InsufficientOutputAmount");
+        require(
+            amounts[amounts.length - 1] >= amountOutMin,
+            "KajuswapRouter: INSUFFICIENT_OUTPUT_AMOUNT"
+        );
         _safeTransferFrom(
             path[0],
-            msg.sender,
             KajuswapLibrary.pairFor(address(factory), path[0], path[1]),
             amounts[0]
         );
@@ -107,11 +132,14 @@ contract KajuswapRouter {
             amountOut,
             path
         );
-        if (amounts[amounts.length - 1] > amountInMax)
-            revert ExcessiveInputAmount();
+        // if (amounts[amounts.length - 1] > amountInMax)
+        //     revert ExcessiveInputAmount("ExcessiveInputAmount");
+        require(
+            amounts[0] <= amountInMax,
+            "KajuswapRouter: EXCESSIVE_INPUT_AMOUNT"
+        );
         _safeTransferFrom(
             path[0],
-            msg.sender,
             KajuswapLibrary.pairFor(address(factory), path[0], path[1]),
             amounts[0]
         );
@@ -170,7 +198,11 @@ contract KajuswapRouter {
                 reserveB
             ); //calculates output amount
             if (amountBOptimal <= amountBDesired) {
-                if (amountBOptimal <= amountBMin) revert InsufficientBAmount();
+                // if (amountBOptimal <= amountBMin) revert InsufficientBAmount("InsufficientBAmount");
+                require(
+                    amountBOptimal >= amountBMin,
+                    "KajuswapRouter: INSUFFICIENT_B_AMOUNT"
+                );
                 (amountA, amountB) = (amountADesired, amountBOptimal);
             } else {
                 uint256 amountAOptimal = KajuswapLibrary.quote(
@@ -180,7 +212,11 @@ contract KajuswapRouter {
                 );
                 assert(amountAOptimal <= amountADesired);
 
-                if (amountAOptimal <= amountAMin) revert InsufficientAAmount();
+                // if (amountAOptimal <= amountAMin) revert InsufficientAAmount("InsufficientAAmount");
+                require(
+                    amountAOptimal >= amountAMin,
+                    "KajuswapRouter: INSUFFICIENT_A_AMOUNT"
+                );
                 (amountA, amountB) = (amountAOptimal, amountBDesired);
             }
         }
@@ -188,20 +224,23 @@ contract KajuswapRouter {
 
     function _safeTransferFrom(
         address token,
-        address from,
         address to,
         uint256 value
     ) private {
         (bool success, bytes memory data) = token.call(
-            abi.encodeWithSignature(
-                "transferFrom(address,address,uint256)",
-                from,
+            abi.encodeWithSelector(
+                bytes4(keccak256(bytes("transfer(address,uint256)"))),
                 to,
                 value
             )
         );
-        if (!success || (data.length != 0 && !abi.decode(data, (bool))))
-            revert SafeTransferFailed();
+        // if (!success || (data.length != 0 && !abi.decode(data, (bool))))
+        //     revert SafeTransferFailed({error5:"SafeTransferFailed",PA : to, A:token});
+        // console.log("PairAddress :", to);
+        require(
+            success && (data.length == 0 || abi.decode(data, (bool))),
+            "Kajuswap: TRANSFER_FAILED"
+        );
     }
 
     //

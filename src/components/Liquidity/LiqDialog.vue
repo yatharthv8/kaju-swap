@@ -1,70 +1,52 @@
 <template>
   <dialog open>
-    <div class="card">
-      <p>Add Liquidity</p>
+    <div>
+      <p>Select Tokens</p>
       <hr />
-      <div class="main-swap">
-        <div class="inp-swap">
-          <input
-            type="number"
-            placeholder="0.0"
-            step="any"
-            min="0"
-            name="token0"
-            id="token0"
-            v-model.trim="$store.state.amountToken0"
-          />
-          <button @click="openDialog(0)">
-            {{ $store.state.swapTokenSymbol[0] }}
-          </button>
-        </div>
-        <small v-if="$store.state.displayConnectWalletButton">
-          <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
-          {{ $store.state.tokenBalText[0] }}</small
-        >
-        <div class="inp-swap">
-          <input
-            type="number"
-            placeholder="0.0"
-            step="any"
-            min="0"
-            name="token1"
-            id="token1"
-            v-model.trim="$store.state.amountToken1"
-          />
-          <button @click="openDialog(1)">
-            {{ $store.state.swapTokenSymbol[1] }}
-          </button>
-        </div>
-        <!-- <small v-if="$store.state.displayConnectWalletButton"
-        ><span @click="fillInputWithMaxAmt()">MAX</span>: {{ $store.state.tokenBalText[1] }}</small
-      > -->
-      </div>
-      <div v-if="!swapActive">
-        <button class="swap-button">Enter Amount</button>
-      </div>
-      <div v-else>
-        <button class="swap-button" @click="startSwap()">Add Liquidity</button>
-      </div>
+      <label for="address">New token:</label>
+      <input
+        placeholder="custom token"
+        name="address"
+        id="address"
+        v-model.trim="newAddress"
+        @keyup.enter="submitAddress(newAddress)"
+      />
+      <!-- <select name="tokens" id="tokens" hidden> -->
+      <ul
+        v-for="coin in coins"
+        :key="coin.address"
+        @click="changeTokenText(coin.address, swapDialNum)"
+      >
+        {{
+          coin.abbr
+        }}
+        <br />
+        <small>{{ coin.name }}</small>
+        <!-- <span style="float: right"> {{ coin.balance }} </span> -->
+      </ul>
+      <!-- </select> -->
+      <button style="float: right" @click="closeDialog()">Close</button>
     </div>
-    <div class="card">
-      <bal-res-section></bal-res-section>
-    </div>
-    <button style="float: right" @click="closeDialog()">Close</button>
   </dialog>
 </template>
 
 <script>
-import BalResSection from "../components/layout/BalResSection.vue";
+import * as COINS from "../../constants/coins.js";
+import * as ethFunc from "../../ethereumFunctions.js";
+// import web3 from "../../../ethereum/web3.js";
 
 export default {
-  components: { BalResSection },
+  props: ["swapDialNum"],
   data() {
-    return {};
+    return {
+      coins: COINS.RINKEBYCoins,
+      newAddress: null,
+    };
   },
   methods: {
     closeDialog() {
-      this.$store.state.liqDialog = false;
+      // this.$store.state.liquidityPageVar.liqDialog.bool = false;
+      this.$store.dispatch("closeLiqDialog");
     },
     changeTokenText(tokenAddress) {
       // console.log("swap dial num in CTT dialog.vue->", swapDialNum);
@@ -72,16 +54,21 @@ export default {
     },
     async submitAddress(tokenAddress) {
       try {
-        const accounts = await web3.eth.getAccounts();
-        ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
-          this.$store.state.swapTokenSymbol[this.swapDialNum] = data.symbol;
-          this.$store.state.swapDialog.DialnumAdd[this.swapDialNum] =
-            tokenAddress;
-          // console.log("token balance->", data.balance);
-          // console.log("swapDial->", this.$store.state.swapDialog[1]);
-        });
-        this.$store.dispatch("closeSwapDialog");
-        this.$store.dispatch("displayMaxTokenBalance", {
+        // const accounts = await web3.eth.getAccounts();
+        ethFunc
+          .getBalanceandSymbol(this.$store.state.account0, tokenAddress)
+          .then((data) => {
+            this.$store.state.liquidityPageVar.liqTokenSymbol[
+              this.swapDialNum
+            ] = data.symbol;
+            this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[
+              this.swapDialNum
+            ] = tokenAddress;
+            // console.log("token balance->", data.balance);
+            // console.log("swapDial->", this.$store.state.swapDialog[1]);
+          });
+        this.$store.dispatch("closeLiqDialog");
+        this.$store.dispatch("displayMaxTokenBalanceLiq", {
           add: tokenAddress,
           ind: this.swapDialNum,
         });
@@ -91,7 +78,15 @@ export default {
       }
     },
   },
-  computed: {},
+  computed: {
+    // getBalance() {
+    //   for (let i = 0; i < this.coins.length; ++i) {
+    //     const bal = web3.eth.getBalance(this.coins[i].address);
+    //     console.log("Balance of {this} is", bal);
+    //   }
+    //   return 0;
+    // },
+  },
 };
 </script>
 

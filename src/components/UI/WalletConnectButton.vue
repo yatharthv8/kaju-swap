@@ -22,6 +22,10 @@ export default {
           add: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
           ind: 0,
         });
+        this.$store.dispatch("displayMaxTokenBalanceLiq", {
+          add: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+          ind: 0,
+        });
         // console.log("here", this.$store.state.account0);
         this.$store.dispatch("displayReserves");
       });
