@@ -7,6 +7,7 @@ import "../libraries/UQ112x112.sol";
 import "../interfaces/IERC20.sol";
 
 error AlreadyInitialized();
+
 // error BalanceOverflow();
 // error InsufficientInputAmount();
 // error InsufficientLiquidity();
@@ -69,7 +70,7 @@ contract KajuswapPair is ERC20, Math {
         return (reserve0, reserve1, blockTimestampLast);
     }
 
-    constructor() ERC20("Kajuswap Pair", "KAJU", 18) {
+    constructor() ERC20("Kajuswap Pair", "KAJU-LP", 18) {
         factory = msg.sender;
     } //Inherited the solmate ERC20 token implementation. Defining the name, symbol and decimals for the token.
 
@@ -77,8 +78,8 @@ contract KajuswapPair is ERC20, Math {
         //factory uses this at the time of token deployment
         require(msg.sender == factory, "Kajuswap: FORBIDDEN"); // sufficient check
         if (token0 != address(0) || token1 != address(0))
-            revert AlreadyInitialized(); 
-            //exits from the function. Transaction fails on revert. Why use revert? : Gas used up is returned.
+            revert AlreadyInitialized();
+        //exits from the function. Transaction fails on revert. Why use revert? : Gas used up is returned.
         token0 = token0_;
         token1 = token1_;
     }
@@ -121,7 +122,10 @@ contract KajuswapPair is ERC20, Math {
         amount1 = (liquidity * balance1) / totalSupply;
 
         // if (amount0 == 0 || amount1 == 0) revert InsufficientLiquidityBurned();
-        require(amount0 > 0 && amount1 > 0, "Kajuswap: INSUFFICIENT_LIQUIDITY_BURNED");
+        require(
+            amount0 > 0 && amount1 > 0,
+            "Kajuswap: INSUFFICIENT_LIQUIDITY_BURNED"
+        );
 
         _burn(address(this), liquidity);
         _safeTransfer(token0, to, amount0);
@@ -141,13 +145,19 @@ contract KajuswapPair is ERC20, Math {
     ) public lock {
         // if (amount0Out == 0 && amount1Out == 0)
         //     revert InsufficientOutputAmount();
-        require(amount0Out > 0 || amount1Out > 0, "Kajuswap: INSUFFICIENT_OUTPUT_AMOUNT");
+        require(
+            amount0Out > 0 || amount1Out > 0,
+            "Kajuswap: INSUFFICIENT_OUTPUT_AMOUNT"
+        );
 
         (uint112 reserve0_, uint112 reserve1_, ) = getReserves();
 
         // if (amount0Out > reserve0_ || amount1Out > reserve1_)
         //     revert InsufficientLiquidity();
-        require(amount0Out < reserve0_ && amount1Out < reserve1_, "Kajuswap: INSUFFICIENT_LIQUIDITY");
+        require(
+            amount0Out < reserve0_ && amount1Out < reserve1_,
+            "Kajuswap: INSUFFICIENT_LIQUIDITY"
+        );
 
         if (amount0Out > 0) _safeTransfer(token0, to, amount0Out);
         if (amount1Out > 0) _safeTransfer(token1, to, amount1Out);
@@ -161,7 +171,10 @@ contract KajuswapPair is ERC20, Math {
             ? balance1 - (reserve1 - amount1Out)
             : 0;
         // if (amount0In == 0 && amount1In == 0) revert InsufficientInputAmount();
-        require(amount0In > 0 || amount1In > 0, "Kajuswap: INSUFFICIENT_INPUT_AMOUNT");
+        require(
+            amount0In > 0 || amount1In > 0,
+            "Kajuswap: INSUFFICIENT_INPUT_AMOUNT"
+        );
 
         // Adjusted = balance before swap - swap fee; fee stays in the contract
         uint256 balance0Adjusted = (balance0 * 1000) - (amount0In * 3);
@@ -171,7 +184,11 @@ contract KajuswapPair is ERC20, Math {
         //     balance0Adjusted * balance1Adjusted <
         //     uint256(reserve0_) * uint256(reserve1_) * (1000**2)
         // ) revert InvalidK();
-        require(balance0Adjusted * balance1Adjusted >= uint256(reserve0_) * uint256(reserve1_) * (1000**2), "Kajuswap: INVALID_K");
+        require(
+            balance0Adjusted * balance1Adjusted >=
+                uint256(reserve0_) * uint256(reserve1_) * (1000**2),
+            "Kajuswap: INVALID_K"
+        );
         _update(balance0, balance1, reserve0_, reserve1_);
         emit Swap(msg.sender, amount0Out, amount1Out, to);
     }
@@ -198,7 +215,10 @@ contract KajuswapPair is ERC20, Math {
     ) private {
         // if (balance0 > type(uint112).max || balance1 > type(uint112).max)
         //     revert BalanceOverflow();
-        require(balance0 <= type(uint112).max && balance1 <= type(uint112).max, "Kajuswap: OVERFLOW");
+        require(
+            balance0 <= type(uint112).max && balance1 <= type(uint112).max,
+            "Kajuswap: OVERFLOW"
+        );
 
         unchecked {
             //to disbable overflow/underflow as timeElapsed and CumulativePrice calculation will be out of bounds
@@ -233,10 +253,17 @@ contract KajuswapPair is ERC20, Math {
         // );
         // if (!success || (data.length != 0 && !abi.decode(data, (bool))))
         //     revert TransferFailed();
-        
+
         (bool success, bytes memory data) = token.call(
-            abi.encodeWithSelector(bytes4(keccak256(bytes('transfer(address,uint256)'))), to, value)
+            abi.encodeWithSelector(
+                bytes4(keccak256(bytes("transfer(address,uint256)"))),
+                to,
+                value
+            )
         );
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "Kajuswap: TRANSFER_FAILED");
+        require(
+            success && (data.length == 0 || abi.decode(data, (bool))),
+            "Kajuswap: TRANSFER_FAILED"
+        );
     }
 }

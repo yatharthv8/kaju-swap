@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.15+commit.e14f2714"
+		"version": "0.8.10+commit.fc410830"
 	},
 	"language": "Solidity",
 	"output": {
@@ -356,19 +356,27 @@
 	},
 	"sources": {
 		"contracts/KajuswapLibrary.sol": {
-			"keccak256": "0x085a87f9e3a41662744eeae2307079c55af5ccebc0a0e9d7b393fb17670ad1e6",
+			"keccak256": "0xe3b1c459cc4ca5743638cf733da3debbb51d1b869398ff53272f2703d84e5601",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e1565960ce4365b365af6b88e1ec422f886d8299f8b501a9b4e472b7fa299159",
-				"dweb:/ipfs/QmPjTD7W79u6PQ8Bs4QcNZ4WLCp2o7JD9b91435h5iocTr"
+				"bzz-raw://274e34452739dfa35a5a510dd53260488e0b2e97b82c03ed5af5e121df830465",
+				"dweb:/ipfs/QmXvrq6jpps1Ng27QmBa6Qke26a9TAUjhDrgCMR8w5fVYb"
 			]
 		},
 		"contracts/KajuswapRouter.sol": {
-			"keccak256": "0xa6feea391607645521ccb0d6e37db2a1ab85549dba1477bd17e8d96f7ed02532",
+			"keccak256": "0x9c5a2a95b8529304388567077bc84990c0934d1233cd3bcd79ba36962e4c5a21",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://a52299a078436fefc04e81a9f69b233b77df758d13faf6fb94aad8909f4edce6",
-				"dweb:/ipfs/QmdQUUcqtRWGC8WQZkktZoF9qi8puiL4Vnry3Ki3qhdzqq"
+				"bzz-raw://210b4581ac49bb8ae82ff7715b5bdd8394a9622b64e18c1bec62e35bbc5500a1",
+				"dweb:/ipfs/QmYcdELDjJBnB6XjWv1rKkx5HzJWwh4RoYKUQcg5RgqkPa"
+			]
+		},
+		"interfaces/IERC20.sol": {
+			"keccak256": "0xf675cb1c3bfed12622bac71087289ff02d0617d372ecd3f2a95800362af28838",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://09e8d26983f5d4a8f4ff9c208d0db4d34782e43470772b2ca416182238415311",
+				"dweb:/ipfs/QmcVk617EGaRLyENzK9DktWYZoypjzJQ2MLAAXJRxsxQmU"
 			]
 		},
 		"interfaces/IKajuswapFactory.sol": {

@@ -4,6 +4,7 @@ pragma solidity >=0.8.10;
 import "../interfaces/IKajuswapPair.sol";
 import "../interfaces/IKajuswapFactory.sol";
 import "./KajuswapLibrary.sol";
+import "../interfaces/IERC20.sol";
 
 // import "hardhat/console.sol";
 
@@ -23,6 +24,8 @@ contract KajuswapRouter {
     constructor(address factoryAddress) {
         factory = IKajuswapFactory(factoryAddress);
     }
+
+    // event GetPairAddress(address pair, address from, address to);
 
     // function giveAddressses() public view returns (
     //         address,
@@ -65,13 +68,8 @@ contract KajuswapRouter {
             tokenB
         );
 
-        // PA = pairAddress;
-        // A = tokenA;
-        // B = tokenB;
-        // console.log("PairAddress :", pairAddress);
-
-        _safeTransferFrom(tokenA, pairAddress, amountA);
-        _safeTransferFrom(tokenB, pairAddress, amountB);
+        _safeTransferFrom(tokenA, msg.sender, pairAddress, amountA);
+        _safeTransferFrom(tokenB, msg.sender, pairAddress, amountB);
         liquidity = IKajuswapPair(pairAddress).mint(to);
     }
 
@@ -115,6 +113,7 @@ contract KajuswapRouter {
         );
         _safeTransferFrom(
             path[0],
+            msg.sender,
             KajuswapLibrary.pairFor(address(factory), path[0], path[1]),
             amounts[0]
         );
@@ -140,6 +139,7 @@ contract KajuswapRouter {
         );
         _safeTransferFrom(
             path[0],
+            msg.sender,
             KajuswapLibrary.pairFor(address(factory), path[0], path[1]),
             amounts[0]
         );
@@ -224,19 +224,24 @@ contract KajuswapRouter {
 
     function _safeTransferFrom(
         address token,
+        address from,
         address to,
         uint256 value
     ) private {
+        // emit GetPairAddress(token, from, to);
+        bool approved = IERC20(token).approve(address(this), value);
+        require(approved, "Kajuswap: TOKEN_APPROVAL_FAILED");
+
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(
-                bytes4(keccak256(bytes("transfer(address,uint256)"))),
+                bytes4(
+                    keccak256(bytes("transferFrom(address,address,uint256)"))
+                ),
+                from,
                 to,
                 value
             )
         );
-        // if (!success || (data.length != 0 && !abi.decode(data, (bool))))
-        //     revert SafeTransferFailed({error5:"SafeTransferFailed",PA : to, A:token});
-        // console.log("PairAddress :", to);
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
             "Kajuswap: TRANSFER_FAILED"

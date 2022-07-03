@@ -34,6 +34,18 @@ export const RINKEBYCoins = [
     address: "0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85",
     // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
   },
+  {
+    name: "Kaju Token",
+    abbr: "KAJU",
+    address: "0x4c1740DE7EC715652634E85C54D84f082B297910",
+    // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
+  },
+  {
+    name: "Test Token",
+    abbr: "TEST",
+    address: "0xf9CcAeE0ef99Ab2eAF68A60e7dC3a25582A8Bd6B",
+    // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
+  },
 ];
 
 const COINS = new Map();

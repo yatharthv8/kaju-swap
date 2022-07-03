@@ -126,7 +126,7 @@ export async function getAmountOut(
 
 export async function fetchReserves(token0Address, token1Address, pair) {
   try {
-    const reservesRaw = await pair.methods.getReserves();
+    const reservesRaw = await pair.methods.getReserves().call();
     let results = [
       web3.utils.fromWei(String(reservesRaw[0]), "ether"),
       web3.utils.fromWei(String(reservesRaw[1]), "ether"),
@@ -149,6 +149,7 @@ export async function getReserves(
   accountAddress
 ) {
   const pairAddress = await factory.methods.pairs(token0Address, token1Address);
+  console.log("pair address", pairAddress);
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
   const reservesRaw = await fetchReserves(token0Address, token1Address, pair);
   // console.log("address in getRes->", accountAddress);
@@ -249,6 +250,8 @@ export async function quoteRemoveLiquidity(
   return [liquidity, Aout, Bout];
 }
 
+// const provider = new ethers.providers.Web3Provider(ethereum);
+
 export async function addLiquidity(
   token0Address,
   token1Address,
@@ -262,29 +265,18 @@ export async function addLiquidity(
   const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
   const token1 = new web3.eth.Contract(ERC20.abi, token1Address);
 
-  // const token0Decimals = await getDecimals(token0);
-  // const token1Decimals = await getDecimals(token1);
-
-  // const amountIn0 = ethers.utils.parseUnits(String(amount0), token0Decimals);
-  // const amountIn1 = ethers.utils.parseUnits(String(amount1), token1Decimals);
   const amountIn0 = web3.utils.toWei(String(amount0), "ether");
   const amountIn1 = web3.utils.toWei(String(amount1), "ether");
 
-  // const amount0Min = ethers.utils.parseUnits(
-  //   String(amount0min),
-  //   token0Decimals
-  // );
-  // const amount1Min = ethers.utils.parseUnits(
-  //   String(amount1min),
-  //   token1Decimals
-  // );
   const amount0Min = web3.utils.toWei(String(amount0min), "ether");
   const amount1Min = web3.utils.toWei(String(amount1min), "ether");
 
-  await token0.methods.approve(routerContract.options.address, amountIn0);
-  await token1.methods.approve(routerContract.options.address, amountIn1);
-
-  // const wethAddress = await routerContract.WETH();
+  await token0.methods
+    .approve(routerContract.options.address, amountIn0)
+    .send({ from: account });
+  await token1.methods
+    .approve(routerContract.options.address, amountIn1)
+    .send({ from: account });
 
   console.log("addLiquidity->", [
     token0,
@@ -298,15 +290,17 @@ export async function addLiquidity(
   ]);
 
   // Token + Token
-  await routerContract.methods.addLiquidity(
-    token0Address,
-    token1Address,
-    amountIn0,
-    amountIn1,
-    amount0Min,
-    amount1Min,
-    account
-  );
+  await routerContract.methods
+    .addLiquidity(
+      token0Address,
+      token1Address,
+      amountIn0,
+      amountIn1,
+      amount0Min,
+      amount1Min,
+      account
+    )
+    .send({ from: account });
   // }
 }
 

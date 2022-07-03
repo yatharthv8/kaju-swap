@@ -15,15 +15,15 @@ export const ChainId = {
 export const routerAddress = new Map();
 // routerAddress.set(
 //   ChainId.MAINNET,
-//   "0xfb88fd19547Ea3952BA66111398fAB5D7cb01141"
+//   "0x366aC572c8AF8d17Ef33fc4468d467aaBccA8C50"
 // );
 // routerAddress.set(
 //   ChainId.ROPSTEN,
-//   "0xfb88fd19547Ea3952BA66111398fAB5D7cb01141"
+//   "0x366aC572c8AF8d17Ef33fc4468d467aaBccA8C50"
 // );
 routerAddress.set(
   ChainId.RINKEBY,
-  "0xfb88fd19547Ea3952BA66111398fAB5D7cb01141"
+  "0x366aC572c8AF8d17Ef33fc4468d467aaBccA8C50"
 );
-// routerAddress.set(ChainId.GÖRLI, "0xfb88fd19547Ea3952BA66111398fAB5D7cb01141");
-// routerAddress.set(ChainId.KOVAN, "0xfb88fd19547Ea3952BA66111398fAB5D7cb01141");
+// routerAddress.set(ChainId.GÖRLI, "0x366aC572c8AF8d17Ef33fc4468d467aaBccA8C50");
+// routerAddress.set(ChainId.KOVAN, "0x366aC572c8AF8d17Ef33fc4468d467aaBccA8C50");

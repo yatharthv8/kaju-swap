@@ -31,7 +31,10 @@ library KajuswapLibrary {
         // if (amountIn == 0) revert InsufficientAmount("InsufficientAmount");
         // if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity("InsufficientLiquidity");
         require(amountIn > 0, "KajuswapLibrary: INSUFFICIENT_AMOUNT");
-        require(reserveIn > 0 && reserveOut > 0, "KajuswapLibrary: INSUFFICIENT_LIQUIDITY");
+        require(
+            reserveIn > 0 && reserveOut > 0,
+            "KajuswapLibrary: INSUFFICIENT_LIQUIDITY"
+        );
 
         return (amountIn * reserveOut) / reserveIn;
     }
@@ -52,7 +55,7 @@ library KajuswapLibrary {
                             hex"ff",
                             factoryAddress,
                             keccak256(abi.encodePacked(token0, token1)),
-                            hex"b68fbba50ceb1571c8d495ec425ba3b90ece4d1440852fd428fdd1439ca5a1d8" //See ../abiBytecodePair.js for reference
+                            hex"b68fbba50ceb1571c8d495ec425ba3b90ece4d1440852fd428fdd1439ca5a1d8" //init code hash
                         )
                     )
                 )
@@ -76,7 +79,10 @@ library KajuswapLibrary {
         // if (amountIn == 0) revert InsufficientAmount("InsufficientAmount");
         // if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity("InsufficientLiquidity");
         require(amountIn > 0, "KajuswapLibrary: INSUFFICIENT_AMOUNT");
-        require(reserveIn > 0 && reserveOut > 0, "KajuswapLibrary: INSUFFICIENT_LIQUIDITY");
+        require(
+            reserveIn > 0 && reserveOut > 0,
+            "KajuswapLibrary: INSUFFICIENT_LIQUIDITY"
+        );
 
         uint256 amountInWithFee = amountIn * 997;
         uint256 numerator = amountInWithFee * reserveOut;
@@ -115,7 +121,10 @@ library KajuswapLibrary {
         // if (amountOut == 0) revert InsufficientAmount("InsufficientAmount");
         // if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity("InsufficientLiquidity");
         require(amountOut > 0, "KajuswapLibrary: INSUFFICIENT_AMOUNT");
-        require(reserveIn > 0 && reserveOut > 0, "KajuswapLibrary: INSUFFICIENT_LIQUIDITY");
+        require(
+            reserveIn > 0 && reserveOut > 0,
+            "KajuswapLibrary: INSUFFICIENT_LIQUIDITY"
+        );
 
         uint256 numerator = reserveIn * amountOut * 1000;
         uint256 denominator = (reserveOut - amountOut) * 997;
