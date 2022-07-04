@@ -21,6 +21,10 @@
       {{ $store.state.liquidityPageVar.liqTokenRes[1] }}
     </p>
   </div>
+  <div>
+    Liquidity Added in this pair :
+    <span>{{ $store.state.liquidityPageVar.pairLiquidity }}</span>
+  </div>
 </template>
 
 <script>

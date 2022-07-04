@@ -27,7 +27,7 @@ export default {
           ind: 0,
         });
         // console.log("here", this.$store.state.account0);
-        this.$store.dispatch("displayReserves");
+        this.$store.dispatch("displayReserves", "swap");
       });
     },
   },

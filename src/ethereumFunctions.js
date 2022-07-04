@@ -63,7 +63,7 @@ export async function getTokenBalance(address) {
   const token = new web3.eth.Contract(ERC20.abi, address);
   const accounts = await web3.eth.getAccounts();
   // console.log(
-  //   "Token Bal->",
+  //   "Token Bal from ethFUnc->",
   //   web3.utils.fromWei(
   //     await token.methods.balanceOf(accounts[0]).call(),
   //     "ether"
@@ -85,15 +85,21 @@ export async function swapTokens(
 ) {
   const path = [token0Address, token1Address];
   const amountIn = web3.utils.toWei(String(amount), "ether"); //amount should be int, return BN.js instance.
-  const amountOut = await routerContract.methods.getAmountsOut(amountIn, path);
+  const amountOut = await routerContract.methods
+    .getAmountsOut(amountIn, path)
+    .call();
   const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
-  await token0.methods.approve(routerContract.options.address, amountIn);
-  const a = await routerContract.methods.swapExactTokensForTokens(
-    amountIn,
-    amountOut.arguments[0],
-    path,
-    accountAddress
-  );
+  await token0.methods
+    .approve(routerContract.options.address, amountIn)
+    .send({ from: accountAddress });
+  await routerContract.methods
+    .swapExactTokensForTokens(
+      amountIn,
+      amountOut.arguments[0],
+      path,
+      accountAddress
+    )
+    .send({ from: accountAddress });
   // console.log("here1", a, routerContract.options.address);
 }
 
@@ -127,15 +133,20 @@ export async function getAmountOut(
 export async function fetchReserves(token0Address, token1Address, pair) {
   try {
     const reservesRaw = await pair.methods.getReserves().call();
+    // .then((reservesRaw) => {
     let results = [
       web3.utils.fromWei(String(reservesRaw[0]), "ether"),
       web3.utils.fromWei(String(reservesRaw[1]), "ether"),
     ];
-    console.log("fetchReserves results->", results);
     return [
-      (await pair.token0()) === token0Address ? results[0] : results[1],
-      (await pair.token1()) === token1Address ? results[1] : results[0],
+      (await pair.methods.token0().call()) === token0Address
+        ? results[0]
+        : results[1],
+      (await pair.methods.token1().call()) === token1Address
+        ? results[1]
+        : results[0],
     ];
+    // })
   } catch (err) {
     console.log("No reserves found!");
     return [0, 0];
@@ -148,30 +159,35 @@ export async function getReserves(
   factory,
   accountAddress
 ) {
-  const pairAddress = await factory.methods.pairs(token0Address, token1Address);
-  console.log("pair address", pairAddress);
+  const pairAddress = await factory.methods
+    .pairs(token0Address, token1Address)
+    .call();
+  // .then(async (pairAddress) => {
+  // console.log("pair address", typeof pairAddress);
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
   const reservesRaw = await fetchReserves(token0Address, token1Address, pair);
-  // console.log("address in getRes->", accountAddress);
-  // const liquidityTokens_BN = await pair.methods.balanceOf(accountAddress);
-  // .call();
-  // const liquidityTokens = web3.utils.fromWei(
-  //   String(liquidityTokens_BN),
-  //   "ether"
-  // );
-  // ).toFixed(2);
-  // console.log(
-  //   "getReserves LT->",
-  // web3.utils.fromWei(String(liquidityTokens_BN), "ether")
-  //   liquidityTokens_BN,
-  //   accountAddress
-  // );
-
-  return [
-    reservesRaw[0].toFixed(2),
-    reservesRaw[1].toFixed(2),
-    // liquidityTokens,
-  ];
+  if (pairAddress === "0x0000000000000000000000000000000000000000") {
+    return [
+      Number(reservesRaw[0]).toFixed(2),
+      Number(reservesRaw[1]).toFixed(2),
+      0,
+    ];
+  } else {
+    const liquidityTokens_BN = await pair.methods
+      .balanceOf(accountAddress)
+      .call();
+    const liquidityTokens = web3.utils.fromWei(
+      String(liquidityTokens_BN),
+      "ether"
+    );
+    console.log("getReserves LT->", liquidityTokens);
+    // })
+    return [
+      Number(reservesRaw[0]).toFixed(2),
+      Number(reservesRaw[1]).toFixed(2),
+      Number(liquidityTokens).toFixed(2),
+    ];
+  }
 }
 
 /*-------------------------------LIQUIDITY PAGE-------------------------------------*/
@@ -183,7 +199,9 @@ export async function quoteAddLiquidity(
   amountBDesired,
   factory
 ) {
-  const pairAddress = await factory.getPair(token0Address, token1Address);
+  const pairAddress = await factory
+    .getPair(token0Address, token1Address)
+    .call();
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
 
   const reservesRaw = await fetchReserves(token0Address, token1Address, pair); // Returns the reserves already formated as ethers
@@ -233,7 +251,9 @@ export async function quoteRemoveLiquidity(
   liquidity,
   factory
 ) {
-  const pairAddress = await factory.getPair(token0Address, token1Address);
+  const pairAddress = await factory
+    .getPair(token0Address, token1Address)
+    .call();
   console.log("pair address", pairAddress);
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
 
@@ -241,7 +261,7 @@ export async function quoteRemoveLiquidity(
   const reserveA = reservesRaw[0];
   const reserveB = reservesRaw[1];
 
-  const _totalSupply = await pair.methods.totalSupply();
+  const _totalSupply = await pair.methods.totalSupply().call();
   let totalSupply = Number(web3.utils.fromWei(String(_totalSupply), "ether"));
 
   const Aout = (reserveA * liquidity) / totalSupply;
@@ -349,10 +369,14 @@ export async function removeLiquidity(
     token1Decimals
   );
 
-  const pairAddress = await factory.getPair(token0Address, token1Address);
+  const pairAddress = await factory
+    .getPair(token0Address, token1Address)
+    .call();
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
 
-  await pair.methods.approve(routerContract.address, liquidity);
+  await pair.methods
+    .approve(routerContract.address, liquidity)
+    .send({ from: account });
 
   console.log([
     token0Address,
@@ -363,14 +387,16 @@ export async function removeLiquidity(
     account,
   ]);
   // Token + Token
-  await routerContract.methods.removeLiquidity(
-    token0Address,
-    token1Address,
-    liquidity,
-    amount0Min,
-    amount1Min,
-    account
-  );
+  await routerContract.methods
+    .removeLiquidity(
+      token0Address,
+      token1Address,
+      liquidity,
+      amount0Min,
+      amount1Min,
+      account
+    )
+    .send({ from: account });
   // }
 }
 

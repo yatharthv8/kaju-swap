@@ -69,11 +69,11 @@ export default {
   methods: {
     openDialog(num) {
       this.symbolButtonIndex = num;
-      console.log(
-        "Input box values",
-        this.$store.state.liquidityPageVar.liqTokenAmount0,
-        this.addLiqActive
-      );
+      // console.log(
+      //   "Input box values",
+      //   this.$store.state.liquidityPageVar.liqTokenAmount0,
+      //   this.addLiqActive
+      // );
       this.$store.dispatch("openLiqDialog");
     },
     fillInputWithMaxAmt() {

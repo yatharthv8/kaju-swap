@@ -59,15 +59,18 @@ export default {
           this.$store.state.swapTokenSymbol[this.swapDialNum] = data.symbol;
           this.$store.state.swapDialog.DialnumAdd[this.swapDialNum] =
             tokenAddress;
-          // console.log("token balance->", data.balance);
-          // console.log("swapDial->", this.$store.state.swapDialog[1]);
+          // console.log(
+          //   "from swapDial submitAddress->",
+          //   this.$store.state.swapTokenSymbol[this.swapDialNum],
+          //   this.$store.state.swapDialog.DialnumAdd[this.swapDialNum]
+          // );
+          this.$store.dispatch("displayMaxTokenBalance", {
+            add: tokenAddress,
+            ind: this.swapDialNum,
+          });
+          this.$store.dispatch("displayReserves", "swap");
         });
         this.$store.dispatch("closeSwapDialog");
-        this.$store.dispatch("displayMaxTokenBalance", {
-          add: tokenAddress,
-          ind: this.swapDialNum,
-        });
-        this.$store.dispatch("displayReserves");
       } catch (err) {
         console.log("Invalid token address!");
       }

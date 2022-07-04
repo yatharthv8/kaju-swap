@@ -48,6 +48,7 @@ const store = createStore({
             "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
           ],
         },
+        pairLiquidity: 0,
       },
     };
   },
@@ -68,6 +69,18 @@ const store = createStore({
     closeLiqDialog(state) {
       state.liquidityPageVar.liqDialog.bool = false;
     },
+    displayReservesInConsole(state) {
+      console.log(
+        "token balance->",
+        state.swapTokenSymbol[0],
+        state.swapDialog.DialnumAdd[0],
+        state.tokenBalText[0],
+        "\n",
+        state.swapTokenSymbol[1],
+        state.swapDialog.DialnumAdd[1],
+        state.tokenBalText[1]
+      );
+    },
   },
   actions: {
     async addLiquidity() {
@@ -82,38 +95,50 @@ const store = createStore({
         this.state.account0
       );
     },
-    async displayReserves() {
+    async displayReserves(context, payload) {
       // console.log("address->", this.state.account0);
-      const swapReserves = await ethFunc.getReserves(
-        this.state.swapDialog.DialnumAdd[0],
-        this.state.swapDialog.DialnumAdd[1],
-        factory,
-        this.state.account0
-      );
-      const liqReserves = await ethFunc.getReserves(
-        this.state.liquidityPageVar.liqDialog.DialnumAdd[0],
-        this.state.liquidityPageVar.liqDialog.DialnumAdd[1],
-        factory,
-        this.state.account0
-      );
-      this.state.tokenReserves[0] = swapReserves[0];
-      this.state.tokenReserves[1] = swapReserves[1];
-      this.state.liquidityPageVar.liqTokenRes[0] = liqReserves[0];
-      this.state.liquidityPageVar.liqTokenRes[1] = liqReserves[1];
-      this.state.tokenBalText[0] = await ethFunc.getTokenBalance(
-        this.state.swapDialog.DialnumAdd[0]
-      );
-      this.state.tokenBalText[1] = await ethFunc.getTokenBalance(
-        this.state.swapDialog.DialnumAdd[1]
-      );
-      this.state.liquidityPageVar.liqTokenBal[0] =
-        await ethFunc.getTokenBalance(
-          this.state.liquidityPageVar.liqDialog.DialnumAdd[0]
+      if (payload === "swap") {
+        await ethFunc
+          .getReserves(
+            this.state.swapDialog.DialnumAdd[0],
+            this.state.swapDialog.DialnumAdd[1],
+            factory,
+            this.state.account0
+          )
+          .then((swapReserves) => {
+            this.state.tokenReserves[0] = swapReserves[0];
+            this.state.tokenReserves[1] = swapReserves[1];
+          });
+        this.state.tokenBalText[0] = await ethFunc.getTokenBalance(
+          this.state.swapDialog.DialnumAdd[0]
         );
-      this.state.liquidityPageVar.liqTokenBal[1] =
-        await ethFunc.getTokenBalance(
-          this.state.liquidityPageVar.liqDialog.DialnumAdd[1]
+        this.state.tokenBalText[1] = await ethFunc.getTokenBalance(
+          this.state.swapDialog.DialnumAdd[1]
         );
+      } else {
+        const liqReserves = await ethFunc.getReserves(
+          this.state.liquidityPageVar.liqDialog.DialnumAdd[0],
+          this.state.liquidityPageVar.liqDialog.DialnumAdd[1],
+          factory,
+          this.state.account0
+        );
+        // .then((liqReserves) => {
+        this.state.liquidityPageVar.liqTokenRes[0] = liqReserves[0];
+        this.state.liquidityPageVar.liqTokenRes[1] = liqReserves[1];
+        this.state.liquidityPageVar.pairLiquidity = liqReserves[2];
+        // });
+        console.log("then inside displayReserves->", payload, liqReserves);
+        this.state.liquidityPageVar.liqTokenBal[0] =
+          await ethFunc.getTokenBalance(
+            this.state.liquidityPageVar.liqDialog.DialnumAdd[0]
+          );
+        this.state.liquidityPageVar.liqTokenBal[1] =
+          await ethFunc.getTokenBalance(
+            this.state.liquidityPageVar.liqDialog.DialnumAdd[1]
+          );
+      }
+      // context.commit("displayReservesInConsole");
+
       // this.state.selectedPoolLiq = reserves[2];
     },
     async swapToken() {

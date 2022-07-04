@@ -229,8 +229,8 @@ contract KajuswapRouter {
         uint256 value
     ) private {
         // emit GetPairAddress(token, from, to);
-        bool approved = IERC20(token).approve(address(this), value);
-        require(approved, "Kajuswap: TOKEN_APPROVAL_FAILED");
+        // bool approved = IERC20(token).approve(address(this), value);
+        // require(approved, "Kajuswap: TOKEN_APPROVAL_FAILED");
 
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(

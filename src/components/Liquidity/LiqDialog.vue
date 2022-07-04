@@ -66,13 +66,13 @@ export default {
             ] = tokenAddress;
             // console.log("token balance->", data.balance);
             // console.log("swapDial->", this.$store.state.swapDialog[1]);
+            this.$store.dispatch("displayMaxTokenBalanceLiq", {
+              add: tokenAddress,
+              ind: this.swapDialNum,
+            });
+            this.$store.dispatch("displayReserves", "pool");
           });
         this.$store.dispatch("closeLiqDialog");
-        this.$store.dispatch("displayMaxTokenBalanceLiq", {
-          add: tokenAddress,
-          ind: this.swapDialNum,
-        });
-        this.$store.dispatch("displayReserves");
       } catch (err) {
         console.log("Invalid token address!");
       }
