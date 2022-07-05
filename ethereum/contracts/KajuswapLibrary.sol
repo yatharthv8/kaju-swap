@@ -55,7 +55,7 @@ library KajuswapLibrary {
                             hex"ff",
                             factoryAddress,
                             keccak256(abi.encodePacked(token0, token1)),
-                            hex"b68fbba50ceb1571c8d495ec425ba3b90ece4d1440852fd428fdd1439ca5a1d8" //init code hash
+                            hex"8ffdd81729eb5fd7ba14736f0df76f7c722a59228053db66046f6a96e3525513" //init code hash
                         )
                     )
                 )

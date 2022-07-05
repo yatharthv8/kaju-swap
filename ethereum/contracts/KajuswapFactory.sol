@@ -22,6 +22,10 @@ contract KajuswapFactory {
         uint256
     );
 
+    function getAllPairsLength() public view returns (uint256) {
+        return allPairs.length;
+    }
+
     function createPair(address tokenA, address tokenB)
         public
         returns (address pair)

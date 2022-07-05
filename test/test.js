@@ -16,7 +16,7 @@ beforeEach(async () => {
   router = await new web3.eth.Contract(abi)
     .deploy({
       data: data.bytecode.object,
-      arguments: ["0x0227A3F6e498430062D6257b94f3FAcE73DeBa5F"],
+      arguments: ["0xb39b851e2243f97a5Cd6B9A24878540a3098bFCE"],
     })
     .send({ from: accounts[0] });
   console.log(

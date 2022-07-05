@@ -6,7 +6,7 @@ import * as ethFunc from "../ethereumFunctions.js";
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
-const Weth = ethFunc.getWeth(process.env.VUE_APP_WETH);
+// const Weth = ethFunc.getWeth(process.env.VUE_APP_WETH);
 
 const { ethereum } = window;
 
@@ -16,6 +16,15 @@ const store = createStore({
   },
   state() {
     return {
+      removeLiquidityPage: {
+        PairAddress: "0x20fd0632de0a0fc8ddd05861bf1107791240d675",
+        pairTokenAddress: [null, null],
+        symbol: [null, null],
+        // liqToken0InputAmount: null,
+        // liqToken1InputAmount: null,
+        pairLiqInp: null,
+        pairLiquidity: 0,
+      },
       displayConnectWalletButton: false,
       account0: null,
       balance: null,
@@ -34,6 +43,7 @@ const store = createStore({
       tokenBalText: [0, 0],
       tokenReserves: [0, 0],
       selectedPoolLiq: null,
+      allPairs: [],
       liquidityPageVar: {
         liqTokenSymbol: ["WETH", "UNI"],
         liqTokenAmount0: null, //For inputing in the form
@@ -83,6 +93,41 @@ const store = createStore({
     },
   },
   actions: {
+    async getSymbolsForLiqRemPage(_, payload) {
+      const resAndSymb = await ethFunc.getSymbolsForPairs(
+        this.state.account0,
+        payload
+      );
+      this.state.removeLiquidityPage.pairTokenAddress[0] = resAndSymb[2];
+      this.state.removeLiquidityPage.pairTokenAddress[1] = resAndSymb[3];
+      const liqReserves = await ethFunc.getReserves(
+        this.state.removeLiquidityPage.pairTokenAddress[0],
+        this.state.removeLiquidityPage.pairTokenAddress[1],
+        factory,
+        this.state.account0
+      );
+      this.state.removeLiquidityPage.symbol[0] = resAndSymb[0];
+      this.state.removeLiquidityPage.symbol[1] = resAndSymb[1];
+      this.state.removeLiquidityPage.pairLiquidity = liqReserves[2];
+    },
+
+    async removeLiquidity() {
+      await ethFunc.removeLiquidity(
+        this.state.removeLiquidityPage.pairTokenAddress[0],
+        this.state.removeLiquidityPage.pairTokenAddress[1],
+        this.state.removeLiquidityPage.pairLiqInp,
+        0,
+        0,
+        router,
+        this.state.account0,
+        factory
+      );
+    },
+
+    async getPairsFromFactory() {
+      this.state.allPairs = await ethFunc.getPairs(factory);
+    },
+
     async addLiquidity() {
       await ethFunc.addLiquidity(
         this.state.liquidityPageVar.liqDialog.DialnumAdd[0],
@@ -95,6 +140,7 @@ const store = createStore({
         this.state.account0
       );
     },
+
     async displayReserves(context, payload) {
       // console.log("address->", this.state.account0);
       if (payload === "swap") {
@@ -115,7 +161,7 @@ const store = createStore({
         this.state.tokenBalText[1] = await ethFunc.getTokenBalance(
           this.state.swapDialog.DialnumAdd[1]
         );
-      } else {
+      } else if (payload === "pool") {
         const liqReserves = await ethFunc.getReserves(
           this.state.liquidityPageVar.liqDialog.DialnumAdd[0],
           this.state.liquidityPageVar.liqDialog.DialnumAdd[1],
@@ -141,6 +187,7 @@ const store = createStore({
 
       // this.state.selectedPoolLiq = reserves[2];
     },
+
     async swapToken() {
       // try {
       await ethFunc.swapTokens(
@@ -155,10 +202,12 @@ const store = createStore({
       //   return false;
       // }
     },
+
     async fillLiqTokenAmt(_, payload) {
       let address0;
       let address1;
-      if (payload === 1) {
+      // if (payload.page === "addLiq") {
+      if (payload.inpBox === 1) {
         address0 = this.state.liquidityPageVar.liqDialog.DialnumAdd[0];
         address1 = this.state.liquidityPageVar.liqDialog.DialnumAdd[1];
       } else {
@@ -171,7 +220,25 @@ const store = createStore({
         this.state.liquidityPageVar.liqTokenAmount0,
         router
       );
+      // }
+      // if (payload.page === "removeLiq") {
+      //   if (payload.inpBox === 1) {
+      //     address0 = this.state.removeLiquidityPage.pairTokenAddress[0];
+      //     address1 = this.state.removeLiquidityPage.pairTokenAddress[1];
+      //   } else {
+      //     address1 = this.state.removeLiquidityPage.pairTokenAddress[0];
+      //     address0 = this.state.removeLiquidityPage.pairTokenAddress[1];
+      //   }
+      //   this.state.removeLiquidityPage.liqToken1InputAmount =
+      //     await ethFunc.getAmountOut(
+      //       address0,
+      //       address1,
+      //       this.state.removeLiquidityPage.liqToken0InputAmount,
+      //       router
+      //     );
+      // }
     },
+
     async fillTokenAmount(_, payload) {
       let address0;
       let address1;
@@ -189,30 +256,38 @@ const store = createStore({
         router
       );
     },
+
     async displayMaxTokenBalance(_, payload) {
       this.state.tokenBalText[payload.ind] = await ethFunc.getTokenBalance(
         payload.add
       );
     },
+
     async displayMaxTokenBalanceLiq(_, payload) {
       this.state.liquidityPageVar.liqTokenBal[payload.ind] =
         await ethFunc.getTokenBalance(payload.add);
     },
+
     closeSwapDialog(context) {
       context.commit("closeSwapDialog");
     },
+
     closeLiqDialog(context) {
       context.commit("closeLiqDialog");
     },
+
     openSwapDialog(context) {
       context.commit("openSwapDialog");
     },
+
     openLiqDialog(context) {
       context.commit("openLiqDialog");
     },
+
     toggleConnectWalletButton(context) {
       context.commit("toggleConnectWalletButton"); //Not the actual implementation. Needs some refactoring. Will do later
     },
+
     async onConnect(context) {
       this.state.isLoading = true;
       if (typeof ethereum !== "undefined") {

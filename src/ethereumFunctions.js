@@ -62,13 +62,6 @@ export async function getBalanceandSymbol(accountAddress, address) {
 export async function getTokenBalance(address) {
   const token = new web3.eth.Contract(ERC20.abi, address);
   const accounts = await web3.eth.getAccounts();
-  // console.log(
-  //   "Token Bal from ethFUnc->",
-  //   web3.utils.fromWei(
-  //     await token.methods.balanceOf(accounts[0]).call(),
-  //     "ether"
-  //   )
-  // );
   return web3.utils.fromWei(
     await token.methods.balanceOf(accounts[0]).call(),
     "ether"
@@ -89,18 +82,17 @@ export async function swapTokens(
     .getAmountsOut(amountIn, path)
     .call();
   const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
+  console.log("swapTokens->", amountIn, amountOut, path, accountAddress);
   await token0.methods
     .approve(routerContract.options.address, amountIn)
     .send({ from: accountAddress });
-  await routerContract.methods
-    .swapExactTokensForTokens(
-      amountIn,
-      amountOut.arguments[0],
-      path,
-      accountAddress
-    )
-    .send({ from: accountAddress });
-  // console.log("here1", a, routerContract.options.address);
+  try {
+    await routerContract.methods
+      .swapExactTokensForTokens(amountIn, amountOut[1], path, accountAddress)
+      .send({ from: accountAddress });
+  } catch (err) {
+    alert(err);
+  }
 }
 
 export async function getAmountOut(
@@ -109,24 +101,31 @@ export async function getAmountOut(
   amountIn,
   routerContract
 ) {
-  // console.log(
-  //   "Eth Func GAO->",
-  //   typeof Number(
-  //     web3.utils.fromWei(web3.utils.toWei(String(amountIn), "ether"), "ether")
-  //   )
-  // );
-  // console.log("Y", amount_out);
   try {
-    const values_out = await routerContract.methods.getAmountsOut(
-      web3.utils.toWei(String(amountIn), "ether"),
-      [token0Address, token1Address]
-    );
-    const amount_out = Number(
-      web3.utils.fromWei(values_out.arguments[0], "ether")
-    );
+    const values_out = await routerContract.methods
+      .getAmountsOut(web3.utils.toWei(String(amountIn), "ether"), [
+        token0Address,
+        token1Address,
+      ])
+      .call();
+    const amount_out = Number(web3.utils.fromWei(values_out[1], "ether"));
     return amount_out;
   } catch {
     return false;
+  }
+}
+
+export async function getPairs(factory) {
+  try {
+    const pairLength = await factory.methods.getAllPairsLength().call();
+    let pairs = [];
+    for (let i = 0; i < pairLength; i++) {
+      const pair = await factory.methods.allPairs(i).call();
+      pairs.push(pair);
+    }
+    return pairs;
+  } catch (err) {
+    console.log("No pairs found", err);
   }
 }
 
@@ -162,16 +161,10 @@ export async function getReserves(
   const pairAddress = await factory.methods
     .pairs(token0Address, token1Address)
     .call();
-  // .then(async (pairAddress) => {
-  // console.log("pair address", typeof pairAddress);
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
   const reservesRaw = await fetchReserves(token0Address, token1Address, pair);
   if (pairAddress === "0x0000000000000000000000000000000000000000") {
-    return [
-      Number(reservesRaw[0]).toFixed(2),
-      Number(reservesRaw[1]).toFixed(2),
-      0,
-    ];
+    return [Number(reservesRaw[0]), Number(reservesRaw[1]), 0];
   } else {
     const liquidityTokens_BN = await pair.methods
       .balanceOf(accountAddress)
@@ -181,16 +174,29 @@ export async function getReserves(
       "ether"
     );
     console.log("getReserves LT->", liquidityTokens);
-    // })
     return [
-      Number(reservesRaw[0]).toFixed(2),
-      Number(reservesRaw[1]).toFixed(2),
-      Number(liquidityTokens).toFixed(2),
+      Number(reservesRaw[0]),
+      Number(reservesRaw[1]),
+      Number(liquidityTokens),
     ];
   }
 }
 
 /*-------------------------------LIQUIDITY PAGE-------------------------------------*/
+
+export async function getSymbolsForPairs(accountAddress, pairAddress) {
+  const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
+  const token0Address = await pair.methods.token0().call();
+  const token1Address = await pair.methods.token1().call();
+  const token0Symbol = await getBalanceandSymbol(accountAddress, token0Address);
+  const token1Symbol = await getBalanceandSymbol(accountAddress, token1Address);
+  return [
+    token0Symbol.symbol,
+    token1Symbol.symbol,
+    token0Address,
+    token1Address,
+  ];
+}
 
 export async function quoteAddLiquidity(
   token0Address,
@@ -310,17 +316,21 @@ export async function addLiquidity(
   ]);
 
   // Token + Token
-  await routerContract.methods
-    .addLiquidity(
-      token0Address,
-      token1Address,
-      amountIn0,
-      amountIn1,
-      amount0Min,
-      amount1Min,
-      account
-    )
-    .send({ from: account });
+  try {
+    await routerContract.methods
+      .addLiquidity(
+        token0Address,
+        token1Address,
+        amountIn0,
+        amountIn1,
+        amount0Min,
+        amount1Min,
+        account
+      )
+      .send({ from: account });
+  } catch (err) {
+    alert(err);
+  }
   // }
 }
 
@@ -344,48 +354,28 @@ export async function removeLiquidity(
   account,
   factory
 ) {
-  const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
-  const token1 = new web3.eth.Contract(ERC20.abi, token1Address);
+  const liquidity = web3.utils.toWei(String(liquidity_tokens), "ether");
 
-  const token0Decimals = await getDecimals(token0);
-  const token1Decimals = await getDecimals(token1);
-
-  const Getliquidity = (liquidity_tokens) => {
-    if (liquidity_tokens < 0.001) {
-      return ethers.BigNumber.from(liquidity_tokens * 10 ** 18);
-    }
-    return ethers.utils.parseUnits(String(liquidity_tokens), 18);
-  };
-
-  const liquidity = Getliquidity(liquidity_tokens);
-  console.log("liquidity: ", liquidity);
-
-  const amount0Min = ethers.utils.parseUnits(
-    String(amount0min),
-    token0Decimals
-  );
-  const amount1Min = ethers.utils.parseUnits(
-    String(amount1min),
-    token1Decimals
-  );
-
-  const pairAddress = await factory
-    .getPair(token0Address, token1Address)
-    .call();
-  const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
-
-  await pair.methods
-    .approve(routerContract.address, liquidity)
-    .send({ from: account });
+  const amount0Min = web3.utils.toWei(String(amount0min), "ether");
+  const amount1Min = web3.utils.toWei(String(amount1min), "ether");
 
   console.log([
     token0Address,
     token1Address,
-    Number(liquidity),
-    Number(amount0Min),
-    Number(amount1Min),
+    liquidity,
+    amount0Min,
+    amount1Min,
     account,
   ]);
+  const pairAddress = await factory.methods
+    .pairs(token0Address, token1Address)
+    .call();
+  const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
+
+  await pair.methods
+    .approve(routerContract.options.address, liquidity)
+    .send({ from: account });
+
   // Token + Token
   await routerContract.methods
     .removeLiquidity(
@@ -398,18 +388,4 @@ export async function removeLiquidity(
     )
     .send({ from: account });
   // }
-}
-
-export async function getDecimals(token) {
-  const decimals = await token.methods
-    .decimals()
-    .call()
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      console.log("No tokenDecimals function for this token, set to 0");
-      return 0;
-    });
-  return decimals;
 }

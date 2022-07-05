@@ -356,19 +356,19 @@
 	},
 	"sources": {
 		"contracts/KajuswapLibrary.sol": {
-			"keccak256": "0xe3b1c459cc4ca5743638cf733da3debbb51d1b869398ff53272f2703d84e5601",
+			"keccak256": "0xe8f3982b73a73768482a7972e25a2ead5a274fed6129f7710cc31a7ef7587f3d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://274e34452739dfa35a5a510dd53260488e0b2e97b82c03ed5af5e121df830465",
-				"dweb:/ipfs/QmXvrq6jpps1Ng27QmBa6Qke26a9TAUjhDrgCMR8w5fVYb"
+				"bzz-raw://d73ebb05ae8c06e0967d6bd54f01c5e5b1b78f071eba8ff7ea51e1bc4b63fa14",
+				"dweb:/ipfs/QmQ2DTRqEhCVtDEAv72jXS6d7rcirUzSJz4RypvffqmHRa"
 			]
 		},
 		"contracts/KajuswapRouter.sol": {
-			"keccak256": "0x9c5a2a95b8529304388567077bc84990c0934d1233cd3bcd79ba36962e4c5a21",
+			"keccak256": "0xf9f279abd45664c9b152292c18955c53b3f1d347a42bdce48501887663018edf",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://210b4581ac49bb8ae82ff7715b5bdd8394a9622b64e18c1bec62e35bbc5500a1",
-				"dweb:/ipfs/QmYcdELDjJBnB6XjWv1rKkx5HzJWwh4RoYKUQcg5RgqkPa"
+				"bzz-raw://83cd4e8f0414bc4875a059ee7e2ded97b0e3b84b56313c307faf46b2aa78b80e",
+				"dweb:/ipfs/QmeJPxXrszZDvoVNFLAmiJf2kibkVvNq45ErRPuZAZJitU"
 			]
 		},
 		"interfaces/IERC20.sol": {

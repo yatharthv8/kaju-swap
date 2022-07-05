@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.15+commit.e14f2714"
+		"version": "0.8.10+commit.fc410830"
 	},
 	"language": "Solidity",
 	"output": {
@@ -93,6 +93,19 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "getAllPairsLength",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -153,27 +166,27 @@
 			]
 		},
 		"contracts/KajuswapFactory.sol": {
-			"keccak256": "0x8ccf4fe053222208a4e97f31eeb3be59498c29028a4c7897df5e72dea0e7fb7d",
+			"keccak256": "0x9833167b06d2453a65acc988c137630064a68c5c146f131deae2c072f2330c16",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://22ece24265c42ba1428e52d6bfd03de5db41e77d5e4521d4d1c60fffbe771c95",
-				"dweb:/ipfs/QmUaWx3k8HJsKnFzGp7qpTwXCrVACfogXeZXrf5vAfDCQz"
+				"bzz-raw://de4265b59647acb8cf4e0c45c87f415ca1553bd455de41a656fca35dd8e8282a",
+				"dweb:/ipfs/QmaNPC64kYDaAB7VSSqdQu6UqRYRuhiJzr2NAnqrdqg6om"
 			]
 		},
 		"contracts/KajuswapPair.sol": {
-			"keccak256": "0xd02dfbd285495590f138230420467ed37a0e0335afe5af9e1c2914a579f59d45",
+			"keccak256": "0x3532707c0d956bce8e3143cadfb30e4f256060386dc8ac27a60d94449eaa4e03",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://966ea58e55ae03a0a69db444f3939c467802509bab5911e1f9f92661561b6b91",
-				"dweb:/ipfs/QmaPS1ydax7GN1BJf35at1a1G5T7VVzMLejKLPcsEKeMu1"
+				"bzz-raw://5ca2b715ceed4f207f41bbd44116dbf6d7378b2742cf4f0762a51a8c8edc79c9",
+				"dweb:/ipfs/QmXjc7cbKP1qJFNApyCs78JbxMUaGMH6CZDiq794eyxzD2"
 			]
 		},
 		"interfaces/IERC20.sol": {
-			"keccak256": "0xfddbc94c05b2231e566768735ed117e6c5d3bea6821c6a05b6b532db5baaa2fc",
+			"keccak256": "0xf675cb1c3bfed12622bac71087289ff02d0617d372ecd3f2a95800362af28838",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://9a70967baba86c464950fa9c805641c81f9e2713cff66c032b462f95893978c0",
-				"dweb:/ipfs/QmRcGQATjEdZ92qSS9gTGUN1U241WPqH8RcERBdtFCSt5Q"
+				"bzz-raw://09e8d26983f5d4a8f4ff9c208d0db4d34782e43470772b2ca416182238415311",
+				"dweb:/ipfs/QmcVk617EGaRLyENzK9DktWYZoypjzJQ2MLAAXJRxsxQmU"
 			]
 		},
 		"interfaces/IKajuswapPair.sol": {
