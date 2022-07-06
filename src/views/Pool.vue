@@ -32,10 +32,27 @@
           >
         </div>
         <div v-else>
-          <!-- <ul v-for="pair in $store.state.allPairs" :key=""></ul> -->
-          <!-- <router-link to="/removeLiquidity">
-          <button @click="remLiquidityPage()">Remove Liquidity</button>
-        </router-link> -->
+          <ul v-for="pair in symLP" :key="pair.address">
+            {{
+              pair[0]
+            }}
+            -
+            {{
+              pair[1]
+            }}
+            LP
+            <div>
+              <router-link to="/addLiquidity">
+                <button @click="addMoreLiquidity(pair[2], pair[3])">
+                  Add More Liquidity
+                </button></router-link
+              ><router-link to="/removeLiquidity"
+                ><button @click="remLiquidityPage(pair.address)">
+                  Remove Liquidity
+                </button></router-link
+              >
+            </div>
+          </ul>
         </div>
       </div>
     </div>
@@ -58,25 +75,56 @@
 </template>
 
 <script>
+import * as ethFunc from "../ethereumFunctions.js";
+
 export default {
   data() {
     return {
       pairsExistAndIs_SEL_Clicked: [false, false],
+      symLP: [],
     };
   },
   methods: {
+    async addMoreLiquidity(token0Address, token1Address) {
+      // console.log("token addresses->", token0Address, token1Address);
+      await ethFunc
+        .getBalanceandSymbol(this.$store.state.account0, token0Address)
+        .then((data) => {
+          this.$store.state.liquidityPageVar.liqTokenSymbol[0] = data.symbol;
+        });
+      await ethFunc
+        .getBalanceandSymbol(this.$store.state.account0, token1Address)
+        .then((data) => {
+          this.$store.state.liquidityPageVar.liqTokenSymbol[1] = data.symbol;
+        });
+      this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[0] =
+        token0Address;
+      this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[1] =
+        token1Address;
+      this.$store.dispatch("displayReserves", "pool");
+    },
     showExistingLiquidity() {
-      this.$store.dispatch("getPairsFromFactory").then((val) => {
+      this.$store.dispatch("getPairsFromFactory").then(async (val) => {
         this.pairsExistAndIs_SEL_Clicked[0] = true;
         if (this.$store.state.allPairs.length > 0)
           this.pairsExistAndIs_SEL_Clicked[1] = true;
+        for (let i = 0; i < this.$store.state.allPairs.length; ++i) {
+          const symb = await ethFunc.getDataForPairs(
+            this.$store.state.account0,
+            this.$store.state.allPairs[i]
+          );
+          this.symLP.push({
+            address: this.$store.state.allPairs[i],
+            0: symb[0],
+            1: symb[1],
+            2: symb[2],
+            3: symb[3],
+          });
+        }
       });
     },
-    remLiquidityPage() {
-      this.$store.dispatch(
-        "getSymbolsForLiqRemPage",
-        "0x20fd0632de0a0fc8ddd05861bf1107791240d675"
-      );
+    remLiquidityPage(address) {
+      this.$store.dispatch("getDataForLiqRemPage", address);
     },
   },
   computed: {},
@@ -88,5 +136,18 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+ul {
+  border-radius: 1rem;
+  background-color: rgb(230, 203, 162);
+  width: 40rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+ul:hover {
+  background-color: rgba(228, 189, 140, 0.799);
 }
 </style>

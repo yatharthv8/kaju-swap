@@ -184,17 +184,21 @@ export async function getReserves(
 
 /*-------------------------------LIQUIDITY PAGE-------------------------------------*/
 
-export async function getSymbolsForPairs(accountAddress, pairAddress) {
+export async function getDataForPairs(accountAddress, pairAddress) {
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
   const token0Address = await pair.methods.token0().call();
   const token1Address = await pair.methods.token1().call();
   const token0Symbol = await getBalanceandSymbol(accountAddress, token0Address);
   const token1Symbol = await getBalanceandSymbol(accountAddress, token1Address);
+  const token0Bal = await getTokenBalance(token0Address);
+  const token1Bal = await getTokenBalance(token1Address);
   return [
     token0Symbol.symbol,
     token1Symbol.symbol,
     token0Address,
     token1Address,
+    token0Bal,
+    token1Bal,
   ];
 }
 

@@ -10,7 +10,7 @@
       {{ $store.state.tokenBalText[1] }}
     </p>
   </div>
-  <div>Your Reserves :</div>
+  <div>Your Reserves in Contract :</div>
   <div>
     <p>
       <span>{{ $store.state.swapTokenSymbol[0] }}: </span>

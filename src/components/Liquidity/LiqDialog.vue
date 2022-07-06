@@ -55,7 +55,7 @@ export default {
     async submitAddress(tokenAddress) {
       try {
         // const accounts = await web3.eth.getAccounts();
-        ethFunc
+        await ethFunc
           .getBalanceandSymbol(this.$store.state.account0, tokenAddress)
           .then((data) => {
             this.$store.state.liquidityPageVar.liqTokenSymbol[

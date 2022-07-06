@@ -17,10 +17,12 @@ const store = createStore({
   state() {
     return {
       removeLiquidityPage: {
-        PairAddress: "0x20fd0632de0a0fc8ddd05861bf1107791240d675",
+        PairAddress: null,
         pairTokenAddress: [null, null],
         symbol: [null, null],
         // liqToken0InputAmount: null,
+        liqToken0: 0,
+        liqToken1: 0,
         // liqToken1InputAmount: null,
         pairLiqInp: null,
         pairLiquidity: 0,
@@ -93,13 +95,15 @@ const store = createStore({
     },
   },
   actions: {
-    async getSymbolsForLiqRemPage(_, payload) {
-      const resAndSymb = await ethFunc.getSymbolsForPairs(
+    async getDataForLiqRemPage(_, payload) {
+      const resAndSymb = await ethFunc.getDataForPairs(
         this.state.account0,
         payload
       );
       this.state.removeLiquidityPage.pairTokenAddress[0] = resAndSymb[2];
       this.state.removeLiquidityPage.pairTokenAddress[1] = resAndSymb[3];
+      this.state.removeLiquidityPage.liqToken0 = resAndSymb[4];
+      this.state.removeLiquidityPage.liqToken1 = resAndSymb[5];
       const liqReserves = await ethFunc.getReserves(
         this.state.removeLiquidityPage.pairTokenAddress[0],
         this.state.removeLiquidityPage.pairTokenAddress[1],
@@ -303,8 +307,6 @@ const store = createStore({
                 "ether"
               )
             ).toFixed(2);
-            // console.log("type of balance", typeof this.state.balance);
-            // this.state.balance = this.state.balance.toFixed(2);
           } else {
             if (ethereum.isMetaMask) {
               ethereum.request({ method: "eth_requestAccounts" });

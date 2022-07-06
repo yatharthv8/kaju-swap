@@ -10,7 +10,7 @@
       {{ $store.state.liquidityPageVar.liqTokenBal[1] }}
     </p>
   </div>
-  <div>Your Reserves :</div>
+  <div>Your Reserves in Contract :</div>
   <div>
     <p>
       <span>{{ $store.state.liquidityPageVar.liqTokenSymbol[0] }}: </span>
