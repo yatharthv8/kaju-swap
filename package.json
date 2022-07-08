@@ -1,11 +1,9 @@
 {
-  "homepage": "https://yatharthv8.github.io/kaju-swap",
   "name": "kaju-swap",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "sh deploy.sh",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
@@ -35,7 +33,6 @@
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0",
-    "gh-pages": "^4.0.0",
     "mocha": "^10.0.0",
     "prettier": "^2.2.1"
   }
