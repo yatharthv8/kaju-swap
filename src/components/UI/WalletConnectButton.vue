@@ -19,14 +19,22 @@ export default {
     onConnect() {
       this.$store.dispatch("onConnect").then(() => {
         this.$store.dispatch("displayMaxTokenBalance", {
-          add: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+          add: this.$store.state.swapDialog.DialnumAdd[0],
           ind: 0,
         });
         this.$store.dispatch("displayMaxTokenBalanceLiq", {
-          add: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+          add: this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[0],
           ind: 0,
         });
-        // console.log("here", this.$store.state.account0);
+        this.$store.dispatch("displayMaxTokenBalance", {
+          add: this.$store.state.swapDialog.DialnumAdd[1],
+          ind: 1,
+        });
+        this.$store.dispatch("displayMaxTokenBalanceLiq", {
+          add: this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[1],
+          ind: 1,
+        });
+        // console.log("here", this.$store.state.swapDialog.DialnumAdd[1]);
         this.$store.dispatch("displayReserves", "swap");
       });
     },
