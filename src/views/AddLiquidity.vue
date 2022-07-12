@@ -1,7 +1,8 @@
 <template>
-  <div v-if="$store.state.liquidityPageVar.liqDialog.bool">
-    <liq-dialog :swapDialNum="symbolButtonIndex"></liq-dialog>
-  </div>
+  <teleport to="header">
+    <div v-if="$store.state.liquidityPageVar.liqDialog.bool">
+      <liq-dialog :swapDialNum="symbolButtonIndex"></liq-dialog></div
+  ></teleport>
   <div class="card">
     <router-link to="/pool" style="align-self: normal">
       <button>Back</button>
@@ -23,7 +24,7 @@
           {{ $store.state.liquidityPageVar.liqTokenSymbol[0] }}
         </button>
       </div>
-      <small v-if="$store.state.displayConnectWalletButton">
+      <small v-if="displayWalletStatus">
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
         {{ $store.state.liquidityPageVar.liqTokenBal[0] }}</small
       >
@@ -42,7 +43,10 @@
         </button>
       </div>
     </div>
-    <div v-if="!addLiqActive">
+    <div v-if="!displayWalletStatus">
+      <wallet-connect-button class="swap-button"></wallet-connect-button>
+    </div>
+    <div v-else-if="!addLiqActive">
       <button class="swap-button">Enter Amount</button>
     </div>
     <div v-else>
@@ -55,6 +59,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 import BalResSection from "../components/layout/BalResSecLiq.vue";
 import LiqDialog from "../components/Liquidity/LiqDialog.vue";
 
@@ -67,22 +72,21 @@ export default {
     };
   },
   methods: {
+    ...mapActions({ addLiquidity: "addLiquidity" }),
+    //OR ...mapActions(["addLiquidity"]),
     openDialog(num) {
       this.symbolButtonIndex = num;
-      // console.log(
-      //   "Input box values",
-      //   this.$store.state.liquidityPageVar.liqTokenAmount0,
-      //   this.addLiqActive
-      // );
       this.$store.dispatch("openLiqDialog");
     },
     fillInputWithMaxAmt() {
       this.$store.state.liquidityPageVar.liqTokenAmount0 =
         this.$store.state.liquidityPageVar.liqTokenBal[0];
     },
-    addLiquidity() {
-      this.$store.dispatch("addLiquidity");
-    },
+  },
+  computed: {
+    ...mapGetters({
+      displayWalletStatus: "displayWalletStatus",
+    }),
   },
   watch: {
     "$store.state.liquidityPageVar.liqTokenAmount0"(newVal) {

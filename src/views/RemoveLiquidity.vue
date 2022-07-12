@@ -23,7 +23,7 @@
           v-model.trim="$store.state.removeLiquidityPage.pairLiqInp"
         />
       </div>
-      <small v-if="$store.state.displayConnectWalletButton">
+      <small v-if="displayWalletStatus">
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
         {{ $store.state.removeLiquidityPage.pairLiquidity }}</small
       >
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 import BalResSection from "../components/layout/BalResSecRemLiq.vue";
 
 export default {
@@ -53,13 +54,18 @@ export default {
     };
   },
   methods: {
+    ...mapActions({
+      remLiquidity: "removeLiquidity",
+    }),
     fillInputWithMaxAmt() {
       this.$store.state.removeLiquidityPage.pairLiqInp =
         this.$store.state.removeLiquidityPage.pairLiquidity;
     },
-    remLiquidity() {
-      this.$store.dispatch("removeLiquidity");
-    },
+  },
+  computed: {
+    ...mapGetters({
+      displayWalletStatus: "displayWalletStatus",
+    }),
   },
   watch: {
     "$store.state.removeLiquidityPage.pairLiqInp"(newVal) {

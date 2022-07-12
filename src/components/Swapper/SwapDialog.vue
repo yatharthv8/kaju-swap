@@ -1,36 +1,35 @@
 <template>
   <dialog open>
-    <div>
-      <p>Select Tokens</p>
-      <hr />
-      <label for="address">New token:</label>
-      <input
-        placeholder="custom token"
-        name="address"
-        id="address"
-        v-model.trim="newAddress"
-        @keyup.enter="submitAddress(newAddress)"
-      />
-      <!-- <select name="tokens" id="tokens" hidden> -->
-      <ul
-        v-for="coin in coins"
-        :key="coin.address"
-        @click="changeTokenText(coin.address, swapDialNum)"
-      >
-        {{
-          coin.abbr
-        }}
-        <br />
-        <small>{{ coin.name }}</small>
-        <!-- <span style="float: right"> {{ coin.balance }} </span> -->
-      </ul>
-      <!-- </select> -->
-      <button style="float: right" @click="closeDialog()">Close</button>
-    </div>
+    <p>Select Tokens</p>
+    <hr />
+    <label for="address">New token:</label>
+    <input
+      placeholder="custom token"
+      name="address"
+      id="address"
+      v-model.trim="newAddress"
+      @keyup.enter="submitAddress(newAddress)"
+    />
+    <!-- <select name="tokens" id="tokens" hidden> -->
+    <ul
+      v-for="coin in coins"
+      :key="coin.address"
+      @click="submitAddress(coin.address)"
+    >
+      {{
+        coin.abbr
+      }}
+      <br />
+      <small>{{ coin.name }}</small>
+      <!-- <span style="float: right"> {{ coin.balance }} </span> -->
+    </ul>
+    <!-- </select> -->
+    <button style="float: right" @click="closeDialog()">Close</button>
   </dialog>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
@@ -44,14 +43,7 @@ export default {
     };
   },
   methods: {
-    closeDialog() {
-      this.$store.dispatch("closeSwapDialog");
-      // this.$store.dispatch("displayMaxTokenBalance");
-    },
-    changeTokenText(tokenAddress) {
-      // console.log("swap dial num in CTT dialog.vue->", swapDialNum);
-      this.submitAddress(tokenAddress);
-    },
+    ...mapActions({ closeDialog: "closeSwapDialog" }),
     async submitAddress(tokenAddress) {
       try {
         const accounts = await web3.eth.getAccounts();
@@ -59,11 +51,6 @@ export default {
           this.$store.state.swapTokenSymbol[this.swapDialNum] = data.symbol;
           this.$store.state.swapDialog.DialnumAdd[this.swapDialNum] =
             tokenAddress;
-          // console.log(
-          //   "from swapDial submitAddress->",
-          //   this.$store.state.swapTokenSymbol[this.swapDialNum],
-          //   this.$store.state.swapDialog.DialnumAdd[this.swapDialNum]
-          // );
           this.$store.dispatch("displayMaxTokenBalance", {
             add: tokenAddress,
             ind: this.swapDialNum,
@@ -76,15 +63,7 @@ export default {
       }
     },
   },
-  computed: {
-    // getBalance() {
-    //   for (let i = 0; i < this.coins.length; ++i) {
-    //     const bal = web3.eth.getBalance(this.coins[i].address);
-    //     console.log("Balance of {this} is", bal);
-    //   }
-    //   return 0;
-    // },
-  },
+  computed: {},
 };
 </script>
 

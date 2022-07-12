@@ -1,11 +1,24 @@
 <template>
-  <div v-if="$store.state.swapDialog.bool">
-    <swap-dialog-vue :swapDialNum="symbolButtonIndex"></swap-dialog-vue>
-  </div>
+  <teleport to="header">
+    <div v-if="$store.state.swapDialog.bool">
+      <swap-dialog-vue :swapDialNum="symbolButtonIndex"></swap-dialog-vue></div
+  ></teleport>
   <div class="card">
     <div class="form-header">
       <div>Swap</div>
-      <div><gearSvg></gearSvg></div>
+      <div class="side-dropdown" @click="showOrHideDropdown()">
+        <gearSvg></gearSvg>
+        <div
+          class="side-dropdown-content"
+          :style="{ display: displayDropdown }"
+        >
+          <router-link to="/about">About</router-link>
+          <a href="https://github.com/yatharthv8/kaju-swap" target="_blank"
+            >Github Repo</a
+          >
+          <!-- <a href="#">Dark Theme</a> -->
+        </div>
+      </div>
     </div>
     <div class="main-swap">
       <div class="inp-swap">
@@ -22,7 +35,7 @@
           {{ $store.state.swapTokenSymbol[0] }}
         </button>
       </div>
-      <small v-if="$store.state.displayConnectWalletButton">
+      <small v-if="displayWalletStatus">
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
         {{ $store.state.tokenBalText[0] }}</small
       >
@@ -41,11 +54,8 @@
           {{ $store.state.swapTokenSymbol[1] }}
         </button>
       </div>
-      <!-- <small v-if="$store.state.displayConnectWalletButton"
-        ><span @click="fillInputWithMaxAmt()">MAX</span>: {{ $store.state.tokenBalText[1] }}</small
-      > -->
     </div>
-    <div v-if="!$store.state.displayConnectWalletButton">
+    <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
     </div>
     <div v-else-if="!swapActive">
@@ -61,16 +71,11 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 import gearSvg from "../assets/svg/gear.vue";
 import downArrow from "../assets/svg/downArrow.vue";
-import * as ethFunc from "../ethereumFunctions.js";
 import SwapDialogVue from "../components/Swapper/SwapDialog.vue";
 import BalResSection from "../components/layout/BalResSection.vue";
-// import SwapperDropdown from "../components/Swapper/SwapperDropdown.vue";
-
-const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
-const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
-const Weth = ethFunc.getWeth(process.env.VUE_APP_WETH);
 
 export default {
   components: { gearSvg, downArrow, SwapDialogVue, BalResSection },
@@ -78,24 +83,31 @@ export default {
     return {
       swapActive: false,
       symbolButtonIndex: null,
-      // amountToken0: null,
-      // amountToken1: null,
+      displayDropdown: "none",
     };
   },
   methods: {
+    ...mapActions({ startSwap: "swapToken" }),
+    showOrHideDropdown() {
+      if (this.displayDropdown === "none") {
+        this.displayDropdown = "block";
+      } else {
+        this.displayDropdown = "none";
+      }
+    },
     openDialog(num) {
       this.symbolButtonIndex = num;
       this.$store.dispatch("openSwapDialog");
     },
-    startSwap() {
-      this.$store.dispatch("swapToken");
-    },
     fillInputWithMaxAmt() {
-      // console.log("fillInp->", this.$store.state.tokenBalText[0]);
       this.$store.state.amountToken0 = this.$store.state.tokenBalText[0];
     },
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      displayWalletStatus: "displayWalletStatus",
+    }),
+  },
   watch: {
     "$store.state.amountToken0"(newVal) {
       if (newVal != null) {
@@ -110,19 +122,6 @@ export default {
         this.swapActive = false;
       }
     },
-    // "$store.state.amountToken1"(newVal) {
-    //   if (newVal != null) {
-    //     this.$store.dispatch("fillTokenAmount", 0);
-    //     if (this.$store.state.amountToken1) {
-    //       this.swapActive = true;
-    //     } else {
-    //       this.swapActive = false;
-    //     }
-    //     // console.log("Watcher->", newVal);
-    //   } else {
-    //     this.swapActive = false;
-    //   }
-    // },
   },
 };
 </script>

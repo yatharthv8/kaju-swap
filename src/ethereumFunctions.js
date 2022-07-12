@@ -1,5 +1,3 @@
-import { Contract, ethers } from "ethers";
-import * as COINS from "./constants/coins.js";
 import web3 from "../ethereum/web3.js";
 
 const ROUTER = require("../ethereum/contracts/artifacts/KajuswapRouter.json");

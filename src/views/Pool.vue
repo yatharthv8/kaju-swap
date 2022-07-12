@@ -2,8 +2,8 @@
   <div class="pools-page-container">
     <div class="pools-page-header">
       <div>Pools Overview</div>
-      <div>
-        <button>More</button>
+      <div v-if="displayWalletStatus">
+        <!-- <button>More</button> -->
         <router-link to="/addLiquidity"
           ><button>+New Position</button></router-link
         >
@@ -11,7 +11,7 @@
     </div>
 
     <div class="pools-page-card">
-      <div v-if="!$store.state.displayConnectWalletButton">
+      <div v-if="!displayWalletStatus">
         <wallet-connect-button></wallet-connect-button>
       </div>
       <div v-else>
@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 import * as ethFunc from "../ethereumFunctions.js";
 
 export default {
@@ -85,6 +86,9 @@ export default {
     };
   },
   methods: {
+    ...mapActions({
+      remLiquidityPage: "getDataForLiqRemPage",
+    }),
     async addMoreLiquidity(token0Address, token1Address) {
       // console.log("token addresses->", token0Address, token1Address);
       await ethFunc
@@ -123,11 +127,12 @@ export default {
         }
       });
     },
-    remLiquidityPage(address) {
-      this.$store.dispatch("getDataForLiqRemPage", address);
-    },
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      displayWalletStatus: "displayWalletStatus",
+    }),
+  },
 };
 </script>
 

@@ -1,11 +1,12 @@
 <template>
   <header>
     <div>
-      <img
-        class="kajuswap-logo"
-        src="../../assets/KajuToken.png"
-        alt="KajuToken"
-      />
+      <router-link to="/">
+        <img
+          class="kajuswap-logo"
+          src="../../assets/KajuToken.png"
+          alt="KajuToken"
+      /></router-link>
     </div>
     <div>
       <div class="center-nav-bar">
@@ -24,12 +25,9 @@
     </div>
     <div class="right-header-display">
       <div class="nav-item-container">
-        <div class="nav-item">Network</div>
+        <div class="nav-item">{{ $store.state.network }}</div>
       </div>
-      <div
-        v-if="$store.state.displayConnectWalletButton"
-        class="nav-item-container nav-item"
-      >
+      <div v-if="displayWalletStatus" class="nav-item-container nav-item">
         <div class="wallet-info">{{ $store.state.balance }} rETH</div>
         <div class="wallet-info">{{ $store.state.account0 }}</div>
       </div>
@@ -42,8 +40,11 @@
           class="side-dropdown-content"
           :style="{ display: displayDropdown }"
         >
-          <a href="#">About</a>
-          <a href="#">Dark Theme</a>
+          <router-link to="/about">About</router-link>
+          <a href="https://github.com/yatharthv8/kaju-swap" target="_blank"
+            >Github Repo</a
+          >
+          <!-- <a href="#">Dark Theme</a> -->
         </div>
       </button>
     </div>
@@ -51,6 +52,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   components: {},
   data() {
@@ -68,9 +71,9 @@ export default {
     },
   },
   computed: {
-    displayConnectWalletButtonHere() {
-      return this.$store.state.displayConnectWalletButton;
-    },
+    ...mapGetters({
+      displayWalletStatus: "displayWalletStatus",
+    }),
   },
 };
 </script>

@@ -15,7 +15,7 @@
       <ul
         v-for="coin in coins"
         :key="coin.address"
-        @click="changeTokenText(coin.address, swapDialNum)"
+        @click="submitAddress(coin.address)"
       >
         {{
           coin.abbr
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 // import web3 from "../../../ethereum/web3.js";
@@ -44,17 +45,10 @@ export default {
     };
   },
   methods: {
-    closeDialog() {
-      // this.$store.state.liquidityPageVar.liqDialog.bool = false;
-      this.$store.dispatch("closeLiqDialog");
-    },
-    changeTokenText(tokenAddress) {
-      // console.log("swap dial num in CTT dialog.vue->", swapDialNum);
-      this.submitAddress(tokenAddress);
-    },
+    ...mapActions({ closeDialog: "closeLiqDialog" }),
     async submitAddress(tokenAddress) {
       try {
-        // const accounts = await web3.eth.getAccounts();
+        console.log("liq->", this.coins);
         await ethFunc
           .getBalanceandSymbol(this.$store.state.account0, tokenAddress)
           .then((data) => {
@@ -64,8 +58,6 @@ export default {
             this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[
               this.swapDialNum
             ] = tokenAddress;
-            // console.log("token balance->", data.balance);
-            // console.log("swapDial->", this.$store.state.swapDialog[1]);
             this.$store.dispatch("displayMaxTokenBalanceLiq", {
               add: tokenAddress,
               ind: this.swapDialNum,
@@ -78,15 +70,7 @@ export default {
       }
     },
   },
-  computed: {
-    // getBalance() {
-    //   for (let i = 0; i < this.coins.length; ++i) {
-    //     const bal = web3.eth.getBalance(this.coins[i].address);
-    //     console.log("Balance of {this} is", bal);
-    //   }
-    //   return 0;
-    // },
-  },
+  computed: {},
 };
 </script>
 
