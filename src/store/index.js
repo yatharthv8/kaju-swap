@@ -294,36 +294,41 @@ const store = createStore({
 
     async onConnect(context) {
       this.state.isLoading = true;
+      let check = false;
       if (typeof ethereum !== "undefined") {
         const provider = await detectEthereumProvider();
         if (provider) {
-          const accounts = await web3.eth.getAccounts();
-          if (accounts.length > 0) {
-            context.dispatch("toggleConnectWalletButton");
-            this.state.account0 = accounts[0];
-            this.state.balance = parseFloat(
-              web3.utils.fromWei(
-                await web3.eth.getBalance(this.state.account0),
-                "ether"
-              )
-            ).toFixed(2);
-          } else {
-            if (ethereum.isMetaMask) {
-              ethereum.request({ method: "eth_requestAccounts" });
-              console.log("The connected wallet is metamask");
-              context.dispatch("toggleConnectWalletButton");
+          await web3.eth.getAccounts().then(async (accounts) => {
+            console.log("onConnect->", accounts.length, this.state.isLoading);
+            if (accounts.length > 0) {
+              check = true;
+              this.state.account0 = accounts[0];
+              this.state.balance = parseFloat(
+                web3.utils.fromWei(
+                  await web3.eth.getBalance(this.state.account0),
+                  "ether"
+                )
+              ).toFixed(2);
             } else {
-              alert(
-                "Wallets other than Metamask are not supported at the moment! Sorry for the inconvinience caused."
-              );
+              if (ethereum.isMetaMask) {
+                ethereum.request({ method: "eth_requestAccounts" });
+                console.log("The connected wallet is metamask");
+              } else {
+                alert(
+                  "Wallets other than Metamask are not supported at the moment! Sorry for the inconvinience caused."
+                );
+              }
             }
-          }
+          });
         }
       } else {
         console.log("Please install a Wallet Provider");
         alert("Please install a Wallet Provider preferably Metamask.");
       }
       this.state.isLoading = false;
+      if (this.state.isLoading === false && check) {
+        context.dispatch("toggleConnectWalletButton");
+      }
     },
   },
 });

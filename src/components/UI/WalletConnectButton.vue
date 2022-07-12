@@ -17,26 +17,29 @@ export default {
   },
   methods: {
     onConnect() {
-      this.$store.dispatch("onConnect").then(() => {
-        this.$store.dispatch("displayMaxTokenBalance", {
-          add: this.$store.state.swapDialog.DialnumAdd[0],
-          ind: 0,
-        });
-        this.$store.dispatch("displayMaxTokenBalanceLiq", {
-          add: this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[0],
-          ind: 0,
-        });
-        this.$store.dispatch("displayMaxTokenBalance", {
-          add: this.$store.state.swapDialog.DialnumAdd[1],
-          ind: 1,
-        });
-        this.$store.dispatch("displayMaxTokenBalanceLiq", {
-          add: this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[1],
-          ind: 1,
-        });
-        // console.log("here", this.$store.state.swapDialog.DialnumAdd[1]);
-        this.$store.dispatch("displayReserves", "swap");
-      });
+      this.$store
+        .dispatch("onConnect")
+        .then(() => {
+          this.$store.dispatch("displayMaxTokenBalance", {
+            add: this.$store.state.swapDialog.DialnumAdd[0],
+            ind: 0,
+          });
+          this.$store.dispatch("displayMaxTokenBalanceLiq", {
+            add: this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[0],
+            ind: 0,
+          });
+          this.$store.dispatch("displayMaxTokenBalance", {
+            add: this.$store.state.swapDialog.DialnumAdd[1],
+            ind: 1,
+          });
+          this.$store.dispatch("displayMaxTokenBalanceLiq", {
+            add: this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[1],
+            ind: 1,
+          });
+          // console.log("here", this.$store.state.swapDialog.DialnumAdd[1]);
+          this.$store.dispatch("displayReserves", "swap");
+        })
+        .catch((err) => console.log(err));
     },
   },
   // created() {
