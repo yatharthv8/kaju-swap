@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper">
     <TheHeader></TheHeader>
+    <base-spinner v-if="$store.state.operationUnderProcess"></base-spinner>
     <router-view></router-view>
     <TheFooter></TheFooter>
   </div>
@@ -12,9 +13,5 @@ import TheFooter from "./components/layout/TheFooter.vue";
 
 export default {
   components: { TheHeader, TheFooter },
-  //   mounted() {
-  //     this.$store.dispatch("onConnect");
-  //     console.log("mounted");
-  //   },
 };
 </script>

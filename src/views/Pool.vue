@@ -94,18 +94,16 @@ export default {
       await ethFunc
         .getBalanceandSymbol(this.$store.state.account0, token0Address)
         .then((data) => {
-          this.$store.state.liquidityPageVar.liqTokenSymbol[0] = data.symbol;
+          this.liqTokenSymbolVal[0] = data.symbol;
         });
       await ethFunc
         .getBalanceandSymbol(this.$store.state.account0, token1Address)
         .then((data) => {
-          this.$store.state.liquidityPageVar.liqTokenSymbol[1] = data.symbol;
+          this.liqTokenSymbolVal[1] = data.symbol;
         });
-      this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[0] =
-        token0Address;
-      this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[1] =
-        token1Address;
-      this.$store.dispatch("displayReserves", "pool");
+      this.liqDialogVal.DialnumAdd[0] = token0Address;
+      this.liqDialogVal.DialnumAdd[1] = token1Address;
+      this.$store.dispatch("displayReservesPool");
     },
     showExistingLiquidity() {
       this.$store.dispatch("getPairsFromFactory").then(async (val) => {
@@ -131,6 +129,8 @@ export default {
   computed: {
     ...mapGetters({
       displayWalletStatus: "displayWalletStatus",
+      liqTokenSymbolVal: "getLiqTokenSymbol",
+      liqDialogVal: "getLiqDialog",
     }),
   },
 };

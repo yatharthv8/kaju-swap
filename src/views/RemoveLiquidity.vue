@@ -7,12 +7,7 @@
     <hr />
     <div class="main-swap">
       <div class="inp-swap">
-        <span
-          >{{ $store.state.removeLiquidityPage.symbol[0] }}-{{
-            $store.state.removeLiquidityPage.symbol[1]
-          }}
-          LP</span
-        >
+        <span>{{ symbolVal[0] }}-{{ symbolVal[1] }} LP</span>
         <input
           type="number"
           placeholder="0.0"
@@ -20,19 +15,26 @@
           min="0"
           name="token0"
           id="token0"
-          v-model.trim="$store.state.removeLiquidityPage.pairLiqInp"
+          v-model.trim="$store.state.remLiquidity.pairLiqInp"
         />
       </div>
       <small v-if="displayWalletStatus">
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
-        {{ $store.state.removeLiquidityPage.pairLiquidity }}</small
+        {{ $store.state.remLiquidity.pairLiquidity }}</small
       >
     </div>
     <div v-if="!remLiqActive">
       <button class="swap-button">Enter Amount</button>
     </div>
     <div v-else>
-      <button class="swap-button" @click="remLiquidity()">
+      <button
+        :disabled="$store.state.operationUnderProcess"
+        :class="{
+          'button-disabled': $store.state.operationUnderProcess,
+          'swap-button': true,
+        }"
+        @click="remLiquidity()"
+      >
         Remove Liquidity
       </button>
     </div>
@@ -58,24 +60,25 @@ export default {
       remLiquidity: "removeLiquidity",
     }),
     fillInputWithMaxAmt() {
-      this.$store.state.removeLiquidityPage.pairLiqInp =
-        this.$store.state.removeLiquidityPage.pairLiquidity;
+      this.$store.state.remLiquidity.pairLiqInp =
+        this.$store.state.remLiquidity.pairLiquidity;
     },
   },
   computed: {
     ...mapGetters({
       displayWalletStatus: "displayWalletStatus",
+      symbolVal: "getSymbol",
     }),
   },
   watch: {
-    "$store.state.removeLiquidityPage.pairLiqInp"(newVal) {
+    "$store.state.remLiquidity.pairLiqInp"(newVal) {
       if (newVal != null) {
         // console.log("Token 1 val->", newVal);
         // this.$store.dispatch("fillLiqTokenAmt", {
         //   inpBox: 1,
         //   page: "removeLiq",
         // });
-        if (this.$store.state.removeLiquidityPage.pairLiqInp) {
+        if (this.$store.state.remLiquidity.pairLiqInp) {
           this.remLiqActive = true;
         } else {
           this.remLiqActive = false;

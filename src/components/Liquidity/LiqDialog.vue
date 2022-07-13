@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 // import web3 from "../../../ethereum/web3.js";
@@ -52,17 +52,13 @@ export default {
         await ethFunc
           .getBalanceandSymbol(this.$store.state.account0, tokenAddress)
           .then((data) => {
-            this.$store.state.liquidityPageVar.liqTokenSymbol[
-              this.swapDialNum
-            ] = data.symbol;
-            this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[
-              this.swapDialNum
-            ] = tokenAddress;
+            this.liqTokenSymbolVal[this.swapDialNum] = data.symbol;
+            this.liqDialogVal.DialnumAdd[this.swapDialNum] = tokenAddress;
             this.$store.dispatch("displayMaxTokenBalanceLiq", {
               add: tokenAddress,
               ind: this.swapDialNum,
             });
-            this.$store.dispatch("displayReserves", "pool");
+            this.$store.dispatch("displayReservesPool");
           });
         this.$store.dispatch("closeLiqDialog");
       } catch (err) {
@@ -70,7 +66,12 @@ export default {
       }
     },
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      liqTokenSymbolVal: "getLiqTokenSymbol",
+      liqDialogVal: "getLiqDialog",
+    }),
+  },
 };
 </script>
 

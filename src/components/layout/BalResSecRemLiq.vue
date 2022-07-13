@@ -1,19 +1,19 @@
 <template>
-  <div>Your Reserves in the Contract :</div>
+  <div>Your Balances :</div>
   <div>
     <p>
-      <span>{{ remLiqPageVars.symbol[0] }}: </span>
-      {{ remLiqPageVars.liqToken0 }}
+      <span>{{ symbolVal[0] }}: </span>
+      {{ remLiqTokenBalVal[0] }}
     </p>
     <p>
-      <span>{{ remLiqPageVars.symbol[1] }}: </span>
-      {{ remLiqPageVars.liqToken1 }}
+      <span>{{ symbolVal[1] }}: </span>
+      {{ remLiqTokenBalVal[1] }}
     </p>
   </div>
 
   <div>
-    Liquidity Added in this pair :
-    <span>{{ remLiqPageVars.pairLiquidity }}</span>
+    Your share of Liquidity Tokens in this pool:
+    <span>{{ $store.state.remLiquidity.pairLiquidity }}</span>
   </div>
 </template>
 
@@ -25,7 +25,10 @@ export default {
     return {};
   },
   computed: {
-    ...mapGetters({ remLiqPageVars: "getRemoveLiquidityPageVars" }),
+    ...mapGetters({
+      remLiqTokenBalVal: "getRemLiqTokenBal",
+      symbolVal: "getSymbol",
+    }),
   },
 };
 </script>

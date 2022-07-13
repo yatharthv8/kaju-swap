@@ -1,6 +1,6 @@
 <template>
   <teleport to="header">
-    <div v-if="$store.state.liquidityPageVar.liqDialog.bool">
+    <div v-if="liqDialogVal.bool">
       <liq-dialog :swapDialNum="symbolButtonIndex"></liq-dialog></div
   ></teleport>
   <div class="card">
@@ -18,15 +18,15 @@
           min="0"
           name="token0"
           id="token0"
-          v-model.trim="$store.state.liquidityPageVar.liqTokenAmount0"
+          v-model.trim="$store.state.addLiquidity.liqTokenAmount0"
         />
         <button @click="openDialog(0)">
-          {{ $store.state.liquidityPageVar.liqTokenSymbol[0] }}
+          {{ liqTokenSymbolVal[0] }}
         </button>
       </div>
       <small v-if="displayWalletStatus">
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
-        {{ $store.state.liquidityPageVar.liqTokenBal[0] }}</small
+        {{ liqTokenBalVal[0] }}</small
       >
       <div class="inp-swap">
         <input
@@ -36,10 +36,10 @@
           min="0"
           name="token1"
           id="token1"
-          v-model.trim="$store.state.liquidityPageVar.liqTokenAmount1"
+          v-model.trim="$store.state.addLiquidity.liqTokenAmount1"
         />
         <button @click="openDialog(1)">
-          {{ $store.state.liquidityPageVar.liqTokenSymbol[1] }}
+          {{ liqTokenSymbolVal[1] }}
         </button>
       </div>
     </div>
@@ -50,7 +50,16 @@
       <button class="swap-button">Enter Amount</button>
     </div>
     <div v-else>
-      <button class="swap-button" @click="addLiquidity()">Add Liquidity</button>
+      <button
+        :disabled="$store.state.operationUnderProcess"
+        :class="{
+          'button-disabled': $store.state.operationUnderProcess,
+          'swap-button': true,
+        }"
+        @click="addLiquidity()"
+      >
+        Add Liquidity
+      </button>
     </div>
   </div>
   <div class="card">
@@ -59,9 +68,13 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import BalResSection from "../components/layout/BalResSecLiq.vue";
-import LiqDialog from "../components/Liquidity/LiqDialog.vue";
+
+const LiqDialog = defineAsyncComponent(() =>
+  import("../components/Liquidity/LiqDialog.vue")
+);
 
 export default {
   components: { BalResSection, LiqDialog },
@@ -79,30 +92,27 @@ export default {
       this.$store.dispatch("openLiqDialog");
     },
     fillInputWithMaxAmt() {
-      this.$store.state.liquidityPageVar.liqTokenAmount0 =
-        this.$store.state.liquidityPageVar.liqTokenBal[0];
+      this.$store.state.addLiquidity.liqTokenAmount0 = this.liqTokenBalVal[0];
     },
   },
   computed: {
     ...mapGetters({
       displayWalletStatus: "displayWalletStatus",
+      liqTokenSymbolVal: "getLiqTokenSymbol",
+      liqDialogVal: "getLiqDialog",
+      liqTokenBalVal: "getLiqTokenBal",
     }),
   },
   watch: {
-    "$store.state.liquidityPageVar.liqTokenAmount0"(newVal) {
+    "$store.state.addLiquidity.liqTokenAmount0"(newVal) {
       if (newVal != null) {
         this.$store.dispatch("fillLiqTokenAmt", 1);
-        if (this.$store.state.liquidityPageVar.liqTokenAmount0) {
+        if (this.$store.state.addLiquidity.liqTokenAmount0) {
           this.addLiqActive = true;
         } else {
           this.addLiqActive = false;
         }
-        // console.log(
-        //   "Watcher->",
-        //   this.$store.state.liquidityPageVar.liqTokenAmount0
-        // );
       } else {
-        // console.log("WatcherOther->", newVal);
         this.addLiqActive = false;
       }
     },

@@ -4,7 +4,10 @@ import getters from "./getters.js";
 
 export default {
   state() {
-    return { displayConnectWalletButton: false };
+    return {
+      isLoading: false,
+      displayConnectWalletButton: false,
+    };
   },
   mutations: mutations,
   actions: actions,

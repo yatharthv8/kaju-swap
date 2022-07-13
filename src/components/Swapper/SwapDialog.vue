@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
@@ -48,14 +48,13 @@ export default {
       try {
         const accounts = await web3.eth.getAccounts();
         ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
-          this.$store.state.swapTokenSymbol[this.swapDialNum] = data.symbol;
-          this.$store.state.swapDialog.DialnumAdd[this.swapDialNum] =
-            tokenAddress;
+          this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
+          this.swapDialogVars.DialnumAdd[this.swapDialNum] = tokenAddress;
           this.$store.dispatch("displayMaxTokenBalance", {
             add: tokenAddress,
             ind: this.swapDialNum,
           });
-          this.$store.dispatch("displayReserves", "swap");
+          this.$store.dispatch("displayReservesSwap");
         });
         this.$store.dispatch("closeSwapDialog");
       } catch (err) {
@@ -63,7 +62,12 @@ export default {
       }
     },
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      swapDialogVars: "getSwapDialog",
+      swapTokenSymbolVal: "getSwapTokenSymbol",
+    }),
+  },
 };
 </script>
 

@@ -1,8 +1,9 @@
 <template>
   <button
+    :disabled="$store.state.operationUnderProcess"
     :class="{
-      'button-disabled': $store.state.isLoading,
-      'wallet-connect-button-eth-amt': !$store.state.isLoading,
+      'button-disabled': $store.state.walletConnect.isLoading,
+      'wallet-connect-button-eth-amt': !$store.state.walletConnect.isLoading,
     }"
     @click="onConnect()"
   >
@@ -11,40 +12,50 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   data() {
-    return {};
+    return {
+      walletConnecting: false,
+    };
   },
   methods: {
     onConnect() {
+      this.$store.dispatch("toggleOperationUnderProcess", true);
       this.$store
         .dispatch("onConnect")
         .then(() => {
           this.$store.dispatch("displayMaxTokenBalance", {
-            add: this.$store.state.swapDialog.DialnumAdd[0],
+            add: this.swapDialogVars.DialnumAdd[0],
             ind: 0,
           });
           this.$store.dispatch("displayMaxTokenBalanceLiq", {
-            add: this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[0],
+            add: this.liqDialogVal.DialnumAdd[0],
             ind: 0,
           });
           this.$store.dispatch("displayMaxTokenBalance", {
-            add: this.$store.state.swapDialog.DialnumAdd[1],
+            add: this.swapDialogVars.DialnumAdd[1],
             ind: 1,
           });
           this.$store.dispatch("displayMaxTokenBalanceLiq", {
-            add: this.$store.state.liquidityPageVar.liqDialog.DialnumAdd[1],
+            add: this.liqDialogVal.DialnumAdd[1],
             ind: 1,
           });
-          // console.log("here", this.$store.state.swapDialog.DialnumAdd[1]);
-          this.$store.dispatch("displayReserves", "swap");
+          this.$store.dispatch("displayReservesSwap");
+          this.$store.dispatch("displayReservesPool");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .then(() => {
+          this.$store.dispatch("toggleOperationUnderProcess", false);
+        });
     },
   },
-  // created() {
-  //   this.$store.dispatch("isConnectedToProvider");
-  //   console.log("1");
-  // },
+  computed: {
+    ...mapGetters({
+      swapDialogVars: "getSwapDialog",
+      liqDialogVal: "getLiqDialog",
+    }),
+  },
 };
 </script>

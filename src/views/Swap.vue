@@ -1,6 +1,6 @@
 <template>
   <teleport to="header">
-    <div v-if="$store.state.swapDialog.bool">
+    <div v-if="swapDialogVars.bool">
       <swap-dialog-vue :swapDialNum="symbolButtonIndex"></swap-dialog-vue></div
   ></teleport>
   <div class="card">
@@ -29,15 +29,15 @@
           min="0"
           name="token0"
           id="token0"
-          v-model.trim="$store.state.amountToken0"
+          v-model.trim="$store.state.swap.amountToken0"
         />
         <button @click="openDialog(0)">
-          {{ $store.state.swapTokenSymbol[0] }}
+          {{ swapTokenSymbolVal[0] }}
         </button>
       </div>
       <small v-if="displayWalletStatus">
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
-        {{ $store.state.tokenBalText[0] }}</small
+        {{ tokenBalTextVal[0] }}</small
       >
       <downArrow></downArrow>
       <div class="inp-swap">
@@ -48,10 +48,10 @@
           min="0"
           name="token1"
           id="token1"
-          v-model.trim="$store.state.amountToken1"
+          v-model.trim="$store.state.swap.amountToken1"
         />
         <button @click="openDialog(1)">
-          {{ $store.state.swapTokenSymbol[1] }}
+          {{ swapTokenSymbolVal[1] }}
         </button>
       </div>
     </div>
@@ -62,7 +62,16 @@
       <button class="swap-button">Enter Amount</button>
     </div>
     <div v-else>
-      <button class="swap-button" @click="startSwap()">Swap</button>
+      <button
+        :disabled="$store.state.operationUnderProcess"
+        :class="{
+          'button-disabled': $store.state.operationUnderProcess,
+          'swap-button': true,
+        }"
+        @click="startSwap()"
+      >
+        Swap
+      </button>
     </div>
   </div>
   <div class="card">
@@ -71,11 +80,15 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import gearSvg from "../assets/svg/gear.vue";
 import downArrow from "../assets/svg/downArrow.vue";
-import SwapDialogVue from "../components/Swapper/SwapDialog.vue";
 import BalResSection from "../components/layout/BalResSection.vue";
+
+const SwapDialogVue = defineAsyncComponent(() =>
+  import("../components/Swapper/SwapDialog.vue")
+);
 
 export default {
   components: { gearSvg, downArrow, SwapDialogVue, BalResSection },
@@ -100,24 +113,27 @@ export default {
       this.$store.dispatch("openSwapDialog");
     },
     fillInputWithMaxAmt() {
-      this.$store.state.amountToken0 = this.$store.state.tokenBalText[0];
+      this.$store.state.swap.amountToken0 = this.tokenBalTextVal[0];
     },
   },
   computed: {
     ...mapGetters({
       displayWalletStatus: "displayWalletStatus",
+      swapDialogVars: "getSwapDialog",
+      swapTokenSymbolVal: "getSwapTokenSymbol",
+      tokenBalTextVal: "getTokenBalText",
     }),
   },
   watch: {
-    "$store.state.amountToken0"(newVal) {
+    "$store.state.swap.amountToken0"(newVal) {
       if (newVal != null) {
         this.$store.dispatch("fillTokenAmount", 1);
-        if (this.$store.state.amountToken0) {
+        if (this.$store.state.swap.amountToken0) {
           this.swapActive = true;
         } else {
           this.swapActive = false;
         }
-        console.log("Watcher->", newVal);
+        // console.log("Watcher->", newVal);
       } else {
         this.swapActive = false;
       }
