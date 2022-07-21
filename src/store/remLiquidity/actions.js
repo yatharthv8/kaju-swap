@@ -5,11 +5,13 @@ const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
 export default {
   async getDataForLiqRemPage(context, payload) {
+    context.dispatch("toggleOperationUnderProcess", true);
     context.state.pairAddress = payload;
     const resAndSymb = await ethFunc.getDataForPairs(
       context.rootState.account0,
       payload
     );
+
     context.getters.getPairTokenAddress[0] = resAndSymb[2];
     context.getters.getPairTokenAddress[1] = resAndSymb[3];
     context.getters.getRemLiqTokenBal[0] = resAndSymb[4];
@@ -23,6 +25,7 @@ export default {
     context.getters.getSymbol[0] = resAndSymb[0];
     context.getters.getSymbol[1] = resAndSymb[1];
     context.state.pairLiquidity = liqReserves[2];
+    context.dispatch("toggleOperationUnderProcess", false);
   },
 
   async removeLiquidity(context) {

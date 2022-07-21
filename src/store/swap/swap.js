@@ -14,6 +14,7 @@ export default {
       amountToken1: null,
       tokenBalText: [0, 0],
       tokenReserves: [0, 0],
+      insufficientBal: false,
     };
   },
   mutations: mutations,

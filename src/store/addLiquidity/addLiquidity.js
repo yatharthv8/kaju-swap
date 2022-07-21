@@ -16,6 +16,7 @@ export default {
         DialnumAdd: [process.env.VUE_APP_WETH, process.env.VUE_APP_UNI],
       },
       pairLiquidity: 0,
+      predictedLiq: [],
     };
   },
   mutations: mutations,

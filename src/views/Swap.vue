@@ -58,6 +58,17 @@
     <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
     </div>
+    <div v-else-if="$store.state.swap.insufficientBal">
+      <button
+        :disabled="$store.state.swap.insufficientBal"
+        :class="{
+          'button-disabled': $store.state.swap.insufficientBal,
+          'swap-button': true,
+        }"
+      >
+        Insufficient {{ swapTokenSymbolVal[0] }} Balance
+      </button>
+    </div>
     <div v-else-if="!swapActive">
       <button class="swap-button">Enter Amount</button>
     </div>
@@ -100,7 +111,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions({ startSwap: "swapToken" }),
+    ...mapActions({ startSwap: "swapToken", checkForBal: "checkMaxBal" }),
     showOrHideDropdown() {
       if (this.displayDropdown === "none") {
         this.displayDropdown = "block";
@@ -128,6 +139,7 @@ export default {
     "$store.state.swap.amountToken0"(newVal) {
       if (newVal != null) {
         this.$store.dispatch("fillTokenAmount", 1);
+        this.checkForBal();
         if (this.$store.state.swap.amountToken0) {
           this.swapActive = true;
         } else {

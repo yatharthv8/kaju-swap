@@ -1,6 +1,7 @@
 <template>
   <dialog open>
     <div class="spinner">
+      <p>Please Wait...</p>
       <div class="lds-roller">
         <div></div>
         <div></div>
@@ -19,6 +20,7 @@
 .spinner {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   width: 100%;
 }

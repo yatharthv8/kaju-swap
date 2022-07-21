@@ -4,6 +4,10 @@ const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
 export default {
+  checkMaxBal(context) {
+    context.commit("checkMaxBal");
+  },
+
   closeSwapDialog(context) {
     context.commit("swapDialog", false);
   },
@@ -35,6 +39,7 @@ export default {
   async displayMaxTokenBalance(context, payload) {
     context.getters.getTokenBalText[payload.ind] =
       await ethFunc.getTokenBalance(payload.add);
+    context.commit("checkMaxBal");
   },
 
   async fillTokenAmount(context, payload) {

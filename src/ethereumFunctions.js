@@ -135,6 +135,7 @@ export async function fetchReserves(token0Address, token1Address, pair) {
       web3.utils.fromWei(String(reservesRaw[0]), "ether"),
       web3.utils.fromWei(String(reservesRaw[1]), "ether"),
     ];
+    // console.log(reservesRaw, token0Address);
     return [
       (await pair.methods.token0().call()) === token0Address
         ? results[0]
@@ -171,7 +172,7 @@ export async function getReserves(
       String(liquidityTokens_BN),
       "ether"
     );
-    console.log("getReserves LT->", liquidityTokens);
+    // console.log("getReserves LT->", liquidityTokens);
     return [
       Number(reservesRaw[0]),
       Number(reservesRaw[1]),
@@ -207,8 +208,8 @@ export async function quoteAddLiquidity(
   amountBDesired,
   factory
 ) {
-  const pairAddress = await factory
-    .getPair(token0Address, token1Address)
+  const pairAddress = await factory.methods
+    .pairs(token0Address, token1Address)
     .call();
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
 
@@ -216,20 +217,19 @@ export async function quoteAddLiquidity(
   const reserveA = reservesRaw[0];
   const reserveB = reservesRaw[1];
 
+  // console.log(reservesRaw);
   if (reserveA === 0 && reserveB === 0) {
     let amountOut = Math.sqrt(reserveA * reserveB);
-    return [
-      amountADesired.toString(),
-      amountBDesired.toString(),
-      amountOut.toString(),
-    ];
+    // console.log("here-1", amountOut);
+    return [String(amountADesired), String(amountBDesired), String(amountOut)];
   } else {
     let [amountBOptimal, amountOut] = quote(amountADesired, reserveA, reserveB);
+    // console.log("here-2", amountBOptimal, amountBDesired, amountOut);
     if (amountBOptimal <= amountBDesired) {
       return [
-        amountADesired.toString(),
-        amountBOptimal.toString(),
-        amountOut.toString(),
+        String(amountADesired),
+        String(amountBOptimal),
+        String(amountOut),
       ];
     } else {
       let [amountAOptimal, amountOut] = quote(
@@ -237,11 +237,12 @@ export async function quoteAddLiquidity(
         reserveB,
         reserveA
       );
-      console.log(amountAOptimal, amountOut);
+      // console.log("here-3", amountOut);
+      // console.log("here-3", amountAOptimal, amountOut);
       return [
-        amountAOptimal.toString(),
-        amountBDesired.toString(),
-        amountOut.toString(),
+        String(amountAOptimal),
+        String(amountBDesired),
+        String(amountOut),
       ];
     }
   }

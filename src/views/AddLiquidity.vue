@@ -62,7 +62,7 @@
       </button>
     </div>
   </div>
-  <div class="card">
+  <div>
     <bal-res-section></bal-res-section>
   </div>
 </template>
