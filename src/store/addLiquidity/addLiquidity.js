@@ -17,6 +17,7 @@ export default {
       },
       pairLiquidity: 0,
       predictedLiq: [],
+      insufficientLiqBal: false,
     };
   },
   mutations: mutations,

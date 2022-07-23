@@ -8,7 +8,6 @@ export default {
       state.tokenBalText[0] == 0
     ) {
       state.insufficientBal = true;
-      console.log(state.insufficientBal);
     } else {
       state.insufficientBal = false;
     }

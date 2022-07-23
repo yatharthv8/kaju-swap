@@ -4,6 +4,10 @@ const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
 export default {
+  checkMaxLiqBal(context) {
+    context.commit("checkMaxLiqBal");
+  },
+
   closeLiqDialog(context) {
     context.commit("liqDialog", false);
   },
@@ -19,7 +23,11 @@ export default {
   },
 
   async addLiquidity(context) {
-    context.dispatch("toggleOperationUnderProcess", true);
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "addLiq",
+    });
+    context.rootState.canLeave = false;
     await ethFunc
       .addLiquidity(
         context.getters.getLiqDialog.DialnumAdd[0],
@@ -33,16 +41,27 @@ export default {
       )
       .then(() => {
         context.dispatch("displayReservesPool");
-        context.dispatch("toggleOperationUnderProcess", false);
+        context.dispatch("toggleOperationUnderProcess", {
+          val: false,
+          location: "addLiq",
+        });
+        context.rootState.canLeave = true;
       })
       .catch((err) => {
-        context.dispatch("toggleOperationUnderProcess", false);
+        context.dispatch("toggleOperationUnderProcess", {
+          val: false,
+          location: "addLiq",
+        });
+        context.rootState.canLeave = true;
         console.log(err);
       });
   },
 
   async displayReservesPool(context) {
-    context.dispatch("toggleOperationUnderProcess", true);
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "DispResPool",
+    });
     const liqReserves = await ethFunc.getReserves(
       context.getters.getLiqDialog.DialnumAdd[0],
       context.getters.getLiqDialog.DialnumAdd[1],
@@ -59,7 +78,10 @@ export default {
     context.getters.getLiqTokenBal[1] = await ethFunc.getTokenBalance(
       context.getters.getLiqDialog.DialnumAdd[1]
     );
-    context.dispatch("toggleOperationUnderProcess", false);
+    context.dispatch("toggleOperationUnderProcess", {
+      val: false,
+      location: "DispResPool",
+    });
   },
 
   async fillLiqTokenAmt(context, payload) {

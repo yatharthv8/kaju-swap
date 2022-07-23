@@ -46,6 +46,17 @@
     <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
     </div>
+    <div v-else-if="$store.state.addLiquidity.insufficientLiqBal">
+      <button
+        :disabled="$store.state.addLiquidity.insufficientLiqBal"
+        :class="{
+          'button-disabled': $store.state.addLiquidity.insufficientLiqBal,
+          'swap-button': true,
+        }"
+      >
+        Insufficient {{ liqTokenSymbolVal[0] }} Balance
+      </button>
+    </div>
     <div v-else-if="!addLiqActive">
       <button class="swap-button">Enter Amount</button>
     </div>
@@ -82,10 +93,14 @@ export default {
     return {
       addLiqActive: false,
       symbolButtonIndex: null,
+      A: this.displayWalletStatus,
     };
   },
   methods: {
-    ...mapActions({ addLiquidity: "addLiquidity" }),
+    ...mapActions({
+      addLiquidity: "addLiquidity",
+      checkForBal: "checkMaxLiqBal",
+    }),
     //OR ...mapActions(["addLiquidity"]),
     openDialog(num) {
       this.symbolButtonIndex = num;
@@ -107,6 +122,7 @@ export default {
     "$store.state.addLiquidity.liqTokenAmount0"(newVal) {
       if (newVal != null) {
         this.$store.dispatch("fillLiqTokenAmt", 1);
+        this.checkForBal();
         if (this.$store.state.addLiquidity.liqTokenAmount0) {
           this.addLiqActive = true;
         } else {
@@ -116,6 +132,14 @@ export default {
         this.addLiqActive = false;
       }
     },
+  },
+  beforeRouteLeave(_, _2, next) {
+    if (this.$store.state.canLeave == true) {
+      next();
+    } else {
+      next(false);
+      alert("Please wait for the transaction to end!");
+    }
   },
 };
 </script>

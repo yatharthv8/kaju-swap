@@ -72,21 +72,30 @@ export async function swapTokens(
   token1Address,
   amount,
   routerContract,
-  accountAddress
+  accountAddress,
+  slippageVal
 ) {
   const path = [token0Address, token1Address];
   const amountIn = web3.utils.toWei(String(amount), "ether"); //amount should be int, return BN.js instance.
   const amountOut = await routerContract.methods
     .getAmountsOut(amountIn, path)
     .call();
+  const amountOutMin = String((amountOut[1] * (100 - slippageVal)) / 100);
   const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
-  console.log("swapTokens->", amountIn, amountOut, path, accountAddress);
+  console.log(
+    "swapTokens->",
+    amountIn,
+    amountOutMin,
+    amountOut,
+    path,
+    accountAddress
+  );
   await token0.methods
     .approve(routerContract.options.address, amountIn)
     .send({ from: accountAddress });
   try {
     await routerContract.methods
-      .swapExactTokensForTokens(amountIn, amountOut[1], path, accountAddress)
+      .swapExactTokensForTokens(amountIn, amountOutMin, path, accountAddress)
       .send({ from: accountAddress });
   } catch (err) {
     alert(err);
@@ -147,6 +156,7 @@ export async function fetchReserves(token0Address, token1Address, pair) {
     // })
   } catch (err) {
     console.log("No reserves found!");
+    alert("This pair does not exist! Add liquidity to create pair!");
     return [0, 0];
   }
 }

@@ -12,11 +12,16 @@
           class="side-dropdown-content"
           :style="{ display: displayDropdown }"
         >
-          <router-link to="/about">About</router-link>
-          <a href="https://github.com/yatharthv8/kaju-swap" target="_blank"
-            >Github Repo</a
-          >
-          <!-- <a href="#">Dark Theme</a> -->
+          Slippage Tolerance :
+          <input
+            type="percentage"
+            placeholder="10%"
+            step="1"
+            min="0"
+            name="slippage"
+            id="slippage"
+            v-model.trim="$store.state.swap.slippage"
+          />
         </div>
       </div>
     </div>
@@ -150,6 +155,14 @@ export default {
         this.swapActive = false;
       }
     },
+  },
+  beforeRouteLeave(_, _2, next) {
+    if (this.$store.state.canLeave == true) {
+      next();
+    } else {
+      next(false);
+      alert("Please wait for the transaction to end!");
+    }
   },
 };
 </script>

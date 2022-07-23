@@ -2,7 +2,7 @@
   <div class="pools-page-container">
     <div class="pools-page-header">
       <div>Pools Overview</div>
-      <div v-if="displayWalletStatus">
+      <div>
         <!-- <button>More</button> -->
         <router-link to="/addLiquidity"
           ><button>+New Position</button></router-link
@@ -106,24 +106,36 @@ export default {
       this.$store.dispatch("displayReservesPool");
     },
     showExistingLiquidity() {
-      this.$store.dispatch("getPairsFromFactory").then(async (val) => {
-        this.pairsExistAndIs_SEL_Clicked[0] = true;
-        if (this.$store.state.allPairs.length > 0)
-          this.pairsExistAndIs_SEL_Clicked[1] = true;
-        for (let i = 0; i < this.$store.state.allPairs.length; ++i) {
-          const symb = await ethFunc.getDataForPairs(
-            this.$store.state.account0,
-            this.$store.state.allPairs[i]
-          );
-          this.symLP.push({
-            address: this.$store.state.allPairs[i],
-            0: symb[0],
-            1: symb[1],
-            2: symb[2],
-            3: symb[3],
-          });
-        }
+      this.$store.dispatch("toggleOperationUnderProcess", {
+        val: true,
+        location: "showExLiq",
       });
+      this.$store
+        .dispatch("getPairsFromFactory")
+        .then(async () => {
+          this.pairsExistAndIs_SEL_Clicked[0] = true;
+          if (this.$store.state.allPairs.length > 0)
+            this.pairsExistAndIs_SEL_Clicked[1] = true;
+          for (let i = 0; i < this.$store.state.allPairs.length; ++i) {
+            const symb = await ethFunc.getDataForPairs(
+              this.$store.state.account0,
+              this.$store.state.allPairs[i]
+            );
+            this.symLP.push({
+              address: this.$store.state.allPairs[i],
+              0: symb[0],
+              1: symb[1],
+              2: symb[2],
+              3: symb[3],
+            });
+          }
+        })
+        .then(() => {
+          this.$store.dispatch("toggleOperationUnderProcess", {
+            val: false,
+            location: "showExLiq",
+          });
+        });
     },
   },
   computed: {
@@ -132,6 +144,19 @@ export default {
       liqTokenSymbolVal: "getLiqTokenSymbol",
       liqDialogVal: "getLiqDialog",
     }),
+  },
+  beforeRouteLeave(to, from, next) {
+    // console.log(to.path);
+    if (to.path === "/addLiquidity" || to.path === "/removeLiquidity") {
+      if (this.displayWalletStatus == true) {
+        next();
+      } else {
+        next(false);
+        alert("Please connect to a wallet first!");
+      }
+    } else {
+      next();
+    }
   },
 };
 </script>

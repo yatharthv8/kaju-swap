@@ -11,6 +11,7 @@ export default {
       remLiqTokenBal: [0, 0],
       pairLiqInp: null,
       pairLiquidity: 0,
+      insufficientRemLiqBal: false,
     };
   },
   mutations: mutations,

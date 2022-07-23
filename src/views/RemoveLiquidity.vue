@@ -23,7 +23,18 @@
         {{ $store.state.remLiquidity.pairLiquidity }}</small
       >
     </div>
-    <div v-if="!remLiqActive">
+    <div v-if="$store.state.remLiquidity.insufficientRemLiqBal">
+      <button
+        :disabled="$store.state.remLiquidity.insufficientRemLiqBal"
+        :class="{
+          'button-disabled': $store.state.remLiquidity.insufficientRemLiqBal,
+          'swap-button': true,
+        }"
+      >
+        Insufficient {{ symbolVal[0] }}-{{ symbolVal[1] }} LP Balance
+      </button>
+    </div>
+    <div v-else-if="!remLiqActive">
       <button class="swap-button">Enter Amount</button>
     </div>
     <div v-else>
@@ -58,6 +69,7 @@ export default {
   methods: {
     ...mapActions({
       remLiquidity: "removeLiquidity",
+      checkForBal: "checkMaxRemLiqBal",
     }),
     fillInputWithMaxAmt() {
       this.$store.state.remLiquidity.pairLiqInp =
@@ -73,11 +85,7 @@ export default {
   watch: {
     "$store.state.remLiquidity.pairLiqInp"(newVal) {
       if (newVal != null) {
-        // console.log("Token 1 val->", newVal);
-        // this.$store.dispatch("fillLiqTokenAmt", {
-        //   inpBox: 1,
-        //   page: "removeLiq",
-        // });
+        this.checkForBal();
         if (this.$store.state.remLiquidity.pairLiqInp) {
           this.remLiqActive = true;
         } else {
@@ -87,6 +95,14 @@ export default {
         this.remLiqActive = false;
       }
     },
+  },
+  beforeRouteLeave(_, _2, next) {
+    if (this.$store.state.canLeave == true) {
+      next();
+    } else {
+      next(false);
+      alert("Please wait for the transaction to end!");
+    }
   },
 };
 </script>

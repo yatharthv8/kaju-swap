@@ -22,7 +22,10 @@ export default {
   },
   methods: {
     onConnect() {
-      this.$store.dispatch("toggleOperationUnderProcess", true);
+      this.$store.dispatch("toggleOperationUnderProcess", {
+        val: true,
+        location: "WalCon",
+      });
       this.$store
         .dispatch("onConnect")
         .then(() => {
@@ -47,7 +50,10 @@ export default {
         })
         .catch((err) => console.log(err))
         .then(() => {
-          this.$store.dispatch("toggleOperationUnderProcess", false);
+          this.$store.dispatch("toggleOperationUnderProcess", {
+            val: false,
+            location: "WalCon",
+          });
         });
     },
   },

@@ -17,21 +17,34 @@ export default {
   },
 
   async swapToken(context) {
-    context.dispatch("toggleOperationUnderProcess", true);
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "swapTok",
+    });
+    context.rootState.canLeave = false;
     await ethFunc
       .swapTokens(
         context.getters.getSwapDialog.DialnumAdd[0],
         context.getters.getSwapDialog.DialnumAdd[1],
         context.state.amountToken0,
         router,
-        context.rootState.account0
+        context.rootState.account0,
+        context.state.slippage
       )
       .then(() => {
         context.dispatch("displayReservesSwap");
-        context.dispatch("toggleOperationUnderProcess", false);
+        context.dispatch("toggleOperationUnderProcess", {
+          val: false,
+          location: "swapTok",
+        });
+        context.rootState.canLeave = true;
       })
       .catch((err) => {
-        context.dispatch("toggleOperationUnderProcess", false);
+        context.dispatch("toggleOperationUnderProcess", {
+          val: false,
+          location: "swapTok",
+        });
+        context.rootState.canLeave = true;
         console.log(err);
       });
   },
@@ -61,6 +74,10 @@ export default {
   },
 
   async displayReservesSwap(context) {
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "DispResSwap",
+    });
     await ethFunc
       .getReserves(
         context.getters.getSwapDialog.DialnumAdd[0],
@@ -78,5 +95,9 @@ export default {
     context.getters.getTokenBalText[1] = await ethFunc.getTokenBalance(
       context.getters.getSwapDialog.DialnumAdd[1]
     );
+    context.dispatch("toggleOperationUnderProcess", {
+      val: false,
+      location: "DispResSwap",
+    });
   },
 };

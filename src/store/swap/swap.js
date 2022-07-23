@@ -15,6 +15,7 @@ export default {
       tokenBalText: [0, 0],
       tokenReserves: [0, 0],
       insufficientBal: false,
+      slippage: 10,
     };
   },
   mutations: mutations,

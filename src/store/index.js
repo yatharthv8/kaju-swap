@@ -21,9 +21,10 @@ const store = createStore({
       account0: null,
       balance: null,
       operationUnderProcess: false,
-
+      OUP_TrueVal: "",
       selectedPoolLiq: null,
       allPairs: [],
+      canLeave: true,
     };
   },
   mutations: rootMutations,
