@@ -6,24 +6,7 @@
   <div class="card">
     <div class="form-header">
       <div>Swap</div>
-      <div class="side-dropdown" @click="showOrHideDropdown()">
-        <gearSvg></gearSvg>
-        <div
-          class="side-dropdown-content"
-          :style="{ display: displayDropdown }"
-        >
-          Slippage Tolerance :
-          <input
-            type="percentage"
-            placeholder="10%"
-            step="1"
-            min="0"
-            name="slippage"
-            id="slippage"
-            v-model.trim="$store.state.swap.slippage"
-          />
-        </div>
-      </div>
+      <base-gear></base-gear>
     </div>
     <div class="main-swap">
       <div class="inp-swap">
@@ -98,7 +81,6 @@
 <script>
 import { defineAsyncComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
-import gearSvg from "../assets/svg/gear.vue";
 import downArrow from "../assets/svg/downArrow.vue";
 import BalResSection from "../components/layout/BalResSection.vue";
 
@@ -107,23 +89,16 @@ const SwapDialogVue = defineAsyncComponent(() =>
 );
 
 export default {
-  components: { gearSvg, downArrow, SwapDialogVue, BalResSection },
+  components: { downArrow, SwapDialogVue, BalResSection },
   data() {
     return {
       swapActive: false,
       symbolButtonIndex: null,
-      displayDropdown: "none",
     };
   },
   methods: {
     ...mapActions({ startSwap: "swapToken", checkForBal: "checkMaxBal" }),
-    showOrHideDropdown() {
-      if (this.displayDropdown === "none") {
-        this.displayDropdown = "block";
-      } else {
-        this.displayDropdown = "none";
-      }
-    },
+
     openDialog(num) {
       this.symbolButtonIndex = num;
       this.$store.dispatch("openSwapDialog");

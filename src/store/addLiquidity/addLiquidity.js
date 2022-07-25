@@ -18,6 +18,7 @@ export default {
       pairLiquidity: 0,
       predictedLiq: [],
       insufficientLiqBal: false,
+      slippageAddLiq: 15,
     };
   },
   mutations: mutations,

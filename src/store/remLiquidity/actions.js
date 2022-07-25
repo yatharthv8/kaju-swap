@@ -4,8 +4,18 @@ const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
 export default {
-  checkMaxRemLiqBal(context) {
+  async checkMaxRemLiqBalDispPV(context) {
     context.commit("checkMaxRemLiqBal");
+    await ethFunc
+      .quoteRemoveLiquidity(
+        context.getters.getPairTokenAddress[0],
+        context.getters.getPairTokenAddress[1],
+        context.state.pairLiqInp,
+        factory
+      )
+      .then((data) => {
+        context.state.predictedValues = data;
+      });
   },
 
   async getDataForLiqRemPage(context, payload) {
@@ -49,8 +59,12 @@ export default {
         context.getters.getPairTokenAddress[0],
         context.getters.getPairTokenAddress[1],
         context.state.pairLiqInp,
-        0,
-        0,
+        (context.getters.getRemLiqPredictedVal[1] *
+          (100 - context.state.slippageRemLiq)) /
+          100,
+        (context.getters.getRemLiqPredictedVal[2] *
+          (100 - context.state.slippageRemLiq)) /
+          100,
         router,
         context.rootState.account0,
         factory

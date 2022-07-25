@@ -12,6 +12,8 @@ export default {
       pairLiqInp: null,
       pairLiquidity: 0,
       insufficientRemLiqBal: false,
+      predictedValues: [],
+      slippageRemLiq: 15,
     };
   },
   mutations: mutations,

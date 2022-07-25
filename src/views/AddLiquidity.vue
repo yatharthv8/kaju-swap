@@ -4,9 +4,12 @@
       <liq-dialog :swapDialNum="symbolButtonIndex"></liq-dialog></div
   ></teleport>
   <div class="card">
-    <router-link to="/pool" style="align-self: normal">
-      <button>Back</button>
-    </router-link>
+    <div class="top-gear">
+      <router-link to="/pool" class="back-but">
+        <button>Back</button>
+      </router-link>
+      <base-gear></base-gear>
+    </div>
     <p>Add Liquidity</p>
     <hr />
     <div class="main-swap">
@@ -156,5 +159,14 @@ input {
 
 ul:hover {
   background-color: rgb(226, 177, 118);
+}
+
+.top-gear {
+  display: flex;
+}
+
+.back-but {
+  align-self: self-start;
+  margin-right: calc(var(--card-element-width) - 5rem);
 }
 </style>

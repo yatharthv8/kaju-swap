@@ -87,7 +87,7 @@ input {
   background-color: var(--input-translucent-bg);
   border-style: none;
   border-radius: 1rem;
-  width: var(--card-element-width) - 5;
+  width: calc(var(--card-element-width) - 5rem);
   height: 4rem;
   font-size: var(--input-element-font-size);
   margin: 0.5rem 0.25rem;

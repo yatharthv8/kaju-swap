@@ -1,8 +1,11 @@
 <template>
   <div class="card">
-    <router-link to="/pool" style="align-self: normal">
-      <button>Back</button>
-    </router-link>
+    <div class="top-gear">
+      <router-link to="/pool" class="back-but">
+        <button>Back</button>
+      </router-link>
+      <base-gear></base-gear>
+    </div>
     <p>Remove Liquidity</p>
     <hr />
     <div class="main-swap">
@@ -50,9 +53,7 @@
       </button>
     </div>
   </div>
-  <div class="card">
-    <bal-res-section></bal-res-section>
-  </div>
+  <bal-res-section></bal-res-section>
 </template>
 
 <script>
@@ -69,7 +70,7 @@ export default {
   methods: {
     ...mapActions({
       remLiquidity: "removeLiquidity",
-      checkForBal: "checkMaxRemLiqBal",
+      checkForBalDispPV: "checkMaxRemLiqBalDispPV",
     }),
     fillInputWithMaxAmt() {
       this.$store.state.remLiquidity.pairLiqInp =
@@ -85,7 +86,7 @@ export default {
   watch: {
     "$store.state.remLiquidity.pairLiqInp"(newVal) {
       if (newVal != null) {
-        this.checkForBal();
+        this.checkForBalDispPV();
         if (this.$store.state.remLiquidity.pairLiqInp) {
           this.remLiqActive = true;
         } else {
@@ -110,7 +111,7 @@ export default {
 <style scoped>
 input {
   font-size: 1rem;
-  width: 26rem;
+  width: 22rem;
   height: 2rem;
 }
 .max-amt {
@@ -119,5 +120,14 @@ input {
 
 ul:hover {
   background-color: rgb(226, 177, 118);
+}
+
+.top-gear {
+  display: flex;
+}
+
+.back-but {
+  align-self: self-start;
+  margin-right: calc(var(--card-element-width) - 5rem);
 }
 </style>

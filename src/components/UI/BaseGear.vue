@@ -1,0 +1,76 @@
+<template>
+  <div class="side-dropdown">
+    <div @click="showOrHideDropdown()"><gearSvg></gearSvg></div>
+    <div class="side-dropdown-content" :style="{ display: displayDropdown }">
+      <!-- <p>Transaction Settings:</p> -->
+      Slippage Tolerance :
+      <input
+        type="percentage"
+        placeholder="Default: 15%"
+        step="1"
+        min="0"
+        name="slippage"
+        id="slippage"
+        v-model.trim="slippage"
+      />
+      <div><button style="float: right" @click="submitInp()">OK</button></div>
+    </div>
+  </div>
+</template>
+
+<script>
+import gearSvg from "../../assets/svg/gear.vue";
+export default {
+  components: { gearSvg },
+  data() {
+    return {
+      displayDropdown: "none",
+      slippage: 15,
+    };
+  },
+  methods: {
+    showOrHideDropdown() {
+      if (this.displayDropdown === "none") {
+        this.displayDropdown = "block";
+      } else {
+        this.displayDropdown = "none";
+      }
+    },
+    submitInp() {
+      if (this.$route.path === "/swap") {
+        this.$store.state.swap.slippage = this.slippage;
+      } else {
+        if (this.$route.path === "/addLiquidity") {
+          this.$store.state.addLiquidity.slippageAddLiq = this.slippage;
+        } else {
+          if (this.$route.path === "/remLiquidity") {
+            this.$store.state.remLiquidity.slippageRemLiq = this.slippage;
+          }
+        }
+      }
+      this.showOrHideDropdown();
+    },
+  },
+};
+</script>
+
+<style scoped>
+.side-dropdown-content {
+  height: auto;
+  padding: 0.5rem;
+  margin-top: 0;
+  display: none;
+  position: absolute;
+  background-color: var(--nav-container-color);
+}
+
+input {
+  width: calc(var(--card-element-width) - 15rem);
+  height: auto;
+  font-size: calc(var(--input-element-font-size) - 1rem);
+}
+
+button {
+  background-color: var(--button-hover-color);
+}
+</style>

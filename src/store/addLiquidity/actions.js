@@ -34,8 +34,10 @@ export default {
         context.getters.getLiqDialog.DialnumAdd[1],
         context.state.liqTokenAmount0,
         context.state.liqTokenAmount1,
-        0,
-        0,
+        (context.state.liqTokenAmount0 * (100 - context.state.slippageAddLiq)) /
+          100,
+        (context.state.liqTokenAmount1 * (100 - context.state.slippageAddLiq)) /
+          100,
         router,
         context.rootState.account0
       )

@@ -8,4 +8,7 @@ export default {
   getRemLiqTokenBal(state) {
     return state.remLiqTokenBal;
   },
+  getRemLiqPredictedVal(state) {
+    return state.predictedValues;
+  },
 };

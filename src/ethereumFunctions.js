@@ -270,10 +270,10 @@ export async function quoteRemoveLiquidity(
   liquidity,
   factory
 ) {
-  const pairAddress = await factory
-    .getPair(token0Address, token1Address)
+  const pairAddress = await factory.methods
+    .pairs(token0Address, token1Address)
     .call();
-  console.log("pair address", pairAddress);
+  // console.log("pair address", pairAddress);
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
 
   const reservesRaw = await fetchReserves(token0Address, token1Address, pair); // Returns the reserves already formated as ethers
