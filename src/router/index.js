@@ -50,4 +50,39 @@ const router = createRouter({
   routes,
 });
 
+// const { ethereum } = window;
+
+// let connected = false;
+// let installed = false;
+
+// function isMetaMaskInstalled() {
+//   return Boolean(ethereum && ethereum.isMetaMask);
+// }
+
+// async function isMetaMaskConnected() {
+//   const accounts = await ethereum.request({ method: "eth_accounts" });
+//   return accounts && accounts.length > 0;
+// }
+
+// async function initialise() {
+//   connected = await isMetaMaskConnected();
+//   installed = isMetaMaskInstalled();
+//   console.log(connected, installed);
+// }
+
+// ethereum.on("accountsChanged", async () => {
+//   initialise();
+// });
+
+// router.beforeEach(async (_, _2, next) => {
+//   const accounts = await ethereum.request({ method: "eth_accounts" });
+//   if (accounts && accounts.length > 0) {
+//     console.log("user is connected");
+//   } else {
+//     console.log("user not connected");
+//   }
+//   initialise();
+//   next();
+// });
+
 export default router;
