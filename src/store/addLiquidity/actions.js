@@ -60,30 +60,43 @@ export default {
   },
 
   async displayReservesPool(context) {
-    context.dispatch("toggleOperationUnderProcess", {
-      val: true,
-      location: "DispResPool",
-    });
-    const liqReserves = await ethFunc.getReserves(
-      context.getters.getLiqDialog.DialnumAdd[0],
-      context.getters.getLiqDialog.DialnumAdd[1],
-      factory,
-      context.rootState.account0
-    );
-    context.getters.getLiqTokenRes[0] = liqReserves[0];
-    context.getters.getLiqTokenRes[1] = liqReserves[1];
-    context.state.pairLiquidity = liqReserves[2];
-    // console.log("then inside displayReservesPool->", liqReserves);
-    context.getters.getLiqTokenBal[0] = await ethFunc.getTokenBalance(
-      context.getters.getLiqDialog.DialnumAdd[0]
-    );
-    context.getters.getLiqTokenBal[1] = await ethFunc.getTokenBalance(
-      context.getters.getLiqDialog.DialnumAdd[1]
-    );
-    context.dispatch("toggleOperationUnderProcess", {
-      val: false,
-      location: "DispResPool",
-    });
+    try {
+      context.dispatch("toggleOperationUnderProcess", {
+        val: true,
+        location: "DispResPool",
+      });
+      const liqReserves = await ethFunc.getReserves(
+        context.getters.getLiqDialog.DialnumAdd[0],
+        context.getters.getLiqDialog.DialnumAdd[1],
+        factory,
+        context.rootState.account0
+      );
+      context.getters.getLiqTokenRes[0] = liqReserves[0];
+      context.getters.getLiqTokenRes[1] = liqReserves[1];
+      context.state.pairLiquidity = liqReserves[2];
+      // console.log("then inside displayReservesPool->", liqReserves);
+      context.getters.getLiqTokenBal[0] = await ethFunc.getTokenBalance(
+        context.getters.getLiqDialog.DialnumAdd[0]
+      );
+      context.getters.getLiqTokenBal[1] = await ethFunc.getTokenBalance(
+        context.getters.getLiqDialog.DialnumAdd[1]
+      );
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "DispResPool",
+      });
+    } catch {
+      console.log(
+        "There seems to be some error retrieving Reserves! Sorry for the inconvenience caused!"
+      );
+      alert(
+        "There seems to be some error retrieving Reserves! Sorry for the inconvenience caused!"
+      );
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "DispResPool",
+      });
+    }
   },
 
   async fillLiqTokenAmt(context, payload) {

@@ -15,42 +15,46 @@
 const { ethereum } = window;
 
 import { mapGetters } from "vuex";
-// import web3 from "../../../ethereum/web3.js";
-// import * as chains from "../../constants/chains.js";
+import web3 from "../../../ethereum/web3.js";
+import * as chains from "../../constants/chains.js";
 
 export default {
   data() {
     return {
       walletConnecting: false,
-      checkDone: false,
+      // checkDone: false,
     };
   },
   methods: {
-    // async checkIfConnected() {
-    //   // this.checkDone = true;
-    //   const accounts = await ethereum.request({ method: "eth_accounts" });
-    //   if (accounts && accounts.length > 0) {
-    //     await ethereum.request({ method: "eth_chainId" }).then((networkHex) => {
-    //       this.$store.state.network =
-    //         chains.Hex[Number(networkHex[networkHex.length - 1])];
-    //     });
-    //     this.$store.state.account0 = accounts[0];
-    //     this.$store.state.balance = parseFloat(
-    //       web3.utils.fromWei(
-    //         await web3.eth.getBalance(this.$store.state.account0),
-    //         "ether"
-    //       )
-    //     ).toFixed(2);
-    //     this.walletConnectInitializations();
-    //     // console.log("user is connected");
-    //     this.$store.dispatch("toggleConnectWalletButton");
-    //   } else {
-    //     console.log("user not connected");
-    //     this.onConnect();
-    //   }
-    //   // console.log(this.checkDone);
-    //   // this.onConnect();
-    // },
+    async checkIfConnected() {
+      // this.checkDone = true;
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+      if (accounts && accounts.length > 0) {
+        await ethereum.request({ method: "eth_chainId" }).then((networkHex) => {
+          this.$store.state.network =
+            chains.Hex[Number(networkHex[networkHex.length - 1])];
+          if (networkHex != "0x4") {
+            // console.log(networkHex);
+            alert("Kindly change to Rinkeby Network to use the app!");
+          }
+        });
+        this.$store.state.account0 = accounts[0];
+        this.$store.state.balance = parseFloat(
+          web3.utils.fromWei(
+            await web3.eth.getBalance(this.$store.state.account0),
+            "ether"
+          )
+        ).toFixed(2);
+        this.walletConnectInitializations();
+        // console.log("user is connected");
+        this.$store.dispatch("toggleConnectWalletButton");
+      } else {
+        console.log("user not connected");
+        this.onConnect();
+      }
+      // console.log(this.checkDone);
+      // this.onConnect();
+    },
 
     walletConnectInitializations() {
       this.$store.dispatch("displayMaxTokenBalance", {
@@ -85,7 +89,7 @@ export default {
         })
         .catch((err) => console.log(err))
         .then(() => {
-          console.log("ok");
+          // console.log("ok");
           this.$store.dispatch("toggleOperationUnderProcess", {
             val: false,
             location: "WalCon",
@@ -99,16 +103,16 @@ export default {
       liqDialogVal: "getLiqDialog",
     }),
   },
-  // mounted() {
-  //   console.log("this is the mounted");
-  // console.log(typeof this.$store.state.account0);
-  // if (!this.checkDone) {
-  //   if (this.$store.state.account0 === null) {
-  //     this.checkDone = true;
-  //     console.log("here");
-  //     this.checkIfConnected();
-  // }
-  // }
-  // },
+  mounted() {
+    //   console.log("this is the mounted");
+    //   console.log(typeof this.$store.state.account0);
+    // if (!this.checkDone) {
+    if (this.$store.state.account0 === null) {
+      // this.checkDone = true;
+      // console.log("here");
+      this.checkIfConnected();
+    }
+    // }
+  },
 };
 </script>
