@@ -15,8 +15,8 @@
 const { ethereum } = window;
 
 import { mapGetters } from "vuex";
-import web3 from "../../../ethereum/web3.js";
-import * as chains from "../../constants/chains.js";
+// import web3 from "../../../ethereum/web3.js";
+// import * as chains from "../../constants/chains.js";
 
 export default {
   data() {
@@ -85,6 +85,7 @@ export default {
         })
         .catch((err) => console.log(err))
         .then(() => {
+          console.log("ok");
           this.$store.dispatch("toggleOperationUnderProcess", {
             val: false,
             location: "WalCon",
