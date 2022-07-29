@@ -10,7 +10,7 @@
       {{ tokenBalTextVal[1] }}
     </p>
   </div>
-  <div>Your Reserves in Contract :</div>
+  <div>Total Reserves in Contract :</div>
   <div>
     <p>
       <span>{{ swapTokenSymbolVal[0] }}: </span>
