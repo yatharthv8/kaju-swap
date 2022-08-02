@@ -73,7 +73,7 @@
       </button>
     </div>
   </div>
-  <div class="card">
+  <div v-if="displayWalletStatus" class="card">
     <bal-res-section></bal-res-section>
   </div>
 </template>

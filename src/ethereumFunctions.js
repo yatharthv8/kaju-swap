@@ -76,11 +76,16 @@ export async function swapTokens(
   slippageVal
 ) {
   const path = [token0Address, token1Address];
-  const amountIn = web3.utils.toWei(String(amount), "ether"); //amount should be int, return BN.js instance.
+  let amountIn;
+  if (amount > 0.001) {
+    amountIn = web3.utils.toWei(String(amount), "ether");
+  } else {
+    amountIn = toWei(amount);
+  } //amount should be int, return BN.js instance.
   const amountOut = await routerContract.methods
     .getAmountsOut(amountIn, path)
     .call();
-  const amountOutMin = String((amountOut[1] * (100 - slippageVal)) / 100);
+  const amountOutMin = slippageCalc(slippageVal, amountOut[1]);
   const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
   console.log(
     "swapTokens->",
@@ -264,6 +269,32 @@ const quote = (amount0, reserve0, reserve1) => {
   return [amount1, amountOut];
 };
 
+const slippageCalc = (slippageVal, amount) => {
+  amount = String(amount * (1 - slippageVal / 100));
+  // console.log("It has", amount);
+  let decimalPoint = amount * 10;
+  // console.log("It has", amount);
+  decimalPoint = amount % 10;
+  // console.log("It has decimals", decimalPoint);
+  if (decimalPoint != 0) {
+    const pos = amount.split(".");
+    amount = pos[0];
+  }
+  // console.log(amount);
+  return amount;
+};
+
+const toWei = (number) => {
+  let amount = String(number * 1000000000000000000);
+  let decimalPoint = amount * 10;
+  decimalPoint = amount % 10;
+  if (decimalPoint != 0) {
+    const pos = amount.split(".");
+    amount = pos[0];
+  }
+  return amount;
+};
+
 export async function quoteRemoveLiquidity(
   token0Address,
   token1Address,
@@ -296,19 +327,31 @@ export async function addLiquidity(
   token1Address,
   amount0,
   amount1,
-  amount0min,
-  amount1min,
+  slippageVal,
   routerContract,
   account
 ) {
   const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
   const token1 = new web3.eth.Contract(ERC20.abi, token1Address);
 
-  const amountIn0 = web3.utils.toWei(String(amount0), "ether");
-  const amountIn1 = web3.utils.toWei(String(amount1), "ether");
+  let amountIn0;
+  let amountIn1;
+  if (amountIn0 > 0.001) {
+    amountIn0 = web3.utils.toWei(String(amount0), "ether");
+  } else {
+    amountIn0 = toWei(amount0);
+  }
+  if (amountIn1 > 0.001) {
+    amountIn1 = web3.utils.toWei(String(amount1), "ether");
+  } else {
+    amountIn1 = toWei(amount1);
+  }
 
-  const amount0Min = web3.utils.toWei(String(amount0min), "ether");
-  const amount1Min = web3.utils.toWei(String(amount1min), "ether");
+  // let amount0Min = web3.utils.toWei(String(amount0), "ether");
+  // let amount1Min = web3.utils.toWei(String((amount0 * (100 - slippageVal) / 100)), "ether");
+
+  const amount0Min = slippageCalc(slippageVal, amountIn0);
+  const amount1Min = slippageCalc(slippageVal, amountIn1);
 
   await token0.methods
     .approve(routerContract.options.address, amountIn0)
@@ -369,8 +412,18 @@ export async function removeLiquidity(
 ) {
   const liquidity = web3.utils.toWei(String(liquidity_tokens), "ether");
 
-  const amount0Min = web3.utils.toWei(String(amount0min), "ether");
-  const amount1Min = web3.utils.toWei(String(amount1min), "ether");
+  let amount0Min;
+  if (amount0min > 0.001) {
+    amount0Min = web3.utils.toWei(String(amount0min), "ether");
+  } else {
+    amount0Min = toWei(amount0min);
+  }
+  let amount1Min;
+  if (amount1min > 0.001) {
+    amount1Min = web3.utils.toWei(String(amount1min), "ether");
+  } else {
+    amount1Min = toWei(amount1min);
+  }
 
   console.log([
     token0Address,

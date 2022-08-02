@@ -1,4 +1,7 @@
 <template>
+  <div v-if="this.$store.state.showAccDialog">
+    <show-acc-details></show-acc-details>
+  </div>
   <header>
     <div>
       <router-link to="/">
@@ -27,9 +30,11 @@
       <div class="nav-item-container">
         <div class="nav-item">{{ $store.state.network }}</div>
       </div>
-      <div v-if="displayWalletStatus" class="nav-item-container nav-item">
-        <div class="wallet-info">{{ $store.state.balance }} rETH</div>
-        <div class="wallet-info">{{ $store.state.account0 }}</div>
+      <div v-if="displayWalletStatus" class="nav-item-container">
+        <div class="wallet-info nav-item">{{ $store.state.balance }} rETH</div>
+        <button @click="showAccountDetails()">
+          <div class="wallet-info nav-item">{{ $store.state.account0 }}</div>
+        </button>
       </div>
       <div v-else class="nav-item-container">
         <wallet-connect-button></wallet-connect-button>
@@ -69,6 +74,9 @@ export default {
         this.displayDropdown = "none";
       }
     },
+    showAccountDetails() {
+      this.$store.state.showAccDialog = true;
+    },
   },
   computed: {
     ...mapGetters({
@@ -77,3 +85,5 @@ export default {
   },
 };
 </script>
+
+<style scoped></style>

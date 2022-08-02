@@ -13,7 +13,7 @@ export const RINKEBYCoins = [
   {
     name: "Dai",
     abbr: "DAI",
-    address: "0x95b58a6Bff3D14B7DB2f5cb5F0Ad413DC2940658",
+    address: "0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735",
     // balance: getBalance("0x95b58a6bff3d14b7db2f5cb5f0ad413dc2940658"),
   },
   {

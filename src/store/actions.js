@@ -10,4 +10,9 @@ export default {
   toggleOperationUnderProcess(context, payload) {
     context.commit("toggleOperationUnderProcess", payload);
   },
+
+  restoreInitialState(context) {
+    context.commit("restoreInitialState");
+    context.commit("toggleConnectWalletButton", false);
+  },
 };

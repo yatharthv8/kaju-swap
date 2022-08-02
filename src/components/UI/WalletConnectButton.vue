@@ -46,8 +46,8 @@ export default {
           )
         ).toFixed(2);
         this.walletConnectInitializations();
-        // console.log("user is connected");
-        this.$store.dispatch("toggleConnectWalletButton");
+        console.log("user is connected");
+        this.$store.dispatch("toggleConnectWalletButton", true);
       } else {
         console.log("user not connected");
         this.onConnect();
@@ -78,6 +78,7 @@ export default {
     },
 
     onConnect() {
+      this.$store.state.disconnect = false;
       this.$store.dispatch("toggleOperationUnderProcess", {
         val: true,
         location: "WalCon",
@@ -107,7 +108,7 @@ export default {
     //   console.log("this is the mounted");
     //   console.log(typeof this.$store.state.account0);
     // if (!this.checkDone) {
-    if (this.$store.state.account0 === null) {
+    if (this.$store.state.account0 === null && !this.$store.state.disconnect) {
       // this.checkDone = true;
       // console.log("here");
       this.checkIfConnected();

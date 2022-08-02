@@ -10,4 +10,16 @@ export default {
       }
     }
   },
+  restoreInitialState(state) {
+    state.network = "Network";
+    state.account0 = null;
+    state.balance = null;
+    state.operationUnderProcess = false;
+    state.OUP_TrueVal = "";
+    state.selectedPoolLiq = null;
+    state.allPairs = [];
+    state.canLeave = true;
+    state.showAccDialog = false;
+    state.disconnect = true;
+  },
 };

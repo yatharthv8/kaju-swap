@@ -5,8 +5,8 @@ import * as chains from "../../constants/chains.js";
 const { ethereum } = window;
 
 export default {
-  toggleConnectWalletButton(context) {
-    context.commit("toggleConnectWalletButton");
+  toggleConnectWalletButton(context, payload) {
+    context.commit("toggleConnectWalletButton", payload);
   },
 
   async onConnect(context) {
@@ -74,7 +74,7 @@ export default {
       );
     }
     if (context.state.isLoading === false && check) {
-      context.dispatch("toggleConnectWalletButton");
+      context.dispatch("toggleConnectWalletButton", true);
     }
   },
 };

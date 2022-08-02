@@ -25,6 +25,8 @@ const store = createStore({
       selectedPoolLiq: null,
       allPairs: [],
       canLeave: true,
+      showAccDialog: false,
+      disconnect: false,
     };
   },
   mutations: rootMutations,

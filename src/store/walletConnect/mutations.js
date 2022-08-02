@@ -1,7 +1,7 @@
 export default {
-  toggleConnectWalletButton(state) {
+  toggleConnectWalletButton(state, payload) {
     // console.log("TCWB");
-    state.displayConnectWalletButton = !state.displayConnectWalletButton;
+    state.displayConnectWalletButton = payload;
     // console.log(state.displayConnectWalletButton);
   },
 };
