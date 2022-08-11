@@ -135,6 +135,13 @@ export default {
             val: false,
             location: "showExLiq",
           });
+        })
+        .catch((err) => {
+          console.log("This action can't be completed at the moment!", err);
+          this.$store.dispatch("toggleOperationUnderProcess", {
+            val: false,
+            location: "showExLiq",
+          });
         });
     },
   },

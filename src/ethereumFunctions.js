@@ -127,19 +127,40 @@ export async function getAmountOut(
   }
 }
 
-export async function getPairs(factory) {
+export async function getPairs(factory, accountAddress) {
   try {
     const pairLength = await factory.methods.getAllPairsLength().call();
     let pairs = [];
     for (let i = 0; i < pairLength; i++) {
       const pair = await factory.methods.allPairs(i).call();
-      pairs.push(pair);
+      if (await checkIfLiquidityExists(pair, accountAddress)) {
+        pairs.push(pair);
+      }
     }
+    // for (let i = 0; i < pairLength; ++i) {
+    //   console.log(checkIfLiquidityExists(pairs[i], accountAddress));
+    // }
     return pairs;
   } catch (err) {
-    console.log("No pairs found", err);
+    console.log("No pairs found --->>", err);
   }
 }
+
+const checkIfLiquidityExists = async (pairAddress, accountAddress) => {
+  const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
+  const liquidityTokens_BN = await pair.methods
+    .balanceOf(accountAddress)
+    .call();
+  // const liquidityTokens = web3.utils.fromWei(
+  //   String(liquidityTokens_BN),
+  //   "ether"
+  // );
+  // console.log("getReserves LT->", liquidityTokens_BN);
+  if (liquidityTokens_BN > 0) {
+    return true;
+  }
+  return false;
+};
 
 export async function fetchReserves(token0Address, token1Address, pair) {
   try {

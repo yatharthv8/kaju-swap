@@ -4,7 +4,10 @@ const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
 export default {
   async getPairsFromFactory(context) {
-    context.state.allPairs = await ethFunc.getPairs(factory);
+    context.state.allPairs = await ethFunc.getPairs(
+      factory,
+      context.rootState.account0
+    );
   },
 
   toggleOperationUnderProcess(context, payload) {

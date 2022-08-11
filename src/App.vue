@@ -10,7 +10,7 @@
 <script>
 const { ethereum } = window;
 
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheFooter from "./components/layout/TheFooter.vue";
 
@@ -23,56 +23,64 @@ export default {
     });
     ethereum.on("accountsChanged", (accounts) => {
       console.log(accounts);
-      this.onConnect();
+      // this.onConnect();
+      if (this.$route.path === "/swap" || this.$route.path === "/pool") {
+        this.$router.go();
+      } else {
+        this.$router.push("/");
+        if (this.$route.path !== "/") {
+          alert("You are getting redirected to the home page!");
+        }
+      }
     });
   },
-  methods: {
-    walletConnectInitializations() {
-      this.$store.dispatch("displayMaxTokenBalance", {
-        add: this.swapDialogVars.DialnumAdd[0],
-        ind: 0,
-      });
-      this.$store.dispatch("displayMaxTokenBalanceLiq", {
-        add: this.liqDialogVal.DialnumAdd[0],
-        ind: 0,
-      });
-      this.$store.dispatch("displayMaxTokenBalance", {
-        add: this.swapDialogVars.DialnumAdd[1],
-        ind: 1,
-      });
-      this.$store.dispatch("displayMaxTokenBalanceLiq", {
-        add: this.liqDialogVal.DialnumAdd[1],
-        ind: 1,
-      });
-      this.$store.dispatch("displayReservesSwap");
-      this.$store.dispatch("displayReservesPool");
-    },
+  // methods: {
+  //   walletConnectInitializations() {
+  //     this.$store.dispatch("displayMaxTokenBalance", {
+  //       add: this.swapDialogVars.DialnumAdd[0],
+  //       ind: 0,
+  //     });
+  //     this.$store.dispatch("displayMaxTokenBalanceLiq", {
+  //       add: this.liqDialogVal.DialnumAdd[0],
+  //       ind: 0,
+  //     });
+  //     this.$store.dispatch("displayMaxTokenBalance", {
+  //       add: this.swapDialogVars.DialnumAdd[1],
+  //       ind: 1,
+  //     });
+  //     this.$store.dispatch("displayMaxTokenBalanceLiq", {
+  //       add: this.liqDialogVal.DialnumAdd[1],
+  //       ind: 1,
+  //     });
+  //     this.$store.dispatch("displayReservesSwap");
+  //     this.$store.dispatch("displayReservesPool");
+  //   },
 
-    onConnect() {
-      this.$store.dispatch("toggleOperationUnderProcess", {
-        val: true,
-        location: "AccChange",
-      });
-      this.$store
-        .dispatch("onConnect")
-        .then(() => {
-          this.walletConnectInitializations();
-        })
-        .catch((err) => console.log(err))
-        .then(() => {
-          // console.log("ok");
-          this.$store.dispatch("toggleOperationUnderProcess", {
-            val: false,
-            location: "AccChange",
-          });
-        });
-    },
-  },
-  computed: {
-    ...mapGetters({
-      swapDialogVars: "getSwapDialog",
-      liqDialogVal: "getLiqDialog",
-    }),
-  },
+  //   onConnect() {
+  //     this.$store.dispatch("toggleOperationUnderProcess", {
+  //       val: true,
+  //       location: "AccChange",
+  //     });
+  //     this.$store
+  //       .dispatch("onConnect")
+  //       .then(() => {
+  //         this.walletConnectInitializations();
+  //       })
+  //       .catch((err) => console.log(err))
+  //       .then(() => {
+  //         // console.log("ok");
+  //         this.$store.dispatch("toggleOperationUnderProcess", {
+  //           val: false,
+  //           location: "AccChange",
+  //         });
+  //       });
+  //   },
+  // },
+  // computed: {
+  //   ...mapGetters({
+  //     swapDialogVars: "getSwapDialog",
+  //     liqDialogVal: "getLiqDialog",
+  //   }),
+  // },
 };
 </script>
