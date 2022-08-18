@@ -22,10 +22,17 @@ export default {
       alert("Connect Wallet to use KajuSwap!");
     });
     ethereum.on("accountsChanged", (accounts) => {
-      console.log(accounts);
+      // console.log("new Account ->", accounts);
       // this.onConnect();
       if (this.$route.path === "/swap" || this.$route.path === "/pool") {
+        this.$router.push("/"); //lines 28-34 are just being used because the app is deployed on github pages.
         this.$router.go();
+        if (this.$route.path === "/swap") {
+          this.$router.push("/swap");
+        } else {
+          this.$router.push("/pool");
+        }
+        // this.$router.go(); //If some other hosting service is used this line can be used.
       } else {
         this.$router.push("/");
         if (this.$route.path !== "/") {
