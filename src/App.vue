@@ -10,7 +10,7 @@
 <script>
 const { ethereum } = window;
 
-// import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheFooter from "./components/layout/TheFooter.vue";
 
@@ -22,17 +22,23 @@ export default {
       alert("Connect Wallet to use KajuSwap!");
     });
     ethereum.on("accountsChanged", (accounts) => {
-      // console.log("new Account ->", accounts);
-      // this.onConnect();
+      console.log("new Account ->", accounts);
+      this.onConnect();
       if (this.$route.path === "/swap" || this.$route.path === "/pool") {
-        this.$router.push("/"); //lines 28-34 are just being used because the app is deployed on github pages.
-        this.$router.go();
         if (this.$route.path === "/swap") {
+          //lines 28-39 are just being used because the app is deployed on github pages.
           this.$router.push("/swap");
         } else {
-          this.$router.push("/pool");
+          this.$router
+            .push("/")
+            .then(() => {
+              this.$router.push("/pool");
+            })
+            .catch((err) => {
+              console.log("error->>>", err);
+            });
         }
-        // this.$router.go(); //If some other hosting service is used this line can be used.
+        // this.$router.go(); //If some other hosting service is used this line can be used instead of lines 28-39.
       } else {
         this.$router.push("/");
         if (this.$route.path !== "/") {
@@ -41,53 +47,53 @@ export default {
       }
     });
   },
-  // methods: {
-  //   walletConnectInitializations() {
-  //     this.$store.dispatch("displayMaxTokenBalance", {
-  //       add: this.swapDialogVars.DialnumAdd[0],
-  //       ind: 0,
-  //     });
-  //     this.$store.dispatch("displayMaxTokenBalanceLiq", {
-  //       add: this.liqDialogVal.DialnumAdd[0],
-  //       ind: 0,
-  //     });
-  //     this.$store.dispatch("displayMaxTokenBalance", {
-  //       add: this.swapDialogVars.DialnumAdd[1],
-  //       ind: 1,
-  //     });
-  //     this.$store.dispatch("displayMaxTokenBalanceLiq", {
-  //       add: this.liqDialogVal.DialnumAdd[1],
-  //       ind: 1,
-  //     });
-  //     this.$store.dispatch("displayReservesSwap");
-  //     this.$store.dispatch("displayReservesPool");
-  //   },
+  methods: {
+    walletConnectInitializations() {
+      this.$store.dispatch("displayMaxTokenBalance", {
+        add: this.swapDialogVars.DialnumAdd[0],
+        ind: 0,
+      });
+      this.$store.dispatch("displayMaxTokenBalanceLiq", {
+        add: this.liqDialogVal.DialnumAdd[0],
+        ind: 0,
+      });
+      this.$store.dispatch("displayMaxTokenBalance", {
+        add: this.swapDialogVars.DialnumAdd[1],
+        ind: 1,
+      });
+      this.$store.dispatch("displayMaxTokenBalanceLiq", {
+        add: this.liqDialogVal.DialnumAdd[1],
+        ind: 1,
+      });
+      this.$store.dispatch("displayReservesSwap");
+      this.$store.dispatch("displayReservesPool");
+    },
 
-  //   onConnect() {
-  //     this.$store.dispatch("toggleOperationUnderProcess", {
-  //       val: true,
-  //       location: "AccChange",
-  //     });
-  //     this.$store
-  //       .dispatch("onConnect")
-  //       .then(() => {
-  //         this.walletConnectInitializations();
-  //       })
-  //       .catch((err) => console.log(err))
-  //       .then(() => {
-  //         // console.log("ok");
-  //         this.$store.dispatch("toggleOperationUnderProcess", {
-  //           val: false,
-  //           location: "AccChange",
-  //         });
-  //       });
-  //   },
-  // },
-  // computed: {
-  //   ...mapGetters({
-  //     swapDialogVars: "getSwapDialog",
-  //     liqDialogVal: "getLiqDialog",
-  //   }),
-  // },
+    onConnect() {
+      this.$store.dispatch("toggleOperationUnderProcess", {
+        val: true,
+        location: "AccChange",
+      });
+      this.$store
+        .dispatch("onConnect")
+        .then(() => {
+          this.walletConnectInitializations();
+        })
+        .catch((err) => console.log(err))
+        .then(() => {
+          // console.log("ok");
+          this.$store.dispatch("toggleOperationUnderProcess", {
+            val: false,
+            location: "AccChange",
+          });
+        });
+    },
+  },
+  computed: {
+    ...mapGetters({
+      swapDialogVars: "getSwapDialog",
+      liqDialogVal: "getLiqDialog",
+    }),
+  },
 };
 </script>
