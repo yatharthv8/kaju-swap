@@ -27,7 +27,7 @@
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
         {{ tokenBalTextVal[0] }}</small
       >
-      <downArrow></downArrow>
+      <button @click="swapInpBoxTokens()"><downArrow></downArrow></button>
       <div class="inp-swap">
         <input
           type="number"
@@ -83,6 +83,8 @@ import { defineAsyncComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import downArrow from "../assets/svg/downArrow.vue";
 import BalResSection from "../components/layout/BalResSection.vue";
+import * as ethFunc from "../ethereumFunctions.js";
+import web3 from "../../ethereum/web3.js";
 
 const SwapDialogVue = defineAsyncComponent(() =>
   import("../components/Swapper/SwapDialog.vue")
@@ -98,13 +100,35 @@ export default {
   },
   methods: {
     ...mapActions({ startSwap: "swapToken", checkForBal: "checkMaxBal" }),
-
+    async submitAddress(tokenAddress, index) {
+      try {
+        const accounts = await web3.eth.getAccounts();
+        ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
+          this.swapTokenSymbolVal[index] = data.symbol;
+          this.swapDialogVars.DialnumAdd[index] = tokenAddress;
+          this.$store.dispatch("displayMaxTokenBalance", {
+            add: tokenAddress,
+            ind: index,
+          });
+        });
+      } catch (err) {
+        console.log("Invalid token address!");
+      }
+    },
     openDialog(num) {
       this.symbolButtonIndex = num;
       this.$store.dispatch("openSwapDialog");
     },
     fillInputWithMaxAmt() {
       this.$store.state.swap.amountToken0 = this.tokenBalTextVal[0];
+    },
+    swapInpBoxTokens() {
+      this.$store.state.swap.amountToken0 = this.$store.state.swap.amountToken1;
+      const addressT = this.swapDialogVars.DialnumAdd;
+      // console.log(addressT[0]);
+      this.submitAddress(addressT[1], 0);
+      this.submitAddress(addressT[0], 1);
+      this.$store.dispatch("displayReservesSwap");
     },
   },
   computed: {
