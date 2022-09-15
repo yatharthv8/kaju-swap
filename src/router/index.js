@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import Swap from "../views/Swap.vue";
 import Pool from "../views/Pool.vue";
 import AddLiquidity from "../views/AddLiquidity.vue";
@@ -46,7 +46,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory("/kaju-swap/"),
+  history: createWebHashHistory("/kaju-swap/"),
   routes,
 });
 
