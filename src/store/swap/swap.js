@@ -9,6 +9,8 @@ export default {
         bool: false,
         DialnumAdd: [process.env.VUE_APP_WETH, process.env.VUE_APP_UNI],
       },
+      watchInputs: [false, false],
+      swapWatchInp: true,
       swapTokenSymbol: ["WETH", "UNI"],
       amountToken0: null,
       amountToken1: null,

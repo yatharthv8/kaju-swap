@@ -4,8 +4,12 @@ const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
 export default {
-  checkMaxBal(context) {
-    context.commit("checkMaxBal");
+  checkMaxBalFor0(context) {
+    context.commit("checkMaxBal", 0);
+  },
+
+  checkMaxBalFor1(context) {
+    context.commit("checkMaxBal", 1);
   },
 
   closeSwapDialog(context) {
@@ -56,21 +60,55 @@ export default {
   },
 
   async fillTokenAmount(context, payload) {
-    let address0;
-    let address1;
-    if (payload === 1) {
-      address0 = context.getters.getSwapDialog.DialnumAdd[0];
-      address1 = context.getters.getSwapDialog.DialnumAdd[1];
-    } else {
-      address1 = context.getters.getSwapDialog.DialnumAdd[0];
-      address0 = context.getters.getSwapDialog.DialnumAdd[1];
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "fillTokAmt",
+    });
+    let address0 = context.getters.getSwapDialog.DialnumAdd[0];
+    let address1 = context.getters.getSwapDialog.DialnumAdd[1];
+    if (
+      payload === 1 &&
+      ((!context.state.watchInputs[0] && !context.state.watchInputs[1]) ||
+        (context.state.watchInputs[0] && !context.state.watchInputs[1]))
+    ) {
+      context.state.swapWatchInp = true;
+      context.state.watchInputs[0] = true;
+      await ethFunc
+        .getAmountOut(address0, address1, context.state.amountToken0, router)
+        .then((data) => {
+          context.state.amountToken1 = data;
+        });
+      setTimeout(() => {
+        context.state.watchInputs[0] = false;
+        context.state.watchInputs[1] = false;
+        context.dispatch("toggleOperationUnderProcess", {
+          val: false,
+          location: "fillTokAmt",
+        });
+      }, 2000);
+      console.log("inside 1st");
+    } else if (
+      payload === 0 &&
+      ((!context.state.watchInputs[0] && !context.state.watchInputs[1]) ||
+        (!context.state.watchInputs[0] && context.state.watchInputs[1]))
+    ) {
+      context.state.swapWatchInp = false;
+      context.state.watchInputs[0] = true;
+      await ethFunc
+        .getAmountIn(address0, address1, context.state.amountToken1, router)
+        .then((data) => {
+          context.state.amountToken0 = data;
+        });
+      setTimeout(() => {
+        context.state.watchInputs[0] = false;
+        context.state.watchInputs[1] = false;
+        context.dispatch("toggleOperationUnderProcess", {
+          val: false,
+          location: "fillTokAmt",
+        });
+      }, 2000);
+      console.log("inside 2nd");
     }
-    context.state.amountToken1 = await ethFunc.getAmountOut(
-      address0,
-      address1,
-      context.state.amountToken0,
-      router
-    );
   },
 
   async displayReservesSwap(context) {
@@ -88,6 +126,7 @@ export default {
       .then((swapReserves) => {
         context.getters.getTokenReserves[0] = swapReserves[0];
         context.getters.getTokenReserves[1] = swapReserves[1];
+        // console.log(context.getters.getTokenReserves);
       });
     context.getters.getTokenBalText[0] = await ethFunc.getTokenBalance(
       context.getters.getSwapDialog.DialnumAdd[0]

@@ -127,6 +127,29 @@ export async function getAmountOut(
   }
 }
 
+export async function getAmountIn(
+  token0Address,
+  token1Address,
+  amountOut,
+  routerContract
+) {
+  try {
+    const values_in = await routerContract.methods
+      .getAmountsIn(web3.utils.toWei(String(amountOut)), [
+        token0Address,
+        token1Address,
+      ])
+      .call();
+    const amount_in = Number(web3.utils.fromWei(values_in[0], "ether"));
+    return amount_in;
+  } catch {
+    alert(
+      `You have entered values greater than reserves. Please see the values of corresponding reserves at the bottom of the screen and then enter values accordingly!`
+    );
+    return false;
+  }
+}
+
 export async function getPairs(factory, accountAddress) {
   try {
     const pairLength = await factory.methods.getAllPairsLength().call();
@@ -242,7 +265,8 @@ export async function quoteAddLiquidity(
   token1Address,
   amountADesired,
   amountBDesired,
-  factory
+  factory,
+  inpBox
 ) {
   const pairAddress = await factory.methods
     .pairs(token0Address, token1Address)
@@ -253,31 +277,58 @@ export async function quoteAddLiquidity(
   const reserveA = reservesRaw[0];
   const reserveB = reservesRaw[1];
 
-  // console.log(reservesRaw);
+  // console.log(amountADesired, amountBDesired);
   if (reserveA === 0 && reserveB === 0) {
     let amountOut = Math.sqrt(reserveA * reserveB);
     // console.log("here-1", amountOut);
     return [String(amountADesired), String(amountBDesired), String(amountOut)];
-  } else {
-    let [amountBOptimal, amountOut] = quote(amountADesired, reserveA, reserveB);
-    // console.log("here-2", amountBOptimal, amountBDesired, amountOut);
-    if (amountBOptimal <= amountBDesired) {
-      return [
-        String(amountADesired),
-        String(amountBOptimal),
-        String(amountOut),
-      ];
-    } else {
-      let [amountAOptimal, amountOut] = quote(
-        amountBDesired,
-        reserveB,
-        reserveA
+  } else if (inpBox === 0) {
+    {
+      let [amountBOptimal, amountOut] = quote(
+        amountADesired,
+        reserveA,
+        reserveB
       );
-      // console.log("here-3", amountOut);
-      // console.log("here-3", amountAOptimal, amountOut);
+      // console.log("here-20", amountBOptimal, amountBDesired, amountOut);
+      if (amountBOptimal <= amountBDesired) {
+        return [
+          String(amountADesired),
+          String(amountBOptimal),
+          String(amountOut),
+        ];
+      } else {
+        let [amountAOptimal, amountOut] = quote(
+          amountBDesired,
+          reserveB,
+          reserveA
+        );
+        // console.log("here-3", amountOut);
+        // console.log("here-3", amountAOptimal, amountOut);
+        return [
+          String(amountAOptimal),
+          String(amountBDesired),
+          String(amountOut),
+        ];
+      }
+    }
+  } else {
+    let [amountAOptimal, amountOut] = quote(amountBDesired, reserveB, reserveA);
+    // console.log("here-21", amountAOptimal, amountADesired, amountOut);
+    if (amountAOptimal <= amountADesired) {
       return [
         String(amountAOptimal),
         String(amountBDesired),
+        String(amountOut),
+      ];
+    } else {
+      let [amountBOptimal, amountOut] = quote(
+        amountADesired,
+        reserveA,
+        reserveB
+      );
+      return [
+        String(amountADesired),
+        String(amountBOptimal),
         String(amountOut),
       ];
     }

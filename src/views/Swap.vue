@@ -54,7 +54,7 @@
           'swap-button': true,
         }"
       >
-        Insufficient {{ swapTokenSymbolVal[0] }} Balance
+        Insufficient Balance
       </button>
     </div>
     <div v-else-if="!swapActive">
@@ -99,7 +99,11 @@ export default {
     };
   },
   methods: {
-    ...mapActions({ startSwap: "swapToken", checkForBal: "checkMaxBal" }),
+    ...mapActions({
+      startSwap: "swapToken",
+      checkForBal0: "checkMaxBalFor0",
+      checkForBal1: "checkMaxBalFor1",
+    }),
     async submitAddress(tokenAddress, index) {
       try {
         const accounts = await web3.eth.getAccounts();
@@ -123,12 +127,20 @@ export default {
       this.$store.state.swap.amountToken0 = this.tokenBalTextVal[0];
     },
     swapInpBoxTokens() {
-      this.$store.state.swap.amountToken0 = this.$store.state.swap.amountToken1;
+      if (this.$store.state.swap.swapWatchInp) {
+        this.$store.state.swap.amountToken1 =
+          this.$store.state.swap.amountToken0;
+      } else {
+        this.$store.state.swap.amountToken0 =
+          this.$store.state.swap.amountToken1;
+      }
       const addressT = this.swapDialogVars.DialnumAdd;
       // console.log(addressT[0]);
       this.submitAddress(addressT[1], 0);
       this.submitAddress(addressT[0], 1);
-      this.$store.dispatch("displayReservesSwap");
+      setTimeout(() => {
+        this.$store.dispatch("displayReservesSwap");
+      }, 1000);
     },
   },
   computed: {
@@ -142,9 +154,27 @@ export default {
   watch: {
     "$store.state.swap.amountToken0"(newVal) {
       if (newVal != null) {
-        this.$store.dispatch("fillTokenAmount", 1);
-        this.checkForBal();
+        if (newVal > 0) {
+          this.$store.dispatch("fillTokenAmount", 1);
+        }
+        this.checkForBal0();
         if (this.$store.state.swap.amountToken0) {
+          this.swapActive = true;
+        } else {
+          this.swapActive = false;
+        }
+        // console.log("Watcher->", newVal);
+      } else {
+        this.swapActive = false;
+      }
+    },
+    "$store.state.swap.amountToken1"(newVal) {
+      if (newVal != null) {
+        if (newVal > 0) {
+          this.$store.dispatch("fillTokenAmount", 0);
+        }
+        this.checkForBal1();
+        if (this.$store.state.swap.amountToken1) {
           this.swapActive = true;
         } else {
           this.swapActive = false;

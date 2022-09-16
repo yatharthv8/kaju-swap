@@ -4,8 +4,12 @@ const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
 export default {
-  checkMaxLiqBal(context) {
-    context.commit("checkMaxLiqBal");
+  checkMaxLiqBal0(context) {
+    context.commit("checkMaxLiqBal", 0);
+  },
+
+  checkMaxLiqBal1(context) {
+    context.commit("checkMaxLiqBal", 1);
   },
 
   closeLiqDialog(context) {
@@ -97,30 +101,73 @@ export default {
   },
 
   async fillLiqTokenAmt(context, payload) {
-    let address0;
-    let address1;
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "fillLiqTokAmt",
+    });
+    let address0 = context.getters.getLiqDialog.DialnumAdd[0];
+    let address1 = context.getters.getLiqDialog.DialnumAdd[1];
     let amount;
-    if (payload === 1) {
-      address0 = context.getters.getLiqDialog.DialnumAdd[0];
-      address1 = context.getters.getLiqDialog.DialnumAdd[1];
-    } else {
-      address1 = context.getters.getLiqDialog.DialnumAdd[0];
-      address0 = context.getters.getLiqDialog.DialnumAdd[1];
+    if (
+      payload === 1 &&
+      ((!context.state.liqWatchInps[0] && !context.state.liqWatchInps[1]) ||
+        (context.state.liqWatchInps[0] && !context.state.liqWatchInps[1]))
+    ) {
+      context.state.liqWatchInps[0] = true;
+      amount =
+        context.state.liqTokenAmount0 *
+        (context.getters.getLiqTokenRes[1] / context.getters.getLiqTokenRes[0]);
+      await ethFunc
+        .quoteAddLiquidity(
+          address0,
+          address1,
+          context.state.liqTokenAmount0,
+          amount,
+          factory,
+          0
+        )
+        .then((data) => {
+          context.state.predictedLiq = data;
+          context.state.liqTokenAmount1 = context.state.predictedLiq[1];
+        });
+      setTimeout(() => {
+        context.state.liqWatchInps[0] = false;
+        context.state.liqWatchInps[1] = false;
+        context.dispatch("toggleOperationUnderProcess", {
+          val: false,
+          location: "fillLiqTokAmt",
+        });
+      }, 2000);
+    } else if (
+      payload === 0 &&
+      ((!context.state.liqWatchInps[0] && !context.state.liqWatchInps[1]) ||
+        (!context.state.liqWatchInps[0] && context.state.liqWatchInps[1]))
+    ) {
+      context.state.liqWatchInps[1] = true;
+      amount =
+        context.state.liqTokenAmount1 *
+        (context.getters.getLiqTokenRes[0] / context.getters.getLiqTokenRes[1]);
+      await ethFunc
+        .quoteAddLiquidity(
+          address0,
+          address1,
+          amount,
+          context.state.liqTokenAmount1,
+          factory,
+          1
+        )
+        .then((data) => {
+          context.state.predictedLiq = data;
+          context.state.liqTokenAmount0 = context.state.predictedLiq[0];
+        });
+      setTimeout(() => {
+        context.state.liqWatchInps[0] = false;
+        context.state.liqWatchInps[1] = false;
+        context.dispatch("toggleOperationUnderProcess", {
+          val: false,
+          location: "fillLiqTokAmt",
+        });
+      }, 2000);
     }
-    amount =
-      context.state.liqTokenAmount0 *
-      (context.getters.getLiqTokenRes[1] / context.getters.getLiqTokenRes[0]);
-    await ethFunc
-      .quoteAddLiquidity(
-        address0,
-        address1,
-        context.state.liqTokenAmount0,
-        amount,
-        factory
-      )
-      .then((data) => {
-        context.state.predictedLiq = data;
-        context.state.liqTokenAmount1 = context.state.predictedLiq[1];
-      });
   },
 };

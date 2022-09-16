@@ -15,6 +15,7 @@ export default {
         bool: false,
         DialnumAdd: [process.env.VUE_APP_WETH, process.env.VUE_APP_UNI],
       },
+      liqWatchInps: [false, false],
       pairLiquidity: 0,
       predictedLiq: [],
       insufficientLiqBal: false,

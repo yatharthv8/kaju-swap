@@ -57,7 +57,7 @@
           'swap-button': true,
         }"
       >
-        Insufficient {{ liqTokenSymbolVal[0] }} Balance
+        Insufficient Balance
       </button>
     </div>
     <div v-else-if="!addLiqActive">
@@ -102,7 +102,8 @@ export default {
   methods: {
     ...mapActions({
       addLiquidity: "addLiquidity",
-      checkForBal: "checkMaxLiqBal",
+      checkForBal0: "checkMaxLiqBal0",
+      checkForBal1: "checkMaxLiqBal1",
     }),
     //OR ...mapActions(["addLiquidity"]),
     openDialog(num) {
@@ -123,14 +124,31 @@ export default {
   },
   watch: {
     "$store.state.addLiquidity.liqTokenAmount0"(newVal) {
-      if (newVal != null) {
-        this.$store.dispatch("fillLiqTokenAmt", 1);
-        this.checkForBal();
-        if (this.$store.state.addLiquidity.liqTokenAmount0) {
-          this.addLiqActive = true;
-        } else {
-          this.addLiqActive = false;
+      if (newVal != null && this.$store.state.addLiquidity.pairLiquidity) {
+        if (newVal > 0) {
+          this.$store.dispatch("fillLiqTokenAmt", 1);
         }
+        this.checkForBal0();
+      } else {
+        this.addLiqActive = false;
+      }
+      if (this.$store.state.addLiquidity.liqTokenAmount0) {
+        this.addLiqActive = true;
+      } else {
+        this.addLiqActive = false;
+      }
+    },
+    "$store.state.addLiquidity.liqTokenAmount1"(newVal) {
+      if (newVal != null && this.$store.state.addLiquidity.pairLiquidity) {
+        if (newVal > 0) {
+          this.$store.dispatch("fillLiqTokenAmt", 0);
+        }
+        this.checkForBal1();
+      } else {
+        this.addLiqActive = false;
+      }
+      if (this.$store.state.addLiquidity.liqTokenAmount1) {
+        this.addLiqActive = true;
       } else {
         this.addLiqActive = false;
       }
