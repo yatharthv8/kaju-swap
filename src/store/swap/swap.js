@@ -11,7 +11,7 @@ export default {
       },
       watchInputs: [false, false],
       swapWatchInp: true,
-      swapTokenSymbol: ["WETH", "UNI"],
+      swapTokenSymbol: ["ETH", "UNI"],
       amountToken0: null,
       amountToken1: null,
       tokenBalText: [0, 0],

@@ -5,7 +5,7 @@ import getters from "./getters.js";
 export default {
   state() {
     return {
-      liqTokenSymbol: ["WETH", "UNI"],
+      liqTokenSymbol: ["ETH", "UNI"],
       liqTokenAmount0: null, //For inputing in the form
       liqTokenAmount1: null, //For inputing in the form
       liqTokenBal: [0, 0], //Token Balance in Wallet - Display in BalResLiq

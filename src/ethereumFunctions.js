@@ -43,6 +43,15 @@ export function doesTokenExist(ethAddress) {
 //    `address` - An Ethereum address of the token to check for (either a token or WETH)
 export async function getBalanceandSymbol(accountAddress, address) {
   try {
+    if (address === process.env.VUE_APP_WETH) {
+      return {
+        balance: web3.utils.fromWei(
+          await web3.eth.getBalance(accountAddress),
+          "ether"
+        ),
+        symbol: "ETH",
+      };
+    }
     const token = new web3.eth.Contract(ERC20.abi, address);
     return {
       balance: web3.utils.fromWei(
@@ -57,7 +66,13 @@ export async function getBalanceandSymbol(accountAddress, address) {
   }
 }
 
-export async function getTokenBalance(address) {
+export async function getTokenBalance(address, accountAddress) {
+  if (address === process.env.VUE_APP_WETH) {
+    return web3.utils.fromWei(
+      await web3.eth.getBalance(accountAddress),
+      "ether"
+    );
+  }
   const token = new web3.eth.Contract(ERC20.abi, address);
   const accounts = await web3.eth.getAccounts();
   return web3.utils.fromWei(
@@ -98,12 +113,35 @@ export async function swapTokens(
   await token0.methods
     .approve(routerContract.options.address, amountIn)
     .send({ from: accountAddress });
-  try {
-    await routerContract.methods
-      .swapExactTokensForTokens(amountIn, amountOutMin, path, accountAddress)
-      .send({ from: accountAddress });
-  } catch (err) {
-    alert(err);
+  if (token0Address === process.env.VUE_APP_WETH) {
+    try {
+      await routerContract.methods
+        .swapExactETHForTokens(amountOutMin, path, accountAddress)
+        .send({ from: accountAddress, value: amountIn });
+    } catch (err) {
+      alert(err);
+    }
+  } else if (token1Address === process.env.VUE_APP_WETH) {
+    try {
+      await routerContract.methods
+        .swapExactTokensForETH(
+          String(amountIn),
+          String(amountOutMin),
+          path,
+          accountAddress
+        )
+        .send({ from: accountAddress });
+    } catch (err) {
+      alert(err);
+    }
+  } else {
+    try {
+      await routerContract.methods
+        .swapExactTokensForTokens(amountIn, amountOutMin, path, accountAddress)
+        .send({ from: accountAddress });
+    } catch (err) {
+      alert(err);
+    }
   }
 }
 
@@ -248,8 +286,8 @@ export async function getDataForPairs(accountAddress, pairAddress) {
   const token1Address = await pair.methods.token1().call();
   const token0Symbol = await getBalanceandSymbol(accountAddress, token0Address);
   const token1Symbol = await getBalanceandSymbol(accountAddress, token1Address);
-  const token0Bal = await getTokenBalance(token0Address);
-  const token1Bal = await getTokenBalance(token1Address);
+  const token0Bal = await getTokenBalance(token0Address, accountAddress);
+  const token1Bal = await getTokenBalance(token1Address, accountAddress);
   return [
     token0Symbol.symbol,
     token1Symbol.symbol,
@@ -433,7 +471,7 @@ export async function addLiquidity(
     .send({ from: account });
 
   console.log("addLiquidity->", [
-    token0,
+    // token0,
     token0Address,
     token1Address,
     amountIn0,
@@ -445,17 +483,39 @@ export async function addLiquidity(
 
   // Token + Token
   try {
-    await routerContract.methods
-      .addLiquidity(
-        token0Address,
-        token1Address,
-        amountIn0,
-        amountIn1,
-        amount0Min,
-        amount1Min,
-        account
-      )
-      .send({ from: account });
+    if (token0Address === process.env.VUE_APP_WETH) {
+      await routerContract.methods
+        .addLiquidityETH(
+          token1Address,
+          amountIn1,
+          amount1Min,
+          amount0Min,
+          account
+        )
+        .send({ from: account, value: amountIn0 });
+    } else if (token1Address === process.env.VUE_APP_WETH) {
+      await routerContract.methods
+        .addLiquidityETH(
+          token0Address,
+          amountIn0,
+          amount0Min,
+          amount1Min,
+          account
+        )
+        .send({ from: account, value: amountIn1 });
+    } else {
+      await routerContract.methods
+        .addLiquidity(
+          token0Address,
+          token1Address,
+          amountIn0,
+          amountIn1,
+          amount0Min,
+          amount1Min,
+          account
+        )
+        .send({ from: account });
+    }
   } catch (err) {
     alert(err);
   }
@@ -515,15 +575,37 @@ export async function removeLiquidity(
     .send({ from: account });
 
   // Token + Token
-  await routerContract.methods
-    .removeLiquidity(
-      token0Address,
-      token1Address,
-      liquidity,
-      amount0Min,
-      amount1Min,
-      account
-    )
-    .send({ from: account });
+  if (token0Address === process.env.VUE_APP_WETH) {
+    await routerContract.methods
+      .removeLiquidityETH(
+        token1Address,
+        liquidity,
+        amount1Min,
+        amount0Min,
+        account
+      )
+      .send({ from: account });
+  } else if (token1Address === process.env.VUE_APP_WETH) {
+    await routerContract.methods
+      .removeLiquidityETH(
+        token0Address,
+        liquidity,
+        amount0Min,
+        amount1Min,
+        account
+      )
+      .send({ from: account });
+  } else {
+    await routerContract.methods
+      .removeLiquidity(
+        token0Address,
+        token1Address,
+        liquidity,
+        amount0Min,
+        amount1Min,
+        account
+      )
+      .send({ from: account });
+  }
   // }
 }

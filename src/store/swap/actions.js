@@ -55,7 +55,7 @@ export default {
 
   async displayMaxTokenBalance(context, payload) {
     context.getters.getTokenBalText[payload.ind] =
-      await ethFunc.getTokenBalance(payload.add);
+      await ethFunc.getTokenBalance(payload.add, context.rootState.account0);
     context.commit("checkMaxBal");
   },
 
@@ -129,10 +129,12 @@ export default {
         // console.log(context.getters.getTokenReserves);
       });
     context.getters.getTokenBalText[0] = await ethFunc.getTokenBalance(
-      context.getters.getSwapDialog.DialnumAdd[0]
+      context.getters.getSwapDialog.DialnumAdd[0],
+      context.rootState.account0
     );
     context.getters.getTokenBalText[1] = await ethFunc.getTokenBalance(
-      context.getters.getSwapDialog.DialnumAdd[1]
+      context.getters.getSwapDialog.DialnumAdd[1],
+      context.rootState.account0
     );
     context.dispatch("toggleOperationUnderProcess", {
       val: false,

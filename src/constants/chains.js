@@ -25,6 +25,6 @@ export const routerAddress = new Map();
 //   ChainId.ROPSTEN,
 //   process.env.VUE_APP_ROUTER
 // );
-routerAddress.set(ChainId.RINKEBY, process.env.VUE_APP_ROUTER);
-// routerAddress.set(ChainId.GÖRLI, process.env.VUE_APP_ROUTER);
+// routerAddress.set(ChainId.RINKEBY, process.env.VUE_APP_ROUTER);
+routerAddress.set(ChainId.GÖRLI, process.env.VUE_APP_ROUTER);
 // routerAddress.set(ChainId.KOVAN, process.env.VUE_APP_ROUTER);

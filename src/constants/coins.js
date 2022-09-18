@@ -3,24 +3,23 @@ import * as chains from "./chains";
 
 // const ERC20 = require("../../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 
-export const RINKEBYCoins = [
+export const GÖRLICoins = [
   {
-    name: "Wrapped Ether",
-    abbr: "WETH",
-    address: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
-    // balance: getBalance("0xc778417e063141139fce010982780140aa0cd5ab"),
+    name: "Ether",
+    abbr: "ETH",
+    address: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
   },
+  // {
+  //   name: "Wrapped Ether",
+  //   abbr: "WETH",
+  //   address: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+  //   // balance: getBalance("0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"),
+  // },
   {
     name: "Dai",
     abbr: "DAI",
-    address: "0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735",
+    address: "0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844",
     // balance: getBalance("0x95b58a6bff3d14b7db2f5cb5f0ad413dc2940658"),
-  },
-  {
-    name: "Tether USD",
-    abbr: "USDT",
-    address: "0x3B00Ef435fA4FcFF5C209a37d1f3dcff37c705aD",
-    // balance: getBalance("0x3b00ef435fa4fcff5c209a37d1f3dcff37c705ad"),
   },
   {
     name: "Uniswap",
@@ -29,21 +28,15 @@ export const RINKEBYCoins = [
     // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
   },
   {
-    name: "Maker",
-    abbr: "MKR",
-    address: "0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85",
-    // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
-  },
-  {
     name: "Kaju Token",
     abbr: "KAJU",
-    address: "0x4c1740DE7EC715652634E85C54D84f082B297910",
+    address: "0x36200cA470824efab2581aa985B78152f38a4cd4",
     // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
   },
   {
     name: "Test Token",
     abbr: "TEST",
-    address: "0xf9CcAeE0ef99Ab2eAF68A60e7dC3a25582A8Bd6B",
+    address: "0x610146F3545b25B01D1C083aEF0355822f0D3514",
     // balance: getBalance("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"),
   },
 ];
@@ -51,7 +44,7 @@ export const RINKEBYCoins = [
 const COINS = new Map();
 // COINS.set(chains.ChainId.MAINNET, MAINNETCoins);
 // COINS.set(chains.ChainId.ROPSTEN, ROPSTENCoins);
-COINS.set(chains.ChainId.RINKEBY, RINKEBYCoins);
-// COINS.set(chains.ChainId.GÖRLI, GÖRLICoins);
+// COINS.set(chains.ChainId.RINKEBY, RINKEBYCoins);
+COINS.set(chains.ChainId.GÖRLI, GÖRLICoins);
 // COINS.set(chains.ChainId.KOVAN, KOVANCoins);
 export default COINS;

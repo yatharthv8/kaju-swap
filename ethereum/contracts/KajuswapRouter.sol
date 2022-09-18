@@ -5,6 +5,7 @@ import "../interfaces/IKajuswapPair.sol";
 import "../interfaces/IKajuswapFactory.sol";
 import "./KajuswapLibrary.sol";
 import "../interfaces/IERC20.sol";
+import "../interfaces/IWETH.sol";
 
 // import "hardhat/console.sol";
 
@@ -16,13 +17,15 @@ contract KajuswapRouter {
     // error SafeTransferFailed(string error5, address PA, address A);
 
     IKajuswapFactory factory;
+    IWETH WETH;
 
     // address public PA;
     // address public A;
     // address public B;
 
-    constructor(address factoryAddress) {
+    constructor(address factoryAddress, address WETHAddress) {
         factory = IKajuswapFactory(factoryAddress);
+        WETH = IWETH(WETHAddress);
     }
 
     // event GetPairAddress(address pair, address from, address to);
@@ -62,15 +65,42 @@ contract KajuswapRouter {
             amountAMin,
             amountBMin
         );
+        if(tokenB != address(WETH))
+        {
         address pairAddress = KajuswapLibrary.pairFor(
             address(factory),
             tokenA,
             tokenB
         );
-
         _safeTransferFrom(tokenA, msg.sender, pairAddress, amountA);
         _safeTransferFrom(tokenB, msg.sender, pairAddress, amountB);
         liquidity = IKajuswapPair(pairAddress).mint(to);
+        }
+    }
+
+    function addLiquidityETH(
+        address token,
+        uint amountTokenDesired,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to
+    ) public payable returns (uint amountToken, uint amountETH, uint liquidity) {
+        (amountToken, amountETH, liquidity) = addLiquidity(
+            token,
+            address(WETH),
+            amountTokenDesired,
+            msg.value,
+            amountTokenMin,
+            amountETHMin,
+            to
+        );
+        address pairAddress = KajuswapLibrary.pairFor(address(factory), token, address(WETH));
+        _safeTransferFrom(token, msg.sender, pairAddress, amountToken);
+        IWETH(WETH).deposit{value: amountETH}();
+        assert(IWETH(WETH).transfer(pairAddress, amountETH));
+        liquidity = IKajuswapPair(pairAddress).mint(to);
+        // refund dust eth, if any
+        if (msg.value > amountETH) _safeTransferETH(msg.sender, msg.value - amountETH);
     }
 
     function removeLiquidity(
@@ -92,6 +122,26 @@ contract KajuswapRouter {
         // if (amountB < amountBMin) revert InsufficientBAmount("InsufficientBAmount");
         require(amountA >= amountAMin, "KajuswapRouter: INSUFFICIENT_A_AMOUNT");
         require(amountB >= amountBMin, "KajuswapRouter: INSUFFICIENT_B_AMOUNT");
+    }
+
+    function removeLiquidityETH(
+        address token,
+        uint liquidity,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to
+    ) public returns (uint amountToken, uint amountETH) {
+        (amountToken, amountETH) = removeLiquidity(
+            token,
+            address(WETH),
+            liquidity,
+            amountTokenMin,
+            amountETHMin,
+            address(this)
+        );
+        _safeTransfer(token, to, amountToken);
+        IWETH(WETH).withdraw(amountETH);
+        _safeTransferETH(to, amountETH);
     }
 
     function swapExactTokensForTokens(
@@ -146,6 +196,32 @@ contract KajuswapRouter {
         _swap(amounts, path, to);
     }
 
+    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to)
+        public payable
+        returns (uint[] memory amounts)
+    {
+        require(path[0] == address(WETH), 'KajuswapRouter: INVALID_PATH');
+        amounts = KajuswapLibrary.getAmountsOut(address(factory), msg.value, path);
+        require(amounts[amounts.length - 1] >= amountOutMin, 'KajuswapRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+        IWETH(WETH).deposit{value: amounts[0]}();
+        assert(IWETH(WETH).transfer(KajuswapLibrary.pairFor(address(factory), path[0], path[1]), amounts[0]));
+        _swap(amounts, path, to);
+    }
+
+    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to)
+        public
+        returns (uint[] memory amounts)
+    {
+        require(path[path.length - 1] == address(WETH), 'KajuswapRouter: INVALID_PATH');
+        amounts = KajuswapLibrary.getAmountsOut(address(factory), amountIn, path);
+        require(amounts[amounts.length - 1] >= amountOutMin, 'KajuswapRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+        _safeTransferFrom(
+            path[0], msg.sender, KajuswapLibrary.pairFor(address(factory), path[0], path[1]), amounts[0]
+        );
+        _swap(amounts, path, address(this));
+        IWETH(WETH).withdraw(amounts[amounts.length - 1]);
+        _safeTransferETH(to, amounts[amounts.length - 1]);
+    }
     //
     //
     //
@@ -222,6 +298,20 @@ contract KajuswapRouter {
         }
     }
 
+    function _safeTransfer(
+        address token,
+        address to,
+        uint256 value
+    ) private {
+        // bytes4(keccak256(bytes('transfer(address,uint256)')));
+        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(bytes4(keccak256(bytes('transfer(address,uint256)'))), to, value));
+        require(
+            success && (data.length == 0 || abi.decode(data, (bool))),
+            'Kajuswap::safeTransfer: transfer failed'
+        );
+    }
+
+
     function _safeTransferFrom(
         address token,
         address from,
@@ -248,6 +338,10 @@ contract KajuswapRouter {
         );
     }
 
+    function _safeTransferETH(address to, uint256 value) private {
+        (bool success, ) = to.call{value: value}(new bytes(0));
+        require(success, 'Kajuswap::safeTransferETH: ETH transfer failed');
+    }
     //
     //
     //        LIBRARY FUNCTIONS

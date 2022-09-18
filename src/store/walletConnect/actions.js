@@ -25,9 +25,9 @@ export default {
             .then((networkHex) => {
               context.rootState.network =
                 chains.Hex[Number(networkHex[networkHex.length - 1])];
-              if (networkHex != "0x4") {
+              if (networkHex != "0x5") {
                 // console.log(networkHex);
-                alert("Kindly change to Rinkeby Network to use the app!");
+                alert("Kindly change to GÖRLI Network to use the app!");
               }
             });
           context.rootState.account0 = accounts[0];

@@ -33,9 +33,9 @@ export default {
         await ethereum.request({ method: "eth_chainId" }).then((networkHex) => {
           this.$store.state.network =
             chains.Hex[Number(networkHex[networkHex.length - 1])];
-          if (networkHex != "0x4") {
+          if (networkHex != "0x5") {
             // console.log(networkHex);
-            alert("Kindly change to Rinkeby Network to use the app!");
+            alert("Kindly change to GÖRLI Network to use the app!");
           }
         });
         this.$store.state.account0 = accounts[0];

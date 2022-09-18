@@ -40,7 +40,7 @@ export default {
   props: ["swapDialNum"],
   data() {
     return {
-      coins: COINS.RINKEBYCoins,
+      coins: COINS.GÖRLICoins,
       newAddress: null,
     };
   },

@@ -49,7 +49,7 @@ export default {
   computed: {
     urlOnEthScan() {
       return (
-        "https://rinkeby.etherscan.io/address/" + this.$store.state.account0
+        "https://goerli.etherscan.io/address/" + this.$store.state.account0
       );
     },
   },
