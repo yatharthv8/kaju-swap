@@ -42,6 +42,13 @@ export default {
     context.getters.getSymbol[0] = resAndSymb[0];
     context.getters.getSymbol[1] = resAndSymb[1];
     context.state.pairLiquidity = liqReserves[2];
+    if (context.getters.getPairTokenAddress[0] === process.env.VUE_APP_WETH) {
+      context.rootState.balance = context.getters.getRemLiqTokenBal[0];
+    } else if (
+      context.getters.getPairTokenAddress[1] === process.env.VUE_APP_WETH
+    ) {
+      context.rootState.balance = context.getters.getRemLiqTokenBal[1];
+    }
     context.dispatch("toggleOperationUnderProcess", {
       val: false,
       location: "DataLiqRemPage",

@@ -31,7 +31,7 @@
         <div class="nav-item">{{ $store.state.network }}</div>
       </div>
       <div v-if="displayWalletStatus" class="nav-item-container">
-        <div class="wallet-info nav-item">{{ $store.state.balance }} rETH</div>
+        <div class="wallet-info nav-item">{{ $store.state.balance }} ETH</div>
         <button @click="showAccountDetails()">
           <div class="wallet-info nav-item">{{ $store.state.account0 }}</div>
         </button>

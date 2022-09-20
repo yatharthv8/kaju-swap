@@ -54,7 +54,7 @@
           'swap-button': true,
         }"
       >
-        Insufficient Balance
+        Insufficient {{ swapTokenSymbolVal[0] }} Balance
       </button>
     </div>
     <div v-else-if="!swapActive">

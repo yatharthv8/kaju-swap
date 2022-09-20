@@ -28,6 +28,10 @@ contract KajuswapRouter {
         WETH = IWETH(WETHAddress);
     }
 
+    receive() external payable {
+        require(msg.sender == address(WETH)); // only accept ETH via fallback from the WETH contract
+    }
+    
     // event GetPairAddress(address pair, address from, address to);
 
     // function giveAddressses() public view returns (
@@ -143,6 +147,43 @@ contract KajuswapRouter {
         IWETH(WETH).withdraw(amountETH);
         _safeTransferETH(to, amountETH);
     }
+    
+    // function safeTransEth(address to, uint256 amount) public {
+    //     IWETH(WETH).withdraw(amount);
+    //     _safeTransferETH(to, amount);
+    // }
+    
+    // function sendViaTransfer(address payable _to) public payable {
+    //     // This function is no longer recommended for sending Ether.
+    //     _to.transfer(msg.value);
+    // }
+
+    // function sendViaSend(address payable _to) public payable {
+    //     // Send returns a boolean value indicating success or failure.
+    //     // This function is not recommended for sending Ether.
+    //     bool sent = _to.send(msg.value);
+    //     require(sent, "Failed to send Ether");
+    // }
+
+    // function sendViaCall(address payable _to) public payable {
+    //     // Call returns a boolean value indicating success or failure.
+    //     // This is the current recommended method to use.
+    //     (bool sent, ) = _to.call{value: msg.value}("");
+    //     require(sent, "Failed to send Ether");
+    // }
+    
+    // function EthWidr(uint256 amount) public {
+    //     IWETH(WETH).withdraw(amount);
+    // }
+    
+    // // function TransEth(address to, uint256 amount) public {
+    // //     IWETH(WETH).transfer(to, amount);
+    // // }
+
+    // function TransEth1(address to, uint256 amount) public {
+    //     // IWETH(WETH).withdraw(amount);
+    //     payable(address(to)).transfer(amount);
+    // }
 
     function swapExactTokensForTokens(
         uint256 amountIn,
@@ -304,10 +345,10 @@ contract KajuswapRouter {
         uint256 value
     ) private {
         // bytes4(keccak256(bytes('transfer(address,uint256)')));
-        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(bytes4(keccak256(bytes('transfer(address,uint256)'))), to, value));
+        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(bytes4(keccak256(bytes("transfer(address,uint256)"))), to, value));
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
-            'Kajuswap::safeTransfer: transfer failed'
+            "Kajuswap::safeTransfer: TRANSFER_FAILED"
         );
     }
 
@@ -340,7 +381,7 @@ contract KajuswapRouter {
 
     function _safeTransferETH(address to, uint256 value) private {
         (bool success, ) = to.call{value: value}(new bytes(0));
-        require(success, 'Kajuswap::safeTransferETH: ETH transfer failed');
+        require(success, "Kajuswap::safeTransferETH: ETH TRANSFER_FAILED");
     }
     //
     //

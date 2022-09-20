@@ -86,7 +86,7 @@ export default {
           location: "fillTokAmt",
         });
       }, 2000);
-      console.log("inside 1st");
+      // console.log("inside 1st");
     } else if (
       payload === 0 &&
       ((!context.state.watchInputs[0] && !context.state.watchInputs[1]) ||
@@ -107,7 +107,7 @@ export default {
           location: "fillTokAmt",
         });
       }, 2000);
-      console.log("inside 2nd");
+      // console.log("inside 2nd");
     }
   },
 
@@ -136,6 +136,15 @@ export default {
       context.getters.getSwapDialog.DialnumAdd[1],
       context.rootState.account0
     );
+    if (
+      context.getters.getSwapDialog.DialnumAdd[0] === process.env.VUE_APP_WETH
+    ) {
+      context.rootState.balance = context.getters.getTokenBalText[0];
+    } else if (
+      context.getters.getSwapDialog.DialnumAdd[1] === process.env.VUE_APP_WETH
+    ) {
+      context.rootState.balance = context.getters.getTokenBalText[1];
+    }
     context.dispatch("toggleOperationUnderProcess", {
       val: false,
       location: "DispResSwap",

@@ -57,7 +57,7 @@
           'swap-button': true,
         }"
       >
-        Insufficient Balance
+        Insufficient {{ liqTokenSymbolVal[0] }} Balance
       </button>
     </div>
     <div v-else-if="!addLiqActive">

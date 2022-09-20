@@ -85,6 +85,15 @@ export default {
         context.getters.getLiqDialog.DialnumAdd[1],
         context.rootState.account0
       );
+      if (
+        context.getters.getLiqDialog.DialnumAdd[0] === process.env.VUE_APP_WETH
+      ) {
+        context.rootState.balance = context.getters.getLiqTokenBal[0];
+      } else if (
+        context.getters.getLiqDialog.DialnumAdd[1] === process.env.VUE_APP_WETH
+      ) {
+        context.rootState.balance = context.getters.getLiqTokenBal[1];
+      }
       context.dispatch("toggleOperationUnderProcess", {
         val: false,
         location: "DispResPool",

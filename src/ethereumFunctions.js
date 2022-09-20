@@ -45,19 +45,17 @@ export async function getBalanceandSymbol(accountAddress, address) {
   try {
     if (address === process.env.VUE_APP_WETH) {
       return {
-        balance: web3.utils.fromWei(
-          await web3.eth.getBalance(accountAddress),
-          "ether"
-        ),
+        balance: parseFloat(
+          web3.utils.fromWei(await web3.eth.getBalance(accountAddress), "ether")
+        ).toFixed(4),
         symbol: "ETH",
       };
     }
     const token = new web3.eth.Contract(ERC20.abi, address);
     return {
-      balance: web3.utils.fromWei(
-        await web3.eth.getBalance(accountAddress),
-        "ether"
-      ),
+      balance: parseFloat(
+        web3.utils.fromWei(await web3.eth.getBalance(accountAddress), "ether")
+      ).toFixed(4),
       symbol: await token.methods.symbol().call(),
     };
   } catch (err) {
@@ -68,17 +66,18 @@ export async function getBalanceandSymbol(accountAddress, address) {
 
 export async function getTokenBalance(address, accountAddress) {
   if (address === process.env.VUE_APP_WETH) {
-    return web3.utils.fromWei(
-      await web3.eth.getBalance(accountAddress),
-      "ether"
-    );
+    return parseFloat(
+      web3.utils.fromWei(await web3.eth.getBalance(accountAddress), "ether")
+    ).toFixed(4);
   }
   const token = new web3.eth.Contract(ERC20.abi, address);
   const accounts = await web3.eth.getAccounts();
-  return web3.utils.fromWei(
-    await token.methods.balanceOf(accounts[0]).call(),
-    "ether"
-  );
+  return parseFloat(
+    web3.utils.fromWei(
+      await token.methods.balanceOf(accounts[0]).call(),
+      "ether"
+    )
+  ).toFixed(4);
 }
 
 //Swap function
