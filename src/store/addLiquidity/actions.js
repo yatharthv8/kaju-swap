@@ -1,15 +1,25 @@
 import * as ethFunc from "../../ethereumFunctions.js";
+import web3 from "../../../ethereum/web3.js";
+
+const ERC20 = require("../../../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
-export default {
-  checkMaxLiqBal0(context) {
-    context.commit("checkMaxLiqBal", 0);
-  },
+const toWei = (number) => {
+  let amount = String(number * 1000000000000000000);
+  let decimalPoint = amount * 10;
+  decimalPoint = amount % 10;
+  if (decimalPoint != 0) {
+    const pos = amount.split(".");
+    amount = pos[0];
+  }
+  return amount;
+};
 
-  checkMaxLiqBal1(context) {
-    context.commit("checkMaxLiqBal", 1);
+export default {
+  checkMaxLiqBal(context) {
+    context.commit("checkMaxLiqBal");
   },
 
   closeLiqDialog(context) {
@@ -27,11 +37,48 @@ export default {
     );
   },
 
+  async approveLiq(context) {
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "ApprovTokL",
+    });
+    try {
+      const token0 = new web3.eth.Contract(
+        ERC20.abi,
+        context.getters.getLiqDialog.DialnumAdd[0]
+      );
+      const token1 = new web3.eth.Contract(
+        ERC20.abi,
+        context.getters.getLiqDialog.DialnumAdd[1]
+      );
+      await token0.methods
+        .approve(router.options.address, toWei(context.state.liqTokenAmount0))
+        .send({ from: context.rootState.account0 });
+      await token1.methods
+        .approve(router.options.address, toWei(context.state.liqTokenAmount1))
+        .send({ from: context.rootState.account0 })
+        .then(() => {
+          context.rootState.tokenApprovalInProcess = false;
+        });
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "ApprovTokL",
+      });
+    } catch (err) {
+      console.log(err);
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "ApprovTokL",
+      });
+    }
+  },
+
   async addLiquidity(context) {
     context.dispatch("toggleOperationUnderProcess", {
       val: true,
       location: "addLiq",
     });
+    context.rootState.tokenApprovalInProcess = false;
     context.rootState.canLeave = false;
     await ethFunc
       .addLiquidity(
@@ -50,6 +97,7 @@ export default {
           location: "addLiq",
         });
         context.rootState.canLeave = true;
+        context.rootState.tokenApprovalInProcess = true;
       })
       .catch((err) => {
         context.dispatch("toggleOperationUnderProcess", {
@@ -58,6 +106,7 @@ export default {
         });
         context.rootState.canLeave = true;
         console.log(err);
+        context.rootState.tokenApprovalInProcess = true;
       });
   },
 

@@ -1,4 +1,7 @@
 import * as ethFunc from "../../ethereumFunctions.js";
+import web3 from "../../../ethereum/web3.js";
+
+const ERC20 = require("../../../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
@@ -20,11 +23,44 @@ export default {
     context.commit("swapDialog", true);
   },
 
+  async approveSwap(context) {
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "ApprovTokS",
+    });
+    try {
+      const token0 = new web3.eth.Contract(
+        ERC20.abi,
+        context.getters.getSwapDialog.DialnumAdd[0]
+      );
+      await token0.methods
+        .approve(
+          router.options.address,
+          web3.utils.toWei(String(context.state.amountToken0), "ether")
+        )
+        .send({ from: context.rootState.account0 })
+        .then(() => {
+          context.rootState.tokenApprovalInProcess = false;
+        });
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "ApprovTokS",
+      });
+    } catch (err) {
+      console.log(err);
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "ApprovTokS",
+      });
+    }
+  },
+
   async swapToken(context) {
     context.dispatch("toggleOperationUnderProcess", {
       val: true,
       location: "swapTok",
     });
+    context.rootState.tokenApprovalInProcess = false;
     context.rootState.canLeave = false;
     await ethFunc
       .swapTokens(
@@ -42,6 +78,7 @@ export default {
           location: "swapTok",
         });
         context.rootState.canLeave = true;
+        context.rootState.tokenApprovalInProcess = true;
       })
       .catch((err) => {
         context.dispatch("toggleOperationUnderProcess", {
@@ -50,6 +87,7 @@ export default {
         });
         context.rootState.canLeave = true;
         console.log(err);
+        context.rootState.tokenApprovalInProcess = true;
       });
   },
 

@@ -57,17 +57,35 @@
           'swap-button': true,
         }"
       >
-        Insufficient {{ liqTokenSymbolVal[0] }} Balance
+        Insufficient Balance
       </button>
     </div>
     <div v-else-if="!addLiqActive">
       <button class="swap-button">Enter Amount</button>
     </div>
     <div v-else>
+      <div v-if="$store.state.tokenApprovalInProcess">
+        <button
+          :disabled="$store.state.operationUnderProcess"
+          :class="{
+            'button-disabled': $store.state.operationUnderProcess,
+            'swap-button': true,
+          }"
+          @click="approveLiq()"
+        >
+          Approve Kajuswap to use {{ liqTokenSymbolVal[0] }} &
+          {{ liqTokenSymbolVal[1] }}
+        </button>
+      </div>
       <button
-        :disabled="$store.state.operationUnderProcess"
+        :disabled="
+          $store.state.operationUnderProcess ||
+          $store.state.tokenApprovalInProcess
+        "
         :class="{
-          'button-disabled': $store.state.operationUnderProcess,
+          'button-disabled':
+            $store.state.operationUnderProcess ||
+            $store.state.tokenApprovalInProcess,
           'swap-button': true,
         }"
         @click="addLiquidity()"
@@ -101,9 +119,9 @@ export default {
   },
   methods: {
     ...mapActions({
+      approveLiq: "approveLiq",
       addLiquidity: "addLiquidity",
-      checkForBal0: "checkMaxLiqBal0",
-      checkForBal1: "checkMaxLiqBal1",
+      checkForBal: "checkMaxLiqBal",
     }),
     //OR ...mapActions(["addLiquidity"]),
     openDialog(num) {
@@ -128,7 +146,7 @@ export default {
         if (newVal > 0) {
           this.$store.dispatch("fillLiqTokenAmt", 1);
         }
-        this.checkForBal0();
+        this.checkForBal();
       } else {
         this.addLiqActive = false;
       }
@@ -143,7 +161,7 @@ export default {
         if (newVal > 0) {
           this.$store.dispatch("fillLiqTokenAmt", 0);
         }
-        this.checkForBal1();
+        this.checkForBal();
       } else {
         this.addLiqActive = false;
       }

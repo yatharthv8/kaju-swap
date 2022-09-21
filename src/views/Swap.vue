@@ -54,17 +54,34 @@
           'swap-button': true,
         }"
       >
-        Insufficient {{ swapTokenSymbolVal[0] }} Balance
+        Insufficient Balance
       </button>
     </div>
     <div v-else-if="!swapActive">
       <button class="swap-button">Enter Amount</button>
     </div>
     <div v-else>
+      <div v-if="$store.state.tokenApprovalInProcess">
+        <button
+          :disabled="$store.state.operationUnderProcess"
+          :class="{
+            'button-disabled': $store.state.operationUnderProcess,
+            'swap-button': true,
+          }"
+          @click="approveSwap()"
+        >
+          Approve Kajuswap to use {{ swapTokenSymbolVal[0] }}
+        </button>
+      </div>
       <button
-        :disabled="$store.state.operationUnderProcess"
+        :disabled="
+          $store.state.operationUnderProcess ||
+          $store.state.tokenApprovalInProcess
+        "
         :class="{
-          'button-disabled': $store.state.operationUnderProcess,
+          'button-disabled':
+            $store.state.operationUnderProcess ||
+            $store.state.tokenApprovalInProcess,
           'swap-button': true,
         }"
         @click="startSwap()"
@@ -100,6 +117,7 @@ export default {
   },
   methods: {
     ...mapActions({
+      approveSwap: "approveSwap",
       startSwap: "swapToken",
       checkForBal0: "checkMaxBalFor0",
       checkForBal1: "checkMaxBalFor1",
@@ -173,7 +191,7 @@ export default {
         if (newVal > 0) {
           this.$store.dispatch("fillTokenAmount", 0);
         }
-        this.checkForBal1();
+        this.checkForBal0();
         if (this.$store.state.swap.amountToken1) {
           this.swapActive = true;
         } else {

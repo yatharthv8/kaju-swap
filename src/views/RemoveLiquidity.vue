@@ -41,10 +41,27 @@
       <button class="swap-button">Enter Amount</button>
     </div>
     <div v-else>
+      <div v-if="$store.state.tokenApprovalInProcess">
+        <button
+          :disabled="$store.state.operationUnderProcess"
+          :class="{
+            'button-disabled': $store.state.operationUnderProcess,
+            'swap-button': true,
+          }"
+          @click="approveRemLiq()"
+        >
+          Approve Kajuswap to use {{ symbolVal[0] }}-{{ symbolVal[1] }} LP
+        </button>
+      </div>
       <button
-        :disabled="$store.state.operationUnderProcess"
+        :disabled="
+          $store.state.operationUnderProcess ||
+          $store.state.tokenApprovalInProcess
+        "
         :class="{
-          'button-disabled': $store.state.operationUnderProcess,
+          'button-disabled':
+            $store.state.operationUnderProcess ||
+            $store.state.tokenApprovalInProcess,
           'swap-button': true,
         }"
         @click="remLiquidity()"
@@ -69,6 +86,7 @@ export default {
   },
   methods: {
     ...mapActions({
+      approveRemLiq: "approveRemLiq",
       remLiquidity: "removeLiquidity",
       checkForBalDispPV: "checkMaxRemLiqBalDispPV",
     }),

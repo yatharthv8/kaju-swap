@@ -1,4 +1,7 @@
 import * as ethFunc from "../../ethereumFunctions.js";
+import web3 from "../../../ethereum/web3.js";
+
+const PAIR = require("../../../ethereum/contracts/artifacts/KajuswapPair.json");
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
@@ -16,6 +19,36 @@ export default {
       .then((data) => {
         context.state.predictedValues = data;
       });
+  },
+
+  async approveRemLiq(context) {
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "ApprovTokRL",
+    });
+    try {
+      const pair = new web3.eth.Contract(PAIR.abi, context.state.pairAddress);
+
+      await pair.methods
+        .approve(
+          router.options.address,
+          web3.utils.toWei(String(context.state.pairLiquidity), "ether")
+        )
+        .send({ from: context.rootState.account0 })
+        .then(() => {
+          context.rootState.tokenApprovalInProcess = false;
+        });
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "ApprovTokRL",
+      });
+    } catch (err) {
+      console.log(err);
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "ApprovTokRL",
+      });
+    }
   },
 
   async getDataForLiqRemPage(context, payload) {
@@ -60,6 +93,7 @@ export default {
       val: true,
       location: "RemLiq",
     });
+    context.rootState.tokenApprovalInProcess = false;
     context.rootState.canLeave = false;
     await ethFunc
       .removeLiquidity(
@@ -83,6 +117,7 @@ export default {
           location: "RemLiq",
         });
         context.rootState.canLeave = true;
+        context.rootState.tokenApprovalInProcess = true;
       })
       .catch((err) => {
         context.dispatch("toggleOperationUnderProcess", {
@@ -91,6 +126,7 @@ export default {
         });
         context.rootState.canLeave = true;
         console.log(err);
+        context.rootState.tokenApprovalInProcess = true;
       });
   },
 };

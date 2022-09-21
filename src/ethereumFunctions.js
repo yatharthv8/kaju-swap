@@ -100,7 +100,7 @@ export async function swapTokens(
     .getAmountsOut(amountIn, path)
     .call();
   const amountOutMin = slippageCalc(slippageVal, amountOut[1]);
-  const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
+  // const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
   console.log(
     "swapTokens->",
     amountIn,
@@ -109,9 +109,9 @@ export async function swapTokens(
     path,
     accountAddress
   );
-  await token0.methods
-    .approve(routerContract.options.address, amountIn)
-    .send({ from: accountAddress });
+  // await token0.methods
+  //   .approve(routerContract.options.address, amountIn)
+  //   .send({ from: accountAddress });
   if (token0Address === process.env.VUE_APP_WETH) {
     try {
       await routerContract.methods
@@ -440,8 +440,8 @@ export async function addLiquidity(
   routerContract,
   account
 ) {
-  const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
-  const token1 = new web3.eth.Contract(ERC20.abi, token1Address);
+  // const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
+  // const token1 = new web3.eth.Contract(ERC20.abi, token1Address);
 
   let amountIn0;
   let amountIn1;
@@ -462,12 +462,12 @@ export async function addLiquidity(
   const amount0Min = slippageCalc(slippageVal, amountIn0);
   const amount1Min = slippageCalc(slippageVal, amountIn1);
 
-  await token0.methods
-    .approve(routerContract.options.address, amountIn0)
-    .send({ from: account });
-  await token1.methods
-    .approve(routerContract.options.address, amountIn1)
-    .send({ from: account });
+  // await token0.methods
+  //   .approve(routerContract.options.address, amountIn0)
+  //   .send({ from: account });
+  // await token1.methods
+  //   .approve(routerContract.options.address, amountIn1)
+  //   .send({ from: account });
 
   console.log("addLiquidity->", [
     // token0,
@@ -564,14 +564,14 @@ export async function removeLiquidity(
     amount1Min,
     account,
   ]);
-  const pairAddress = await factory.methods
-    .pairs(token0Address, token1Address)
-    .call();
-  const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
+  // const pairAddress = await factory.methods
+  //   .pairs(token0Address, token1Address)
+  //   .call();
+  // const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
 
-  await pair.methods
-    .approve(routerContract.options.address, liquidity)
-    .send({ from: account });
+  // await pair.methods
+  //   .approve(routerContract.options.address, liquidity)
+  //   .send({ from: account });
 
   // Token + Token
   if (token0Address === process.env.VUE_APP_WETH) {

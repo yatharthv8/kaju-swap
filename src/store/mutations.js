@@ -2,6 +2,7 @@ export default {
   toggleOperationUnderProcess(state, payload) {
     // console.log("ok1", payload.val, payload.location);
     if (payload.val == true) {
+      state.tokenApprovalInProcess = true;
       state.OUP_TrueVal = payload.location;
       state.operationUnderProcess = payload.val;
     } else {
@@ -10,6 +11,7 @@ export default {
       }
     }
   },
+
   restoreInitialState(state) {
     state.network = "Network";
     state.account0 = null;
