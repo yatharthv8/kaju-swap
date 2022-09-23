@@ -32,7 +32,7 @@ export default {
       await pair.methods
         .approve(
           router.options.address,
-          web3.utils.toWei(String(context.state.pairLiquidity), "ether")
+          web3.utils.toWei("10000000000", "ether")
         )
         .send({ from: context.rootState.account0 })
         .then(() => {
@@ -61,7 +61,6 @@ export default {
       context.rootState.account0,
       payload
     );
-
     context.getters.getPairTokenAddress[0] = resAndSymb[2];
     context.getters.getPairTokenAddress[1] = resAndSymb[3];
     context.getters.getRemLiqTokenBal[0] = resAndSymb[4];
@@ -75,6 +74,18 @@ export default {
     context.getters.getSymbol[0] = resAndSymb[0];
     context.getters.getSymbol[1] = resAndSymb[1];
     context.state.pairLiquidity = liqReserves[2];
+    const pair = new web3.eth.Contract(PAIR.abi, context.state.pairAddress);
+    const approvedAmt = web3.utils.fromWei(
+      await pair.methods
+        .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+        .call(),
+      "ether"
+    );
+    if (approvedAmt < context.state.pairLiquidity) {
+      context.rootState.tokenApprovalInProcess = true;
+    } else {
+      context.rootState.tokenApprovalInProcess = false;
+    }
     if (context.getters.getPairTokenAddress[0] === process.env.VUE_APP_WETH) {
       context.rootState.balance = context.getters.getRemLiqTokenBal[0];
     } else if (
@@ -93,7 +104,6 @@ export default {
       val: true,
       location: "RemLiq",
     });
-    context.rootState.tokenApprovalInProcess = false;
     context.rootState.canLeave = false;
     await ethFunc
       .removeLiquidity(
@@ -117,7 +127,6 @@ export default {
           location: "RemLiq",
         });
         context.rootState.canLeave = true;
-        context.rootState.tokenApprovalInProcess = true;
       })
       .catch((err) => {
         context.dispatch("toggleOperationUnderProcess", {
@@ -126,7 +135,6 @@ export default {
         });
         context.rootState.canLeave = true;
         console.log(err);
-        context.rootState.tokenApprovalInProcess = true;
       });
   },
 };

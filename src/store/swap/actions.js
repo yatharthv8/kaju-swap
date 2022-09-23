@@ -36,7 +36,7 @@ export default {
       await token0.methods
         .approve(
           router.options.address,
-          web3.utils.toWei(String(context.state.amountToken0), "ether")
+          web3.utils.toWei("10000000000", "ether")
         )
         .send({ from: context.rootState.account0 })
         .then(() => {
@@ -60,7 +60,6 @@ export default {
       val: true,
       location: "swapTok",
     });
-    context.rootState.tokenApprovalInProcess = false;
     context.rootState.canLeave = false;
     await ethFunc
       .swapTokens(
@@ -78,7 +77,6 @@ export default {
           location: "swapTok",
         });
         context.rootState.canLeave = true;
-        context.rootState.tokenApprovalInProcess = true;
       })
       .catch((err) => {
         context.dispatch("toggleOperationUnderProcess", {
@@ -87,7 +85,6 @@ export default {
         });
         context.rootState.canLeave = true;
         console.log(err);
-        context.rootState.tokenApprovalInProcess = true;
       });
   },
 
@@ -104,6 +101,18 @@ export default {
     });
     let address0 = context.getters.getSwapDialog.DialnumAdd[0];
     let address1 = context.getters.getSwapDialog.DialnumAdd[1];
+    const token0 = new web3.eth.Contract(ERC20.abi, address0);
+    const approvedAmt = web3.utils.fromWei(
+      await token0.methods
+        .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+        .call(),
+      "ether"
+    );
+    if (approvedAmt < context.state.amountToken0) {
+      context.rootState.tokenApprovalInProcess = true;
+    } else {
+      context.rootState.tokenApprovalInProcess = false;
+    }
     if (
       payload === 1 &&
       ((!context.state.watchInputs[0] && !context.state.watchInputs[1]) ||
