@@ -21,7 +21,9 @@
       }}
       <br />
       <small>{{ coin.name }}</small>
-      <!-- <span style="float: right"> {{ coin.balance }} </span> -->
+      <span style="float: right">
+        <small>{{ coin.balance }}</small>
+      </span>
     </ul>
     <!-- </select> -->
     <button style="float: right" @click="closeDialog()">Close</button>
@@ -33,6 +35,8 @@ import { mapActions, mapGetters } from "vuex";
 import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
+
+// const ERC20 = require("../../../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 
 export default {
   props: ["swapDialNum"],
@@ -56,6 +60,7 @@ export default {
           });
           this.$store.dispatch("displayReservesSwap");
         });
+        // console.log(this.coins);
         this.$store.dispatch("closeSwapDialog");
       } catch (err) {
         console.log("Invalid token address!");

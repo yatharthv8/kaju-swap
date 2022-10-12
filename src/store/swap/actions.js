@@ -1,10 +1,12 @@
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
+import * as COINS from "../../constants/coins.js";
 
 const ERC20 = require("../../../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
+let coins = COINS.GÖRLICoins;
 
 export default {
   checkMaxBalFor0(context) {
@@ -85,6 +87,7 @@ export default {
         });
         context.rootState.canLeave = true;
         console.log(err);
+        alert("Something Happened! Transaction was not completed");
       });
   },
 
@@ -191,6 +194,13 @@ export default {
       context.getters.getSwapDialog.DialnumAdd[1] === process.env.VUE_APP_WETH
     ) {
       context.rootState.balance = context.getters.getTokenBalText[1];
+    }
+    for (let i = 0; i < coins.length; ++i) {
+      coins[i].balance = await ethFunc.getTokenBalance(
+        coins[i].address,
+        context.rootState.account0
+      );
+      // console.log(coins[i].balance);
     }
     context.dispatch("toggleOperationUnderProcess", {
       val: false,

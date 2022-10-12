@@ -22,7 +22,9 @@
         }}
         <br />
         <small>{{ coin.name }}</small>
-        <!-- <span style="float: right"> {{ coin.balance }} </span> -->
+        <span style="float: right">
+          <small>{{ coin.balance }}</small>
+        </span>
       </ul>
       <!-- </select> -->
       <button style="float: right" @click="closeDialog()">Close</button>

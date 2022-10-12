@@ -21,30 +21,31 @@ export default {
       this.$router.push("/");
       alert("Connect Wallet to use KajuSwap!");
     });
+    ethereum.on("chainChanged", (_chainId) => this.$router.go());
     ethereum.on("accountsChanged", (accounts) => {
       console.log("new Account ->", accounts);
-      this.onConnect();
-      if (this.$route.path === "/swap" || this.$route.path === "/pool") {
-        if (this.$route.path === "/swap") {
-          //lines 28-39 are just being used because the app is deployed on github pages.
-          this.$router.push("/swap");
-        } else {
-          this.$router
-            .push("/")
-            .then(() => {
-              this.$router.push("/pool");
-            })
-            .catch((err) => {
-              console.log("error->>>", err);
-            });
-        }
-        // this.$router.go(); //If some other hosting service is used this line can be used instead of lines 28-39.
-      } else {
-        this.$router.push("/");
-        if (this.$route.path !== "/") {
-          alert("You are getting redirected to the home page!");
-        }
-      }
+      // this.onConnect();
+      // if (this.$route.path === "/swap" || this.$route.path === "/pool") {
+      // if (this.$route.path === "/swap") {
+      //   //lines 28-39 are just being used because the app doesn't use the WebHash mode.
+      //   this.$router.push("/swap");
+      // } else {
+      //   this.$router
+      //     .push("/")
+      //     .then(() => {
+      //       this.$router.push("/pool");
+      //     })
+      //     .catch((err) => {
+      //       console.log("error->>>", err);
+      //     });
+      // }
+      this.$router.go(); //If Hash mode is used this can be used.
+      // } else {
+      //   this.$router.push("/");
+      //   if (this.$route.path !== "/") {
+      //     alert("You are getting redirected to the home page!");
+      //   }
+      // }
     });
   },
   methods: {

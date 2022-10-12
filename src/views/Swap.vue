@@ -24,7 +24,7 @@
         </button>
       </div>
       <small v-if="displayWalletStatus">
-        <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
+        <span class="max-amt" @click="fillInputWithMaxAmt(0)">MAX</span> :
         {{ tokenBalTextVal[0] }}</small
       >
       <button @click="swapInpBoxTokens()"><downArrow></downArrow></button>
@@ -42,6 +42,10 @@
           {{ swapTokenSymbolVal[1] }}
         </button>
       </div>
+      <small v-if="displayWalletStatus">
+        <span class="max-amt" @click="fillInputWithMaxAmt(1)">MAX</span> :
+        {{ tokenBalTextVal[1] }}</small
+      >
     </div>
     <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
@@ -137,12 +141,16 @@ export default {
         console.log("Invalid token address!");
       }
     },
-    openDialog(num) {
+    async openDialog(num) {
       this.symbolButtonIndex = num;
       this.$store.dispatch("openSwapDialog");
     },
-    fillInputWithMaxAmt() {
-      this.$store.state.swap.amountToken0 = this.tokenBalTextVal[0];
+    fillInputWithMaxAmt(num) {
+      if (num === 0) {
+        this.$store.state.swap.amountToken0 = this.tokenBalTextVal[num];
+      } else {
+        this.$store.state.swap.amountToken1 = this.tokenBalTextVal[num];
+      }
     },
     swapInpBoxTokens() {
       if (this.$store.state.swap.swapWatchInp) {

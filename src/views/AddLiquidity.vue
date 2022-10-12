@@ -28,7 +28,7 @@
         </button>
       </div>
       <small v-if="displayWalletStatus">
-        <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
+        <span class="max-amt" @click="fillInputWithMaxAmt(0)">MAX</span> :
         {{ liqTokenBalVal[0] }}</small
       >
       <div class="inp-swap">
@@ -45,6 +45,10 @@
           {{ liqTokenSymbolVal[1] }}
         </button>
       </div>
+      <small v-if="displayWalletStatus">
+        <span class="max-amt" @click="fillInputWithMaxAmt(1)">MAX</span> :
+        {{ liqTokenBalVal[1] }}</small
+      >
     </div>
     <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
@@ -128,8 +132,14 @@ export default {
       this.symbolButtonIndex = num;
       this.$store.dispatch("openLiqDialog");
     },
-    fillInputWithMaxAmt() {
-      this.$store.state.addLiquidity.liqTokenAmount0 = this.liqTokenBalVal[0];
+    fillInputWithMaxAmt(num) {
+      if (num === 0) {
+        this.$store.state.addLiquidity.liqTokenAmount0 =
+          this.liqTokenBalVal[num];
+      } else {
+        this.$store.state.addLiquidity.liqTokenAmount1 =
+          this.liqTokenBalVal[num];
+      }
     },
   },
   computed: {
