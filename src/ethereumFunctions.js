@@ -112,16 +112,12 @@ export async function swapTokens(
   // await token0.methods
   //   .approve(routerContract.options.address, amountIn)
   //   .send({ from: accountAddress });
-  if (token0Address === process.env.VUE_APP_WETH) {
-    try {
+  try {
+    if (token0Address === process.env.VUE_APP_WETH) {
       await routerContract.methods
         .swapExactETHForTokens(amountOutMin, path, accountAddress)
         .send({ from: accountAddress, value: amountIn });
-    } catch (err) {
-      alert(err);
-    }
-  } else if (token1Address === process.env.VUE_APP_WETH) {
-    try {
+    } else if (token1Address === process.env.VUE_APP_WETH) {
       await routerContract.methods
         .swapExactTokensForETH(
           String(amountIn),
@@ -130,17 +126,13 @@ export async function swapTokens(
           accountAddress
         )
         .send({ from: accountAddress });
-    } catch (err) {
-      alert(err);
-    }
-  } else {
-    try {
+    } else {
       await routerContract.methods
         .swapExactTokensForTokens(amountIn, amountOutMin, path, accountAddress)
         .send({ from: accountAddress });
-    } catch (err) {
-      alert(err);
     }
+  } catch (err) {
+    alert("Something Happened! Transaction was not completed");
   }
 }
 

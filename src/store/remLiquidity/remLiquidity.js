@@ -14,6 +14,7 @@ export default {
       insufficientRemLiqBal: false,
       predictedValues: [],
       slippageRemLiq: 15,
+      deadlineRemLiq: 10,
     };
   },
   mutations: mutations,

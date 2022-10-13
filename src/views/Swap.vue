@@ -46,6 +46,12 @@
         <span class="max-amt" @click="fillInputWithMaxAmt(1)">MAX</span> :
         {{ tokenBalTextVal[1] }}</small
       >
+      <div v-if="swapActive">
+        <small style="margin-right: 21.5rem"
+          >1 {{ swapTokenSymbolVal[1] }} = {{ $store.state.swap.convertRate }}
+          {{ swapTokenSymbolVal[0] }}</small
+        >
+      </div>
     </div>
     <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
@@ -182,6 +188,7 @@ export default {
       if (newVal != null) {
         if (newVal > 0) {
           this.$store.dispatch("fillTokenAmount", 1);
+          this.$store.dispatch("converstionRateSwap");
         }
         this.checkForBal0();
         if (this.$store.state.swap.amountToken0) {

@@ -18,6 +18,8 @@ export default {
       tokenReserves: [0, 0],
       insufficientBal: false,
       slippage: 15,
+      deadline: 10,
+      convertRate: 0,
     };
   },
   mutations: mutations,

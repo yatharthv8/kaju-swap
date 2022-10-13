@@ -25,6 +25,19 @@ export default {
     context.commit("swapDialog", true);
   },
 
+  async converstionRateSwap(context) {
+    await ethFunc
+      .getAmountOut(
+        context.getters.getSwapDialog.DialnumAdd[1],
+        context.getters.getSwapDialog.DialnumAdd[0],
+        1,
+        router
+      )
+      .then((data) => {
+        context.state.convertRate = data.toFixed(4);
+      });
+  },
+
   async approveSwap(context) {
     context.dispatch("toggleOperationUnderProcess", {
       val: true,
@@ -87,7 +100,6 @@ export default {
         });
         context.rootState.canLeave = true;
         console.log(err);
-        alert("Something Happened! Transaction was not completed");
       });
   },
 

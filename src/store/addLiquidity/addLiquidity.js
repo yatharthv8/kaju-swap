@@ -20,6 +20,7 @@ export default {
       predictedLiq: [],
       insufficientLiqBal: false,
       slippageAddLiq: 15,
+      deadlineAddLiq: 10,
     };
   },
   mutations: mutations,
