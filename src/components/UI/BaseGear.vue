@@ -54,11 +54,11 @@ export default {
         this.$store.state.swap.slippage = this.slippage;
         this.$store.state.swap.deadline = this.deadline;
       } else {
-        if (this.$route.path === "/addLiquidity") {
+        if (this.$route.path.search("addLiquidity") === 1) {
           this.$store.state.addLiquidity.slippageAddLiq = this.slippage;
           this.$store.state.addLiquidity.deadlineAddLiq = this.deadline;
         } else {
-          if (this.$route.path === "/remLiquidity") {
+          if (this.$route.path.search("removeLiquidity") === 1) {
             this.$store.state.remLiquidity.slippageRemLiq = this.slippage;
             this.$store.state.remLiquidity.deadlineRemLiq = this.deadline;
           }

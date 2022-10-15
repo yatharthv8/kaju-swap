@@ -17,6 +17,7 @@ export default {
       },
       liqWatchInps: [false, false],
       pairLiquidity: 0,
+      pairLiqPer: null,
       predictedLiq: [],
       insufficientLiqBal: false,
       slippageAddLiq: 15,

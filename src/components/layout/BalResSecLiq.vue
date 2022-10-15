@@ -25,7 +25,7 @@
       </div>
       <div>
         Your share of Liquidity Tokens in this pool:
-        <span>{{ $store.state.addLiquidity.pairLiquidity }}</span>
+        <span>{{ $store.state.addLiquidity.pairLiqPer }}%</span>
       </div>
     </div>
     <div class="card">

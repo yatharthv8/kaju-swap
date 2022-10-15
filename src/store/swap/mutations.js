@@ -1,6 +1,10 @@
 export default {
   swapDialog(state, payload) {
     state.swapDialog.bool = payload;
+    // if (payload === false) {
+    //   state.liqTokenAmount0 = null;
+    //   state.liqTokenAmount1 = null;
+    // }
   },
   checkMaxBal(state, payload) {
     if (payload === 0) {

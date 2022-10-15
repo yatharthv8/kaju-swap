@@ -47,7 +47,7 @@
         {{ tokenBalTextVal[1] }}</small
       >
       <div v-if="swapActive">
-        <small style="margin-right: 21.5rem"
+        <small style="margin-right: 20.5rem"
           >1 {{ swapTokenSymbolVal[1] }} = {{ $store.state.swap.convertRate }}
           {{ swapTokenSymbolVal[0] }}</small
         >
@@ -55,6 +55,18 @@
     </div>
     <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
+    </div>
+    <div v-else-if="$store.state.swap.insuffLiq">
+      <button
+        :disabled="$store.state.swap.insuffLiq"
+        :class="{
+          'button-disabled': $store.state.swap.insuffLiq,
+          'swap-button': true,
+        }"
+      >
+        Insufficient Liquidity for the trade
+        <span><small>(Add Liquidity First)</small></span>
+      </button>
     </div>
     <div v-else-if="$store.state.swap.insufficientBal">
       <button

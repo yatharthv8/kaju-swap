@@ -23,7 +23,7 @@ export default {
     });
     ethereum.on("chainChanged", (_chainId) => this.$router.go());
     ethereum.on("accountsChanged", (accounts) => {
-      console.log("new Account ->", accounts);
+      // console.log("new Account ->", accounts);
       // this.onConnect();
       // if (this.$route.path === "/swap" || this.$route.path === "/pool") {
       // if (this.$route.path === "/swap") {

@@ -4,7 +4,7 @@
       <div>Pools Overview</div>
       <div>
         <!-- <button>More</button> -->
-        <router-link to="/addLiquidity"
+        <router-link :to="baseRoute"
           ><button>+New Position</button></router-link
         >
       </div>
@@ -27,26 +27,36 @@
             <p>Currently there are no pairs in existence.</p>
             <p>To add, click on the button here :</p>
           </div>
-          <router-link to="/addLiquidity">
+          <router-link :to="baseRoute">
             <button>Add Liquidity</button></router-link
           >
         </div>
         <div v-else>
           <ul v-for="pair in symLP" :key="pair.address">
-            {{
-              pair[0]
-            }}
-            -
-            {{
-              pair[1]
-            }}
-            LP
+            <div class="list-format">
+              <div>
+                {{ pair[0] }}
+                -
+                {{ pair[1] }}
+                LP
+              </div>
+              <div class="details">
+                <div v-if="pairValCanDisp(pair[4])">
+                  {{ pair[4] }}
+                </div>
+                <div class="closed-svg" v-else>
+                  <info-svg></info-svg> Closed
+                </div>
+              </div>
+            </div>
             <div>
-              <router-link to="/addLiquidity">
+              <router-link :to="'/addLiquidity/' + pair[2] + '/' + pair[3]">
                 <button @click="addMoreLiquidity(pair[2], pair[3])">
                   Add More Liquidity
                 </button></router-link
-              ><router-link to="/removeLiquidity"
+              ><router-link
+                v-if="pairValCanDisp(pair[4])"
+                :to="'/removeLiquidity/' + pair.address"
                 ><button @click="remLiquidityPage(pair.address)">
                   Remove Liquidity
                 </button></router-link
@@ -77,8 +87,10 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import * as ethFunc from "../ethereumFunctions.js";
+import InfoSvg from "../assets/svg/Info.vue";
 
 export default {
+  components: { InfoSvg },
   data() {
     return {
       pairsExistAndIs_SEL_Clicked: [false, false],
@@ -89,6 +101,12 @@ export default {
     ...mapActions({
       remLiquidityPage: "getDataForLiqRemPage",
     }),
+    pairValCanDisp(val) {
+      if (val < 1e-14) {
+        return false;
+      }
+      return true;
+    },
     async addMoreLiquidity(token0Address, token1Address) {
       // console.log("token addresses->", token0Address, token1Address);
       await ethFunc
@@ -127,6 +145,7 @@ export default {
               1: symb[1],
               2: symb[2],
               3: symb[3],
+              4: symb[6],
             });
           }
         })
@@ -150,11 +169,14 @@ export default {
       displayWalletStatus: "displayWalletStatus",
       liqTokenSymbolVal: "getLiqTokenSymbol",
       liqDialogVal: "getLiqDialog",
+      baseRoute: "getBaseLiqRoute",
     }),
   },
   beforeRouteLeave(to, from, next) {
-    // console.log(to.path);
-    if (to.path === "/addLiquidity" || to.path === "/removeLiquidity") {
+    if (
+      to.path.search("addLiquidity") === 1 ||
+      to.path.search("removeLiquidity") === 1
+    ) {
       if (this.displayWalletStatus == true) {
         next();
       } else {
@@ -186,5 +208,23 @@ ul {
 
 ul:hover {
   background-color: rgba(228, 189, 140, 0.799);
+}
+
+.list-format {
+  display: flex;
+  flex-direction: column;
+  height: 4rem;
+  justify-content: space-between;
+}
+
+.details {
+  font-size: 0.69rem;
+}
+
+.closed-svg {
+  display: flex;
+  width: 3.7rem;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

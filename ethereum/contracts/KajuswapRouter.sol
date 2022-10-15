@@ -28,6 +28,11 @@ contract KajuswapRouter {
         WETH = IWETH(WETHAddress);
     }
 
+    modifier ensure(uint deadline) {
+        require(deadline >= block.timestamp, 'KajuswapRouter: EXPIRED');
+        _;
+    }
+
     receive() external payable {
         require(msg.sender == address(WETH)); // only accept ETH via fallback from the WETH contract
     }
@@ -49,9 +54,11 @@ contract KajuswapRouter {
         uint256 amountBDesired,
         uint256 amountAMin,
         uint256 amountBMin,
-        address to
+        address to,
+        uint deadline
     )
         public
+        ensure(deadline)
         returns (
             uint256 amountA,
             uint256 amountB,
@@ -87,7 +94,8 @@ contract KajuswapRouter {
         uint amountTokenDesired,
         uint amountTokenMin,
         uint amountETHMin,
-        address to
+        address to,
+        uint deadline
     ) public payable returns (uint amountToken, uint amountETH, uint liquidity) {
         (amountToken, amountETH, liquidity) = addLiquidity(
             token,
@@ -96,7 +104,8 @@ contract KajuswapRouter {
             msg.value,
             amountTokenMin,
             amountETHMin,
-            to
+            to,
+            deadline
         );
         address pairAddress = KajuswapLibrary.pairFor(address(factory), token, address(WETH));
         _safeTransferFrom(token, msg.sender, pairAddress, amountToken);
@@ -113,8 +122,9 @@ contract KajuswapRouter {
         uint256 liquidity,
         uint256 amountAMin,
         uint256 amountBMin,
-        address to
-    ) public returns (uint256 amountA, uint256 amountB) {
+        address to,
+        uint deadline
+    ) public ensure(deadline) returns (uint256 amountA, uint256 amountB) {
         address pair = KajuswapLibrary.pairFor(
             address(factory),
             tokenA,
@@ -133,7 +143,8 @@ contract KajuswapRouter {
         uint liquidity,
         uint amountTokenMin,
         uint amountETHMin,
-        address to
+        address to,
+        uint deadline
     ) public returns (uint amountToken, uint amountETH) {
         (amountToken, amountETH) = removeLiquidity(
             token,
@@ -141,7 +152,8 @@ contract KajuswapRouter {
             liquidity,
             amountTokenMin,
             amountETHMin,
-            address(this)
+            address(this),
+            deadline
         );
         _safeTransfer(token, to, amountToken);
         IWETH(WETH).withdraw(amountETH);
@@ -189,8 +201,9 @@ contract KajuswapRouter {
         uint256 amountIn,
         uint256 amountOutMin,
         address[] calldata path,
-        address to
-    ) public returns (uint256[] memory amounts) {
+        address to,
+        uint deadline
+    ) public ensure(deadline) returns (uint256[] memory amounts) {
         amounts = KajuswapLibrary.getAmountsOut(
             address(factory),
             amountIn,
@@ -215,8 +228,9 @@ contract KajuswapRouter {
         uint256 amountOut,
         uint256 amountInMax,
         address[] calldata path,
-        address to
-    ) public returns (uint256[] memory amounts) {
+        address to,
+        uint deadline
+    ) public ensure(deadline) returns (uint256[] memory amounts) {
         amounts = KajuswapLibrary.getAmountsIn(
             address(factory),
             amountOut,
@@ -237,8 +251,8 @@ contract KajuswapRouter {
         _swap(amounts, path, to);
     }
 
-    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to)
-        public payable
+    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
+        public payable ensure(deadline)
         returns (uint[] memory amounts)
     {
         require(path[0] == address(WETH), 'KajuswapRouter: INVALID_PATH');
@@ -249,8 +263,8 @@ contract KajuswapRouter {
         _swap(amounts, path, to);
     }
 
-    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to)
-        public
+    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+        public ensure(deadline)
         returns (uint[] memory amounts)
     {
         require(path[path.length - 1] == address(WETH), 'KajuswapRouter: INVALID_PATH');

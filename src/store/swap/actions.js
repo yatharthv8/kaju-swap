@@ -83,7 +83,8 @@ export default {
         context.state.amountToken0,
         router,
         context.rootState.account0,
-        context.state.slippage
+        context.state.slippage,
+        context.state.deadline
       )
       .then(() => {
         context.dispatch("displayReservesSwap");
@@ -139,6 +140,11 @@ export default {
         .getAmountOut(address0, address1, context.state.amountToken0, router)
         .then((data) => {
           context.state.amountToken1 = data;
+          if (data === false) {
+            context.state.insuffLiq = true;
+          } else {
+            context.state.insuffLiq = false;
+          }
         });
       setTimeout(() => {
         context.state.watchInputs[0] = false;

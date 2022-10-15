@@ -20,6 +20,7 @@ export default {
       slippage: 15,
       deadline: 10,
       convertRate: 0,
+      insuffLiq: false,
     };
   },
   mutations: mutations,

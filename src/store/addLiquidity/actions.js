@@ -40,14 +40,19 @@ export default {
         ERC20.abi,
         context.getters.getLiqDialog.DialnumAdd[1]
       );
-      if (
-        web3.utils.fromWei(
-          await token0.methods
-            .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
-            .call(),
-          "ether"
-        ) < context.state.liqTokenAmount0
-      ) {
+      const allowance0 = web3.utils.fromWei(
+        await token0.methods
+          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+          .call(),
+        "ether"
+      );
+      const allowance1 = web3.utils.fromWei(
+        await token1.methods
+          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+          .call(),
+        "ether"
+      );
+      if (allowance0 < context.state.liqTokenAmount0) {
         await token0.methods
           .approve(
             router.options.address,
@@ -55,17 +60,11 @@ export default {
           )
           .send({ from: context.rootState.account0 })
           .then(() => {
-            context.rootState.tokenApprovalInProcess = false;
+            if (allowance1 > context.state.liqTokenAmount1)
+              context.rootState.tokenApprovalInProcess = false;
           });
       }
-      if (
-        web3.utils.fromWei(
-          await token1.methods
-            .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
-            .call(),
-          "ether"
-        ) < context.state.liqTokenAmount1
-      ) {
+      if (allowance1 < context.state.liqTokenAmount1) {
         await token1.methods
           .approve(
             router.options.address,
@@ -75,6 +74,11 @@ export default {
           .then(() => {
             context.rootState.tokenApprovalInProcess = false;
           });
+      }
+      if (context.rootState.tokenApprovalInProcess === false) {
+        alert("Token approval Successful!");
+      } else {
+        alert("Token approval Unsuccessful!");
       }
       context.dispatch("toggleOperationUnderProcess", {
         val: false,
@@ -86,6 +90,7 @@ export default {
         val: false,
         location: "ApprovTokL",
       });
+      alert("Token approval Unsuccessful!");
     }
   },
 
@@ -103,7 +108,8 @@ export default {
         context.state.liqTokenAmount1,
         context.state.slippageAddLiq,
         router,
-        context.rootState.account0
+        context.rootState.account0,
+        context.state.deadlineAddLiq
       )
       .then(() => {
         context.dispatch("displayReservesPool");
@@ -112,6 +118,7 @@ export default {
           location: "addLiq",
         });
         context.rootState.canLeave = true;
+        context.commit("resetAddLiqState");
       })
       .catch((err) => {
         context.dispatch("toggleOperationUnderProcess", {
@@ -138,6 +145,7 @@ export default {
       context.getters.getLiqTokenRes[0] = liqReserves[0];
       context.getters.getLiqTokenRes[1] = liqReserves[1];
       context.state.pairLiquidity = liqReserves[2];
+      context.state.pairLiqPer = liqReserves[3];
       // console.log("then inside displayReservesPool->", liqReserves);
       context.getters.getLiqTokenBal[0] = await ethFunc.getTokenBalance(
         context.getters.getLiqDialog.DialnumAdd[0],
@@ -174,11 +182,7 @@ export default {
     }
   },
 
-  async fillLiqTokenAmt(context, payload) {
-    context.dispatch("toggleOperationUnderProcess", {
-      val: true,
-      location: "fillLiqTokAmt",
-    });
+  async tokensAreApproved(context) {
     let address0 = context.getters.getLiqDialog.DialnumAdd[0];
     let address1 = context.getters.getLiqDialog.DialnumAdd[1];
     const token0 = new web3.eth.Contract(ERC20.abi, address0);
@@ -203,6 +207,16 @@ export default {
     } else {
       context.rootState.tokenApprovalInProcess = false;
     }
+  },
+
+  async fillLiqTokenAmt(context, payload) {
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "fillLiqTokAmt",
+    });
+    let address0 = context.getters.getLiqDialog.DialnumAdd[0];
+    let address1 = context.getters.getLiqDialog.DialnumAdd[1];
+    context.dispatch("tokensAreApproved");
     let amount;
     if (
       payload === 1 &&

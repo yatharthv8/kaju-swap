@@ -96,6 +96,9 @@
       >
         Add Liquidity
       </button>
+      <!-- <div v-if="$store.state.addLiquidity.liqAdded"> -->
+      <!-- {{ this.$alert("Liquidity Added successfully!", "Success") }} -->
+      <!-- </div> -->
     </div>
   </div>
   <div>
@@ -126,6 +129,7 @@ export default {
       approveLiq: "approveLiq",
       addLiquidity: "addLiquidity",
       checkForBal: "checkMaxLiqBal",
+      tokensAreApproved: "tokensAreApproved",
     }),
     //OR ...mapActions(["addLiquidity"]),
     openDialog(num) {
@@ -158,6 +162,8 @@ export default {
         }
         this.checkForBal();
       } else {
+        this.checkForBal();
+        this.tokensAreApproved();
         this.addLiqActive = false;
       }
       if (this.$store.state.addLiquidity.liqTokenAmount0) {
@@ -173,6 +179,8 @@ export default {
         }
         this.checkForBal();
       } else {
+        this.checkForBal();
+        this.tokensAreApproved();
         this.addLiqActive = false;
       }
       if (this.$store.state.addLiquidity.liqTokenAmount1) {

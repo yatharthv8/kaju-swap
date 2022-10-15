@@ -27,7 +27,7 @@ const store = createStore({
       canLeave: true,
       showAccDialog: false,
       disconnect: false,
-      tokenApprovalInProcess: false,
+      tokenApprovalInProcess: true,
     };
   },
   mutations: rootMutations,

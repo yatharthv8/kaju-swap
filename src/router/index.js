@@ -24,12 +24,12 @@ const routes = [
     component: Pool,
   },
   {
-    path: "/addLiquidity",
+    path: "/addLiquidity/:add1/:add2",
     name: "AddLiquidity",
     component: AddLiquidity,
   },
   {
-    path: "/removeLiquidity",
+    path: "/removeLiquidity/:address",
     name: "RemoveLiquidity",
     component: RemoveLiquidity,
   },

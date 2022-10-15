@@ -25,6 +25,7 @@
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
         {{ $store.state.remLiquidity.pairLiquidity }}</small
       >
+      <base-range-slider class="slider"></base-range-slider>
     </div>
     <div v-if="$store.state.remLiquidity.insufficientRemLiqBal">
       <button
@@ -76,9 +77,14 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import BalResSection from "../components/layout/BalResSecRemLiq.vue";
+import { defineAsyncComponent } from "vue";
+
+const BaseRangeSlider = defineAsyncComponent(() =>
+  import("../components/UI/BaseRangeSlider.vue")
+);
 
 export default {
-  components: { BalResSection },
+  components: { BalResSection, BaseRangeSlider },
   data() {
     return {
       remLiqActive: false,
@@ -147,5 +153,9 @@ ul:hover {
 .back-but {
   align-self: self-start;
   margin-right: calc(var(--card-element-width) - 5rem);
+}
+
+.slider {
+  margin: 3.5rem 0 1.5rem;
 }
 </style>

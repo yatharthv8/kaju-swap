@@ -11,4 +11,12 @@ export default {
   getLiqTokenRes(state) {
     return state.liqTokenRes;
   },
+  getBaseLiqRoute(state) {
+    return (
+      "/addLiquidity/" +
+      state.liqDialog.DialnumAdd[0] +
+      "/" +
+      state.liqDialog.DialnumAdd[1]
+    );
+  },
 };

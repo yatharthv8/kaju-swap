@@ -15,7 +15,7 @@
 
       <div>
         Your share of LP Tokens in pool:
-        <span>{{ $store.state.remLiquidity.pairLiquidity }}</span>
+        <span>{{ $store.state.remLiquidity.pairLiquidityPer }}%</span>
       </div>
     </div>
     <div class="card">

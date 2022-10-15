@@ -9,6 +9,7 @@ export default {
         state.operationUnderProcess = payload.val;
       }
     }
+    // console.log(state, payload);
   },
 
   restoreInitialState(state) {
@@ -23,4 +24,15 @@ export default {
     state.showAccDialog = false;
     state.disconnect = true;
   },
+
+  // resetState(state) {
+  //   //addLiquidity
+  //   state.addLiquidity.liqTokenAmount0 = null;
+  //   state.addLiquidity.liqTokenAmount1 = null;
+  //   state.addLiquidity.liqTokenBal = [0, 0];
+  //   state.addLiquidity.liqTokenRes = [0, 0];
+  //   state.addLiquidity.liqWatchInps = [false, false];
+  //   state.addLiquidity.pairLiquidity = 0;
+  //   state.addLiquidity.predictedLiq = [];
+  // },
 };

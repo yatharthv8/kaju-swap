@@ -50,7 +50,6 @@ export default {
     ...mapActions({ closeDialog: "closeLiqDialog" }),
     async submitAddress(tokenAddress) {
       try {
-        console.log("liq->", this.coins);
         await ethFunc
           .getBalanceandSymbol(this.$store.state.account0, tokenAddress)
           .then((data) => {

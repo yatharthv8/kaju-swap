@@ -37,6 +37,10 @@ export default {
         .send({ from: context.rootState.account0 })
         .then(() => {
           context.rootState.tokenApprovalInProcess = false;
+          alert("LP Token approval Successful!");
+        })
+        .catch((err) => {
+          alert("Approval Unsuccessful!");
         });
       context.dispatch("toggleOperationUnderProcess", {
         val: false,
@@ -74,6 +78,7 @@ export default {
     context.getters.getSymbol[0] = resAndSymb[0];
     context.getters.getSymbol[1] = resAndSymb[1];
     context.state.pairLiquidity = liqReserves[2];
+    context.state.pairLiquidityPer = liqReserves[3];
     const pair = new web3.eth.Contract(PAIR.abi, context.state.pairAddress);
     const approvedAmt = web3.utils.fromWei(
       await pair.methods
@@ -118,7 +123,7 @@ export default {
           100,
         router,
         context.rootState.account0,
-        factory
+        context.state.deadlineRemLiq
       )
       .then(() => {
         context.dispatch("getDataForLiqRemPage", context.state.pairAddress);
