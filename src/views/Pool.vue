@@ -3,7 +3,13 @@
     <div class="pools-page-header">
       <div>Pools Overview</div>
       <div>
-        <!-- <button>More</button> -->
+        <button class="dropdown" @click="OpenIP()">Import Pool</button>
+        <div
+          class="dropdown-content-pool"
+          :style="{ display: displayDropdown }"
+        >
+          <input type="text" placeholder="Write adddress of the pool here" />
+        </div>
         <router-link :to="baseRoute"
           ><button>+New Position</button></router-link
         >
@@ -93,16 +99,25 @@ export default {
   components: { InfoSvg },
   data() {
     return {
+      displayDropdown: "none",
       pairsExistAndIs_SEL_Clicked: [false, false],
       symLP: [],
+      pairAdd: null,
     };
   },
   methods: {
     ...mapActions({
       remLiquidityPage: "getDataForLiqRemPage",
     }),
+    OpenIP() {
+      if (this.displayDropdown === "none") {
+        this.displayDropdown = "block";
+      } else {
+        this.displayDropdown = "none";
+      }
+    },
     pairValCanDisp(val) {
-      if (val < 1e-14) {
+      if (Number(val) < 1e-14) {
         return false;
       }
       return true;
@@ -172,7 +187,7 @@ export default {
       baseRoute: "getBaseLiqRoute",
     }),
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave(to, _, next) {
     if (
       to.path.search("addLiquidity") === 1 ||
       to.path.search("removeLiquidity") === 1

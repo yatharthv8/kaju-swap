@@ -8,19 +8,20 @@
       name="address"
       id="address"
       v-model.trim="newAddress"
-      @keyup.enter="submitAddress(newAddress)"
+      @keyup.enter="submitAddress(newAddress, 1)"
     />
     <!-- <select name="tokens" id="tokens" hidden> -->
     <ul
-      v-for="coin in coins"
+      v-for="coin in $store.state.coins"
       :key="coin.address"
-      @click="submitAddress(coin.address)"
+      @click="submitAddress(coin.address, 0)"
     >
       {{
         coin.abbr
       }}
       <br />
       <small>{{ coin.name }}</small>
+      <small class="ABU" v-if="coin.addedByUser"> | Added by user</small>
       <span style="float: right">
         <small>{{ coin.balance }}</small>
       </span>
@@ -32,7 +33,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import * as COINS from "../../constants/coins.js";
+// import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
 
@@ -42,13 +43,12 @@ export default {
   props: ["swapDialNum"],
   data() {
     return {
-      coins: COINS.GÖRLICoins,
       newAddress: null,
     };
   },
   methods: {
     ...mapActions({ closeDialog: "closeSwapDialog" }),
-    async submitAddress(tokenAddress) {
+    async submitAddress(tokenAddress, action) {
       try {
         const accounts = await web3.eth.getAccounts();
         ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
@@ -58,6 +58,15 @@ export default {
             add: tokenAddress,
             ind: this.swapDialNum,
           });
+          if (action === 1) {
+            this.$store.state.coins.unshift({
+              name: data.name,
+              abbr: data.symbol,
+              address: tokenAddress,
+              balance: data.balance,
+              addedByUser: true,
+            });
+          }
           this.$store.dispatch("displayReservesSwap");
         });
         // console.log(this.coins);
@@ -85,5 +94,11 @@ input {
 
 ul:hover {
   background-color: rgb(226, 177, 118);
+}
+
+.ABU {
+  font-size: 0.8rem;
+  color: #333333;
+  font-weight: 400;
 }
 </style>

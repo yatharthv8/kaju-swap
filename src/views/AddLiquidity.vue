@@ -156,7 +156,11 @@ export default {
   },
   watch: {
     "$store.state.addLiquidity.liqTokenAmount0"(newVal) {
-      if (newVal != null && this.$store.state.addLiquidity.pairLiquidity) {
+      if (
+        newVal != null &&
+        Number(this.$store.state.addLiquidity.pairLiquidity) &&
+        Number(this.$store.state.addLiquidity.totalSupply) > 1e-12
+      ) {
         if (newVal > 0) {
           this.$store.dispatch("fillLiqTokenAmt", 1);
         }
@@ -173,7 +177,11 @@ export default {
       }
     },
     "$store.state.addLiquidity.liqTokenAmount1"(newVal) {
-      if (newVal != null && this.$store.state.addLiquidity.pairLiquidity) {
+      if (
+        newVal != null &&
+        Number(this.$store.state.addLiquidity.pairLiquidity) &&
+        Number(this.$store.state.addLiquidity.totalSupply) > 1e-12
+      ) {
         if (newVal > 0) {
           this.$store.dispatch("fillLiqTokenAmt", 0);
         }

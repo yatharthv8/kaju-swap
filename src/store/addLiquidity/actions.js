@@ -146,6 +146,7 @@ export default {
       context.getters.getLiqTokenRes[1] = liqReserves[1];
       context.state.pairLiquidity = liqReserves[2];
       context.state.pairLiqPer = liqReserves[3];
+      context.state.totalSupply = liqReserves[4];
       // console.log("then inside displayReservesPool->", liqReserves);
       context.getters.getLiqTokenBal[0] = await ethFunc.getTokenBalance(
         context.getters.getLiqDialog.DialnumAdd[0],
@@ -164,6 +165,7 @@ export default {
       ) {
         context.rootState.balance = context.getters.getLiqTokenBal[1];
       }
+      context.dispatch("checkMaxLiqBal");
       context.dispatch("toggleOperationUnderProcess", {
         val: false,
         location: "DispResPool",

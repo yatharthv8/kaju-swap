@@ -13,7 +13,7 @@
       />
       <!-- <select name="tokens" id="tokens" hidden> -->
       <ul
-        v-for="coin in coins"
+        v-for="coin in $store.state.coins"
         :key="coin.address"
         @click="submitAddress(coin.address)"
       >
@@ -34,7 +34,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import * as COINS from "../../constants/coins.js";
+// import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 // import web3 from "../../../ethereum/web3.js";
 
@@ -42,7 +42,6 @@ export default {
   props: ["swapDialNum"],
   data() {
     return {
-      coins: COINS.GÖRLICoins,
       newAddress: null,
     };
   },

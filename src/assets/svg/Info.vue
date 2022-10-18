@@ -26,7 +26,7 @@
   bottom: 0;
   left: -14rem;
   right: 0;
-  background: #0000005c;
+  background: #765d515c;
   color: #000000;
   visibility: hidden;
   opacity: 0;

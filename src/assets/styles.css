@@ -16,6 +16,7 @@
 
 body,
 html {
+  -webkit-font-smoothing: antialiased;
   font-family: "Inter custom", sans-serif;
   background: linear-gradient(
     0deg,
@@ -157,6 +158,37 @@ ul {
   align-items: center;
 }
 
+.network-dropdown {
+  position: relative;
+  display: flex;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 2.3rem;
+  background-color: var(--background-color);
+  min-width: fit-content;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 1rem;
+}
+
+.dropdown-content div {
+  padding: 0.5rem 1.5rem;
+}
+
+.dropdown-content div:hover {
+  cursor: pointer;
+  background-color: var(--button-normal-color);
+  border-radius: 1rem;
+}
+
+.expand-arrow {
+  width: 1rem;
+  padding-left: 4px;
+  height: auto;
+}
+
 .right-header-display {
   display: inline-flex;
   padding: 0rem 1rem;
@@ -178,7 +210,6 @@ ul {
   max-width: 8rem;
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .side-dropdown {
@@ -301,6 +332,30 @@ select {
 
 /*----------------------Pools Page Styling------------------------------*/
 
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content-pool {
+  position: absolute;
+  background-color: var(--background-color);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: 13rem;
+  right: 35rem;
+  border-radius: 1rem;
+}
+
+.dropdown-content-pool div:hover {
+  cursor: pointer;
+  background-color: var(--button-normal-color);
+  border-radius: 1rem;
+}
+
+.dropdown-content-pool input {
+  height: 3rem;
+  font-size: 1rem;
+}
 /* input[type="range"] {
   -webkit-appearance: none;
   margin: 10px 0;

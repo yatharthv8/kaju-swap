@@ -1,12 +1,10 @@
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
-import * as COINS from "../../constants/coins.js";
 
 const ERC20 = require("../../../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
-let coins = COINS.GÖRLICoins;
 
 export default {
   checkMaxBalFor0(context) {
@@ -139,10 +137,10 @@ export default {
       await ethFunc
         .getAmountOut(address0, address1, context.state.amountToken0, router)
         .then((data) => {
-          context.state.amountToken1 = data;
-          if (data === false) {
+          if (data === false || Number(data) < 1e-12) {
             context.state.insuffLiq = true;
           } else {
+            context.state.amountToken1 = data;
             context.state.insuffLiq = false;
           }
         });
@@ -165,7 +163,12 @@ export default {
       await ethFunc
         .getAmountIn(address0, address1, context.state.amountToken1, router)
         .then((data) => {
-          context.state.amountToken0 = data;
+          if (data === false || Number(data) < 1e-12) {
+            context.state.insuffLiq = true;
+          } else {
+            context.state.amountToken0 = data;
+            context.state.insuffLiq = false;
+          }
         });
       setTimeout(() => {
         context.state.watchInputs[0] = false;
@@ -213,12 +216,14 @@ export default {
     ) {
       context.rootState.balance = context.getters.getTokenBalText[1];
     }
-    for (let i = 0; i < coins.length; ++i) {
-      coins[i].balance = await ethFunc.getTokenBalance(
-        coins[i].address,
+    if (context.rootState.coins === null) {
+      context.rootState.coins = JSON.parse(localStorage.getItem("coins"));
+    }
+    for (let i = 0; i < context.rootState.coins.length; ++i) {
+      context.rootState.coins[i].balance = await ethFunc.getTokenBalance(
+        context.rootState.coins[i].address,
         context.rootState.account0
       );
-      // console.log(coins[i].balance);
     }
     context.dispatch("toggleOperationUnderProcess", {
       val: false,

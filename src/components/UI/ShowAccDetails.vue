@@ -6,7 +6,7 @@
       <p>Connected with MetaMask</p>
       <button @click="disconnectWallet()">Disconnect</button>
     </div>
-    <p class="wallet-info">{{ $store.state.account0 }}</p>
+    <p>{{ $store.state.account0 }}</p>
     <div>
       <button @click="copyAdd($store.state.account0)">Copy Address</button>
       <a :href="urlOnEthScan" target="_blank"
@@ -30,8 +30,8 @@ export default {
       revertState: "restoreInitialState",
     }),
     disconnectWallet() {
-      this.revertState();
       this.$router.push("/");
+      this.revertState();
       alert("Connect Wallet to use KajuSwap!");
     },
     closeDialog() {

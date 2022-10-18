@@ -1,4 +1,5 @@
 import web3 from "../ethereum/web3.js";
+// import detectEthereumProvider from "@metamask/detect-provider";
 
 import { ethers } from "ethers";
 
@@ -59,6 +60,7 @@ export async function getBalanceandSymbol(accountAddress, address) {
         web3.utils.fromWei(await web3.eth.getBalance(accountAddress), "ether")
       ).toFixed(4),
       symbol: await token.methods.symbol().call(),
+      name: await token.methods.name().call(),
     };
   } catch (err) {
     console.log("The getBalanceAndSymbol function had an error!", err);
@@ -92,6 +94,34 @@ export async function swapTokens(
   slippageVal,
   deadline
 ) {
+  //swap auto-router testing
+  // const V3_SWAP_ROUTER_ADDRESS = VUE_APP_ROUTER;
+  // const web3Provider = await detectEthereumProvider();
+
+  // const router = new AlphaRouter({ chainId: 5, provider: web3Provider });
+
+  // const ETH = new Token(5, token0Address, 18, "ETH", "Ether");
+
+  // const UNI = new Token(5, token1Address, 18, "UNI", "UN//I");
+
+  // const typedValueParsed = "100000000000000000000";
+  // const ethAmount = CurrencyAmount.fromRawAmount(
+  //   currency,
+  //   JSBI.BigInt(typedValueParsed)
+  // );
+
+  // const route = await router.route(ethAmount, UNI, TradeType.EXACT_INPUT, {
+  //   recipient: myAddress,
+  //   slippageTolerance: new Percent(5, 100),
+  //   deadline: Math.floor(Date.now() / 1000 + 1800),
+  // });
+
+  // console.log(`Quote Exact In: ${route.quote.toFixed(2)}`);
+  // console.log(`Gas Adjusted Quote In: ${route.quoteGasAdjusted.toFixed(2)}`);
+  // console.log(`Gas Used USD: ${route.estimatedGasUsedUSD.toFixed(6)}`);
+  // console.log(`route: ${route}`);
+
+  //actual single token swapping
   const path = [token0Address, token1Address];
   const time = ethers.BigNumber.from(
     Math.floor(Date.now() / 1000) + deadline * 60
@@ -280,20 +310,24 @@ export async function getReserves(
       String(liquidityTokens_BN),
       "ether"
     );
-    const liquidityTokensPercentage = (
-      (liquidityTokens /
-        web3.utils.fromWei(
-          String(await pair.methods.totalSupply().call()),
-          "ether"
-        )) *
+    const totalSuplyOfLiquidity = web3.utils.fromWei(
+      String(await pair.methods.totalSupply().call()),
+      "ether"
+    );
+    let liquidityTokensPercentage = (
+      (liquidityTokens / totalSuplyOfLiquidity) *
       100
     ).toFixed(4);
+    if (Number(liquidityTokens) < 1e-12) {
+      liquidityTokensPercentage = 0;
+    }
     // console.log("getReserves LT->", liquidityTokens);
     return [
       Number(reservesRaw[0]).toFixed(4),
       Number(reservesRaw[1]).toFixed(4),
       Number(liquidityTokens) - 0.00000000000001,
       Number(liquidityTokensPercentage),
+      Number(totalSuplyOfLiquidity),
     ];
   }
 }

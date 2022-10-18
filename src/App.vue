@@ -13,15 +13,31 @@ const { ethereum } = window;
 import { mapGetters } from "vuex";
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheFooter from "./components/layout/TheFooter.vue";
+import * as COINS from "./constants/coins.js";
 
 export default {
   components: { TheHeader, TheFooter },
+  data() {
+    return {};
+  },
+  beforeMount() {
+    if (!localStorage.getItem("coins")) {
+      // console.log(localStorage.getItem("coins"));
+      localStorage.setItem("coins", JSON.stringify(COINS.GÖRLICoins));
+    }
+  },
   mounted() {
     ethereum.on("disconnect", () => {
       this.$router.push("/");
       alert("Connect Wallet to use KajuSwap!");
     });
-    ethereum.on("chainChanged", (_chainId) => this.$router.go());
+    ethereum.on("chainChanged", (_chainId) => {
+      if (!(_chainId === "0x1" || _chainId === "0x5")) {
+        this.$store.dispatch("restoreInitialState");
+      } else {
+        this.$router.go();
+      }
+    });
     ethereum.on("accountsChanged", (accounts) => {
       // console.log("new Account ->", accounts);
       // this.onConnect();
@@ -48,53 +64,19 @@ export default {
       // }
     });
   },
-  methods: {
-    walletConnectInitializations() {
-      this.$store.dispatch("displayMaxTokenBalance", {
-        add: this.swapDialogVars.DialnumAdd[0],
-        ind: 0,
-      });
-      this.$store.dispatch("displayMaxTokenBalanceLiq", {
-        add: this.liqDialogVal.DialnumAdd[0],
-        ind: 0,
-      });
-      this.$store.dispatch("displayMaxTokenBalance", {
-        add: this.swapDialogVars.DialnumAdd[1],
-        ind: 1,
-      });
-      this.$store.dispatch("displayMaxTokenBalanceLiq", {
-        add: this.liqDialogVal.DialnumAdd[1],
-        ind: 1,
-      });
-      this.$store.dispatch("displayReservesSwap");
-      this.$store.dispatch("displayReservesPool");
-    },
-
-    onConnect() {
-      this.$store.dispatch("toggleOperationUnderProcess", {
-        val: true,
-        location: "AccChange",
-      });
-      this.$store
-        .dispatch("onConnect")
-        .then(() => {
-          this.walletConnectInitializations();
-        })
-        .catch((err) => console.log(err))
-        .then(() => {
-          // console.log("ok");
-          this.$store.dispatch("toggleOperationUnderProcess", {
-            val: false,
-            location: "AccChange",
-          });
-        });
-    },
-  },
   computed: {
     ...mapGetters({
       swapDialogVars: "getSwapDialog",
       liqDialogVal: "getLiqDialog",
     }),
+  },
+  watch: {
+    "$store.state.coins": {
+      handler(newVal) {
+        localStorage.setItem("coins", JSON.stringify(newVal));
+      },
+      deep: true,
+    },
   },
 };
 </script>

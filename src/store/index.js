@@ -8,6 +8,8 @@ import rootActions from "./actions.js";
 import rootMutations from "./mutations.js";
 import rootGetters from "./getters.js";
 
+import * as COINS from "../constants/coins.js";
+
 const store = createStore({
   modules: {
     walletConnect: walletConnectModule,
@@ -28,6 +30,7 @@ const store = createStore({
       showAccDialog: false,
       disconnect: false,
       tokenApprovalInProcess: true,
+      coins: JSON.parse(localStorage.getItem("coins")),
     };
   },
   mutations: rootMutations,

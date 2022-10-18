@@ -9,8 +9,8 @@ export default {
   checkMaxBal(state, payload) {
     if (payload === 0) {
       if (
-        state.amountToken0 > state.tokenBalText[0] ||
-        state.tokenBalText[0] == 0
+        Number(state.amountToken0) > Number(state.tokenBalText[0]) ||
+        Number(state.tokenBalText[0]) == 0
       ) {
         state.insufficientBal = true;
       } else {
@@ -18,8 +18,8 @@ export default {
       }
     } else if (payload === 1) {
       if (
-        state.amountToken1 > state.tokenBalText[1] ||
-        state.tokenBalText[1] == 0
+        Number(state.amountToken1) > Number(state.tokenBalText[1]) ||
+        Number(state.tokenBalText[1]) == 0
       ) {
         state.insufficientBal = true;
       } else {

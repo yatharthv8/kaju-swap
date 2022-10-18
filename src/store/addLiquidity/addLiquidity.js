@@ -19,6 +19,7 @@ export default {
       pairLiquidity: 0,
       pairLiqPer: null,
       predictedLiq: [],
+      totalSupply: 0,
       insufficientLiqBal: false,
       slippageAddLiq: 15,
       deadlineAddLiq: 10,

@@ -120,6 +120,14 @@ export default {
         this.remLiqActive = false;
       }
     },
+    "$store.state.remLiquidity.pairLiquidity"(newVal) {
+      if (newVal < 1e-12) {
+        alert(
+          "Since you have removed the full share of Liquidity you added, you can no longer remove LP Tokens from this pool! Hence you are being redirected to the pools page!"
+        );
+        this.$router.push("/pool");
+      }
+    },
   },
   beforeRouteLeave(_, _2, next) {
     if (this.$store.state.canLeave == true) {
