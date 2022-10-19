@@ -3,13 +3,21 @@
     <div class="pools-page-header">
       <div>Pools Overview</div>
       <div>
-        <button class="dropdown" @click="OpenIP()">Import Pool</button>
+        <!-- <button class="dropdown" @click="OpenIP()">Import Pool</button>
         <div
           class="dropdown-content-pool"
           :style="{ display: displayDropdown }"
         >
-          <input type="text" placeholder="Write adddress of the pool here" />
-        </div>
+          <label for="pairAddress">New Pool:</label>
+          <input
+            type="text"
+            placeholder="Write adddress of the pool here"
+            name="pairAddress"
+            id="pairAddress"
+            v-model.trim="pairAdd"
+            @keyup.enter="importPool(pairAdd)"
+          />
+        </div> -->
         <router-link :to="baseRoute"
           ><button>+New Position</button></router-link
         >
@@ -21,13 +29,16 @@
         <wallet-connect-button></wallet-connect-button>
       </div>
       <div v-else>
-        <button
+        <!-- <button
           @click="showExistingLiquidity()"
-          v-if="!pairsExistAndIs_SEL_Clicked[0]"
+          v-if="!$store.state.pairsExistAndIs_SEL_Clicked[0]"
         >
           Show Existing Liquidity
-        </button>
-        <div v-else-if="!pairsExistAndIs_SEL_Clicked[1]" class="disp-card-cont">
+        </button> -->
+        <div
+          v-if="!$store.state.pairsExistAndIs_SEL_Clicked"
+          class="disp-card-cont"
+        >
           <div>
             <p>Your active liquidity positions will appear here.</p>
             <p>Currently there are no pairs in existence.</p>
@@ -38,7 +49,7 @@
           >
         </div>
         <div v-else>
-          <ul v-for="pair in symLP" :key="pair.address">
+          <ul v-for="pair in $store.state.symLP" :key="pair.address">
             <div class="list-format">
               <div>
                 {{ pair[0] }}
@@ -100,15 +111,20 @@ export default {
   data() {
     return {
       displayDropdown: "none",
-      pairsExistAndIs_SEL_Clicked: [false, false],
-      symLP: [],
-      pairAdd: null,
+      // pairAdd: null,
+      // impIn: false,
     };
   },
   methods: {
     ...mapActions({
       remLiquidityPage: "getDataForLiqRemPage",
     }),
+    // importPool(pairAdd) {
+    //   this.impIn = true;
+    //   this.OpenIP();
+    //   // this.$store.state.allPairs.unshift(pairAdd);
+    //   this.$store.dispatch("registerExistingLiquidity", 1);
+    // },
     OpenIP() {
       if (this.displayDropdown === "none") {
         this.displayDropdown = "block";
@@ -137,46 +153,6 @@ export default {
       this.liqDialogVal.DialnumAdd[0] = token0Address;
       this.liqDialogVal.DialnumAdd[1] = token1Address;
       this.$store.dispatch("displayReservesPool");
-    },
-    showExistingLiquidity() {
-      this.$store.dispatch("toggleOperationUnderProcess", {
-        val: true,
-        location: "showExLiq",
-      });
-      this.$store
-        .dispatch("getPairsFromFactory")
-        .then(async () => {
-          this.pairsExistAndIs_SEL_Clicked[0] = true;
-          if (this.$store.state.allPairs.length > 0)
-            this.pairsExistAndIs_SEL_Clicked[1] = true;
-          for (let i = 0; i < this.$store.state.allPairs.length; ++i) {
-            const symb = await ethFunc.getDataForPairs(
-              this.$store.state.account0,
-              this.$store.state.allPairs[i]
-            );
-            this.symLP.push({
-              address: this.$store.state.allPairs[i],
-              0: symb[0],
-              1: symb[1],
-              2: symb[2],
-              3: symb[3],
-              4: symb[6],
-            });
-          }
-        })
-        .then(() => {
-          this.$store.dispatch("toggleOperationUnderProcess", {
-            val: false,
-            location: "showExLiq",
-          });
-        })
-        .catch((err) => {
-          console.log("This action can't be completed at the moment!", err);
-          this.$store.dispatch("toggleOperationUnderProcess", {
-            val: false,
-            location: "showExLiq",
-          });
-        });
     },
   },
   computed: {

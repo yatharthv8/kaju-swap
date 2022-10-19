@@ -113,10 +113,12 @@ export default {
       )
       .then(() => {
         context.dispatch("displayReservesPool");
+        this.$store.dispatch("registerExistingLiquidity");
         context.dispatch("toggleOperationUnderProcess", {
           val: false,
           location: "addLiq",
         });
+
         context.rootState.canLeave = true;
         context.commit("resetAddLiqState");
       })

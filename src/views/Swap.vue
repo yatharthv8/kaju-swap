@@ -46,11 +46,12 @@
         <span class="max-amt" @click="fillInputWithMaxAmt(1)">MAX</span> :
         {{ tokenBalTextVal[1] }}</small
       >
-      <div v-if="swapActive">
-        <small style="margin-right: 20.5rem"
+      <div v-if="swapActive" class="conv-impact">
+        <small
           >1 {{ swapTokenSymbolVal[1] }} = {{ $store.state.swap.convertRate }}
           {{ swapTokenSymbolVal[0] }}</small
         >
+        <small>Price Impact : {{ $store.state.swap.priceImpVal }}%</small>
       </div>
     </div>
     <div v-if="!displayWalletStatus">
@@ -244,5 +245,11 @@ export default {
 <style scoped>
 .max-amt {
   cursor: pointer;
+}
+
+.conv-impact {
+  display: flex;
+  justify-content: space-between;
+  width: -webkit-fill-available;
 }
 </style>

@@ -25,7 +25,8 @@
         <span class="max-amt" @click="fillInputWithMaxAmt()">MAX</span> :
         {{ $store.state.remLiquidity.pairLiquidity }}</small
       >
-      <base-range-slider class="slider"></base-range-slider>
+
+      <base-range-slider></base-range-slider>
     </div>
     <div v-if="$store.state.remLiquidity.insufficientRemLiqBal">
       <button
@@ -96,6 +97,7 @@ export default {
       remLiquidity: "removeLiquidity",
       checkForBalDispPV: "checkMaxRemLiqBalDispPV",
     }),
+
     fillInputWithMaxAmt() {
       this.$store.state.remLiquidity.pairLiqInp =
         this.$store.state.remLiquidity.pairLiquidity;
@@ -161,9 +163,5 @@ ul:hover {
 .back-but {
   align-self: self-start;
   margin-right: calc(var(--card-element-width) - 5rem);
-}
-
-.slider {
-  margin: 3.5rem 0 1.5rem;
 }
 </style>

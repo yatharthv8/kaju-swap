@@ -8,7 +8,7 @@ import rootActions from "./actions.js";
 import rootMutations from "./mutations.js";
 import rootGetters from "./getters.js";
 
-import * as COINS from "../constants/coins.js";
+import autoRouteGraph, * as graph from "../graph.js";
 
 const store = createStore({
   modules: {
@@ -26,11 +26,15 @@ const store = createStore({
       OUP_TrueVal: "",
       selectedPoolLiq: null,
       allPairs: [],
+      checkDone: false,
       canLeave: true,
       showAccDialog: false,
       disconnect: false,
       tokenApprovalInProcess: true,
       coins: JSON.parse(localStorage.getItem("coins")),
+      pairsExistAndIs_SEL_Clicked: false,
+      graph: new autoRouteGraph(),
+      symLP: [],
     };
   },
   mutations: rootMutations,

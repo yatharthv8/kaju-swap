@@ -21,6 +21,8 @@ export default {
       deadline: 10,
       convertRate: 0,
       insuffLiq: false,
+      dispPriceImp: false,
+      priceImpVal: null,
     };
   },
   mutations: mutations,

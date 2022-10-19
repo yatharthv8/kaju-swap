@@ -73,8 +73,10 @@ export default {
         add: this.liqDialogVal.DialnumAdd[1],
         ind: 1,
       });
+
       this.$store.dispatch("displayReservesSwap");
       this.$store.dispatch("displayReservesPool");
+      this.$store.dispatch("registerExistingLiquidity");
     },
 
     onConnect() {
@@ -108,8 +110,12 @@ export default {
     //   console.log("this is the mounted");
     //   console.log(typeof this.$store.state.account0);
     // if (!this.checkDone) {
-    if (this.$store.state.account0 === null && !this.$store.state.disconnect) {
-      // this.checkDone = true;
+    if (
+      this.$store.state.account0 === null &&
+      !this.$store.state.disconnect &&
+      !this.$store.state.checkDone
+    ) {
+      this.$store.state.checkDone = true;
       // console.log("here");
       this.checkIfConnected();
     }

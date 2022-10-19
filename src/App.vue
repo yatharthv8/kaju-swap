@@ -38,7 +38,8 @@ export default {
         this.$router.go();
       }
     });
-    ethereum.on("accountsChanged", (accounts) => {
+    ethereum.on("accountsChanged", () => {
+      // this.$store.dispatch("registerExistingLiquidity");
       // console.log("new Account ->", accounts);
       // this.onConnect();
       // if (this.$route.path === "/swap" || this.$route.path === "/pool") {
@@ -70,6 +71,7 @@ export default {
       liqDialogVal: "getLiqDialog",
     }),
   },
+  methods: {},
   watch: {
     "$store.state.coins": {
       handler(newVal) {
@@ -77,6 +79,12 @@ export default {
       },
       deep: true,
     },
+    // "$store.state.allPairs": {
+    //   handler(newVal) {
+    //     localStorage.setItem("pairs", JSON.stringify(newVal));
+    //   },
+    //   deep: true,
+    // },
   },
 };
 </script>

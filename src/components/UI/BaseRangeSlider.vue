@@ -1,5 +1,12 @@
 <template>
+  <div class="slider-buttons">
+    <button @click="inputMiles(25)">25%</button>
+    <button @click="inputMiles(50)">50%</button>
+    <button @click="inputMiles(75)">75%</button>
+    <button @click="inputMiles(100)">100%</button>
+  </div>
   <vue3-slider
+    class="slider"
     v-model="valueC"
     color="#9c6644"
     :step="1"
@@ -29,6 +36,9 @@ export default {
     };
   },
   methods: {
+    inputMiles(num) {
+      this.valueC = num;
+    },
     calcVal() {
       let text = tooltipText[0].innerHTML;
       text = text.slice(0, text.length - 1);
@@ -46,4 +56,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.slider-buttons {
+  margin: 1.5rem 0 0;
+  width: -webkit-fill-available;
+  display: flex;
+  justify-content: space-evenly;
+}
+.slider {
+  margin: 1.5rem 0 2.5rem;
+}
+</style>

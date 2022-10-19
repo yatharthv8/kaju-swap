@@ -139,7 +139,10 @@ export default {
         .then((data) => {
           if (data === false || Number(data) < 1e-12) {
             context.state.insuffLiq = true;
+            context.state.dispPriceImp = false;
           } else {
+            context.state.dispPriceImp = true;
+            context.commit("calcPriceImp");
             context.state.amountToken1 = data;
             context.state.insuffLiq = false;
           }
@@ -165,7 +168,9 @@ export default {
         .then((data) => {
           if (data === false || Number(data) < 1e-12) {
             context.state.insuffLiq = true;
+            context.state.dispPriceImp = false;
           } else {
+            context.state.dispPriceImp = true;
             context.state.amountToken0 = data;
             context.state.insuffLiq = false;
           }
