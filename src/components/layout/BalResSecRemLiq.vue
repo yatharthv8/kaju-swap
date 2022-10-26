@@ -18,7 +18,7 @@
         <span>{{ $store.state.remLiquidity.pairLiquidityPer }}%</span>
       </div>
     </div>
-    <div class="card">
+    <div class="card" style="margin-bottom: 3rem">
       <div>Liquidity burned:</div>
       <div>
         <p>
@@ -53,10 +53,21 @@ export default {
 </script>
 
 <style scoped>
-.liquidity {
-  display: flex;
+@media screen and (min-width: 700px) {
+  .liquidity {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+  }
 }
-
+@media screen and (max-width: 700px) {
+  .liquidity {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+}
 .card {
   margin: 1rem;
 }

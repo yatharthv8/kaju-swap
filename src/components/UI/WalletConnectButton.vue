@@ -73,7 +73,7 @@ export default {
         add: this.liqDialogVal.DialnumAdd[1],
         ind: 1,
       });
-
+      this.$store.state.symLP = [];
       this.$store.dispatch("displayReservesSwap");
       this.$store.dispatch("displayReservesPool");
       this.$store.dispatch("registerExistingLiquidity");

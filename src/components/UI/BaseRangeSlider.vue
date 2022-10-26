@@ -16,7 +16,7 @@
     tooltipText="%v%"
     tooltipColor="#fafafa5c"
     tooltipTextColor="#4e4245"
-    width="100%"
+    width="95%"
     :handleScale="7"
     :alwaysShowHandle="true"
     @dragging="calcVal()"

@@ -28,7 +28,7 @@
         <span>{{ $store.state.addLiquidity.pairLiqPer }}%</span>
       </div>
     </div>
-    <div class="card">
+    <div class="card" style="margin-bottom: 3rem">
       <div>Token amounts and liquidity that will be added:</div>
       <div>
         <p>
@@ -70,11 +70,19 @@ export default {
 </script>
 
 <style scoped>
-.liquidity {
-  display: flex;
+@media screen and (min-width: 700px) {
+  .liquidity {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
 }
-
-.card {
-  margin: 1rem;
+@media screen and (max-width: 700px) {
+  .liquidity {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
 }
 </style>

@@ -1,8 +1,9 @@
 <template>
-  <teleport to="header">
-    <div v-if="swapDialogVars.bool">
-      <swap-dialog-vue :swapDialNum="symbolButtonIndex"></swap-dialog-vue></div
-  ></teleport>
+  <!-- <teleport to="header"> -->
+  <div v-if="swapDialogVars.bool">
+    <swap-dialog-vue :swapDialNum="symbolButtonIndex"></swap-dialog-vue>
+  </div>
+  <!-- </teleport> -->
   <div class="card">
     <div class="form-header">
       <div>Swap</div>
@@ -46,6 +47,7 @@
         <span class="max-amt" @click="fillInputWithMaxAmt(1)">MAX</span> :
         {{ tokenBalTextVal[1] }}</small
       >
+      <br />
       <div v-if="swapActive" class="conv-impact">
         <small
           >1 {{ swapTokenSymbolVal[1] }} = {{ $store.state.swap.convertRate }}

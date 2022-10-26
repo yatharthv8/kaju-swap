@@ -7,7 +7,7 @@
       <base-gear></base-gear>
     </div>
     <p>Remove Liquidity</p>
-    <hr />
+    <!-- <hr /> -->
     <div class="main-swap">
       <div class="inp-swap">
         <span>{{ symbolVal[0] }}-{{ symbolVal[1] }} LP</span>
@@ -145,7 +145,6 @@ export default {
 <style scoped>
 input {
   font-size: 1rem;
-  width: 22rem;
   height: 2rem;
 }
 .max-amt {
@@ -158,10 +157,11 @@ ul:hover {
 
 .top-gear {
   display: flex;
+  justify-content: space-between;
+  width: -webkit-fill-available;
 }
 
 .back-but {
-  align-self: self-start;
-  margin-right: calc(var(--card-element-width) - 5rem);
+  padding: 0 0.5rem;
 }
 </style>

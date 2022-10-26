@@ -17,6 +17,11 @@
 </template>
 
 <style scoped>
+dialog {
+  height: 25vh;
+  width: 25vw;
+}
+
 .spinner {
   display: flex;
   justify-content: center;

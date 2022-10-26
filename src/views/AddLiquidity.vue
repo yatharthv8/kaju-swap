@@ -1,8 +1,9 @@
 <template>
-  <teleport to="header">
-    <div v-if="liqDialogVal.bool">
-      <liq-dialog :swapDialNum="symbolButtonIndex"></liq-dialog></div
-  ></teleport>
+  <!-- <teleport to="header"> -->
+  <div v-if="liqDialogVal.bool">
+    <liq-dialog :swapDialNum="symbolButtonIndex"></liq-dialog>
+  </div>
+  <!-- </teleport> -->
   <div class="card">
     <div class="top-gear">
       <router-link to="/pool" class="back-but">
@@ -11,7 +12,7 @@
       <base-gear></base-gear>
     </div>
     <p>Add Liquidity</p>
-    <hr />
+    <!-- <hr /> -->
     <div class="main-swap">
       <div class="inp-swap">
         <input
@@ -212,7 +213,6 @@ export default {
 <style scoped>
 input {
   font-size: 1rem;
-  width: 26rem;
   height: 2rem;
 }
 .max-amt {
@@ -225,10 +225,11 @@ ul:hover {
 
 .top-gear {
   display: flex;
+  justify-content: space-between;
+  width: -webkit-fill-available;
 }
 
 .back-but {
-  align-self: self-start;
-  margin-right: calc(var(--card-element-width) - 5rem);
+  padding: 0 0.5rem;
 }
 </style>

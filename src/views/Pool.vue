@@ -1,9 +1,10 @@
 <template>
-  <div class="pools-page-container">
-    <div class="pools-page-header">
-      <div>Pools Overview</div>
-      <div>
-        <!-- <button class="dropdown" @click="OpenIP()">Import Pool</button>
+  <div class="pools">
+    <div class="pools-page-container">
+      <div class="pools-page-header">
+        <div>Pools Overview</div>
+        <div>
+          <!-- <button class="dropdown" @click="OpenIP()">Import Pool</button>
         <div
           class="dropdown-content-pool"
           :style="{ display: displayDropdown }"
@@ -18,85 +19,86 @@
             @keyup.enter="importPool(pairAdd)"
           />
         </div> -->
-        <router-link :to="baseRoute"
-          ><button>+New Position</button></router-link
-        >
+          <router-link :to="baseRoute"
+            ><button>+New Position</button></router-link
+          >
+        </div>
       </div>
-    </div>
 
-    <div class="pools-page-card">
-      <div v-if="!displayWalletStatus">
-        <wallet-connect-button></wallet-connect-button>
-      </div>
-      <div v-else>
-        <!-- <button
+      <div class="pools-page-card">
+        <div v-if="!displayWalletStatus">
+          <wallet-connect-button></wallet-connect-button>
+        </div>
+        <div v-else>
+          <!-- <button
           @click="showExistingLiquidity()"
           v-if="!$store.state.pairsExistAndIs_SEL_Clicked[0]"
         >
           Show Existing Liquidity
         </button> -->
-        <div
-          v-if="!$store.state.pairsExistAndIs_SEL_Clicked"
-          class="disp-card-cont"
-        >
-          <div>
-            <p>Your active liquidity positions will appear here.</p>
-            <p>Currently there are no pairs in existence.</p>
-            <p>To add, click on the button here :</p>
-          </div>
-          <router-link :to="baseRoute">
-            <button>Add Liquidity</button></router-link
+          <div
+            v-if="!$store.state.pairsExistAndIs_SEL_Clicked"
+            class="disp-card-cont"
           >
-        </div>
-        <div v-else>
-          <ul v-for="pair in $store.state.symLP" :key="pair.address">
-            <div class="list-format">
-              <div>
-                {{ pair[0] }}
-                -
-                {{ pair[1] }}
-                LP
-              </div>
-              <div class="details">
-                <div v-if="pairValCanDisp(pair[4])">
-                  {{ pair[4] }}
-                </div>
-                <div class="closed-svg" v-else>
-                  <info-svg></info-svg> Closed
-                </div>
-              </div>
-            </div>
             <div>
-              <router-link :to="'/addLiquidity/' + pair[2] + '/' + pair[3]">
-                <button @click="addMoreLiquidity(pair[2], pair[3])">
-                  Add More Liquidity
-                </button></router-link
-              ><router-link
-                v-if="pairValCanDisp(pair[4])"
-                :to="'/removeLiquidity/' + pair.address"
-                ><button @click="remLiquidityPage(pair.address)">
-                  Remove Liquidity
-                </button></router-link
-              >
+              <p>Your active liquidity positions will appear here.</p>
+              <p>Currently there are no pairs in existence.</p>
+              <p>To add, click on the button here :</p>
             </div>
-          </ul>
+            <router-link :to="baseRoute">
+              <button>Add Liquidity</button></router-link
+            >
+          </div>
+          <div v-else>
+            <ul v-for="pair in $store.state.symLP" :key="pair.address">
+              <div class="list-format">
+                <div>
+                  {{ pair[0] }}
+                  -
+                  {{ pair[1] }}
+                  LP
+                </div>
+                <div class="details">
+                  <div v-if="pairValCanDisp(pair[4])">
+                    {{ pair[4] }}
+                  </div>
+                  <div class="closed-svg" v-else>
+                    <info-svg></info-svg> Closed
+                  </div>
+                </div>
+              </div>
+              <div class="liquidity-add-rem-but">
+                <router-link :to="'/addLiquidity/' + pair[2] + '/' + pair[3]">
+                  <button @click="addMoreLiquidity(pair[2], pair[3])">
+                    Add More Liquidity
+                  </button></router-link
+                ><router-link
+                  v-if="pairValCanDisp(pair[4])"
+                  :to="'/removeLiquidity/' + pair.address"
+                  ><button @click="remLiquidityPage(pair.address)">
+                    Remove Liquidity
+                  </button></router-link
+                >
+              </div>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="pool-page-card-footers">
-      <a
-        href="https://help.uniswap.org/en/articles/5391541-provide-liquidity-on-uniswap-v3"
-        target="_blank"
-        ><button>
-          <p>Learn about providing liquidity <sup>↗</sup></p>
-          <p>Check out our V2 LP walkthrough and migration guides.</p>
-        </button></a
-      ><a href="https://info.uniswap.org/#/pools" target="_blank">
-        <button>
-          <p>Top pools <sup>↗</sup></p>
-          <p>Explore Uniswap Analytics.</p>
-        </button></a
-      >
+      <div class="pool-page-card-footers">
+        <a
+          href="https://help.uniswap.org/en/articles/5391541-provide-liquidity-on-uniswap-v3"
+          target="_blank"
+          ><button>
+            <p>Learn about providing liquidity <sup>↗</sup></p>
+            <p>Check out our V2 LP walkthrough and migration guides.</p>
+          </button></a
+        ><a href="https://info.uniswap.org/#/pools" target="_blank">
+          <button>
+            <p>Top pools <sup>↗</sup></p>
+            <p>Explore Uniswap Analytics.</p>
+          </button></a
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -182,6 +184,11 @@ export default {
 </script>
 
 <style scoped>
+.pools {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+}
 .disp-card-cont {
   display: flex;
   flex-direction: row;
@@ -197,15 +204,52 @@ ul {
   align-items: center;
 }
 
-ul:hover {
-  background-color: rgba(228, 189, 140, 0.799);
+@media screen and (max-width: 520px) {
+  ul {
+    width: 21rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .liquidity-add-rem-but {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+  }
+  .list-format {
+    display: flex;
+    flex-direction: row;
+    width: inherit;
+    justify-content: space-between;
+  }
+}
+@media screen and (max-width: 720px) {
+  .pool-page-card-footers {
+    display: none;
+  }
+}
+@media screen and (min-width: 520px) {
+  .list-format {
+    display: flex;
+    flex-direction: column;
+    height: 4rem;
+    justify-content: space-between;
+  }
+}
+@media screen and (min-width: 520px) and (max-width: 600px) {
+  ul {
+    width: 34rem;
+  }
+}
+@media screen and (min-width: 600px) and (max-width: 720px) {
+  ul {
+    width: 36rem;
+  }
 }
 
-.list-format {
-  display: flex;
-  flex-direction: column;
-  height: 4rem;
-  justify-content: space-between;
+ul:hover {
+  background-color: rgba(228, 189, 140, 0.799);
 }
 
 .details {

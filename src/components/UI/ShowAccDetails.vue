@@ -1,12 +1,18 @@
 <template>
   <dialog open>
     <h3>Account Details</h3>
+    <div>
+      <h2>
+        <div class="wallet-info nav-item">{{ $store.state.balance }} ETH</div>
+      </h2>
+    </div>
     <hr />
     <div>
       <p>Connected with MetaMask</p>
       <button @click="disconnectWallet()">Disconnect</button>
     </div>
     <p>{{ $store.state.account0 }}</p>
+
     <div>
       <button @click="copyAdd($store.state.account0)">Copy Address</button>
       <a :href="urlOnEthScan" target="_blank"
@@ -63,6 +69,9 @@ a {
 
 p {
   margin-right: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 div {
   display: flex;

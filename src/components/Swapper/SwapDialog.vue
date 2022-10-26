@@ -1,6 +1,12 @@
 <template>
   <dialog open>
-    <p>Select Tokens</p>
+    <br />
+    <span>Select Tokens</span>
+    <span style="float: right; cursor: pointer" @click="closeDialog()"
+      >&times;</span
+    >
+    <br />
+    <br />
     <hr />
     <label for="address">New token:</label>
     <input
@@ -10,6 +16,7 @@
       v-model.trim="newAddress"
       @keyup.enter="submitAddress(newAddress, 1)"
     />
+    <hr />
     <!-- <select name="tokens" id="tokens" hidden> -->
     <ul
       v-for="coin in $store.state.coins"
@@ -27,6 +34,7 @@
       </span>
     </ul>
     <!-- </select> -->
+    <hr />
     <button style="float: right" @click="closeDialog()">Close</button>
   </dialog>
 </template>
@@ -88,7 +96,6 @@ export default {
 <style scoped>
 input {
   font-size: 1rem;
-  width: 26rem;
   height: 2rem;
 }
 
