@@ -7,7 +7,13 @@ export default {
     // if (!localStorage.getItem("pairs")) {
     context.state.allPairs = await ethFunc.getPairs(
       factory,
-      context.rootState.account0
+      context.rootState.account0,
+      0
+    );
+    context.state.allPairsForGraph = await ethFunc.getPairs(
+      factory,
+      context.rootState.account0,
+      1
     );
     // }
   },

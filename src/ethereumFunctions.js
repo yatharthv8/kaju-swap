@@ -223,15 +223,20 @@ export async function getAmountIn(
   }
 }
 
-export async function getPairs(factory, accountAddress) {
+export async function getPairs(factory, accountAddress, graph) {
   try {
     const pairLength = await factory.methods.allPairsLength().call();
     let pairs = [];
+    let allPairsForGraph = [];
     for (let i = 0; i < pairLength; i++) {
       const pair = await factory.methods.allPairs(i).call();
+      allPairsForGraph.push(pair);
       if (await CGIfLiquidityExists(pair, accountAddress, "check")) {
         pairs.push(pair);
       }
+    }
+    if (graph === 1) {
+      return allPairsForGraph;
     }
     // for (let i = 0; i < pairLength; ++i) {
     //   console.log(checkIfLiquidityExists(pairs[i], accountAddress));

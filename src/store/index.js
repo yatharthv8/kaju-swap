@@ -26,6 +26,7 @@ const store = createStore({
       OUP_TrueVal: "",
       selectedPoolLiq: null,
       allPairs: [],
+      allPairsForGraph: [],
       checkDone: false,
       canLeave: true,
       showAccDialog: false,
