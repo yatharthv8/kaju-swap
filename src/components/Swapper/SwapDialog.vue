@@ -18,21 +18,23 @@
     />
     <hr />
     <!-- <select name="tokens" id="tokens" hidden> -->
-    <ul
-      v-for="coin in $store.state.coins"
+    <div
+      v-for="(coin, index) in $store.state.coins"
       :key="coin.address"
       @click="submitAddress(coin.address, 0)"
     >
-      {{
-        coin.abbr
-      }}
-      <br />
-      <small>{{ coin.name }}</small>
-      <small class="ABU" v-if="coin.addedByUser"> | Added by user</small>
-      <span style="float: right">
-        <small>{{ coin.balance }}</small>
-      </span>
-    </ul>
+      <ul v-if="showThese[index]">
+        {{
+          coin.abbr
+        }}
+        <br />
+        <small>{{ coin.name }}</small>
+        <small class="ABU" v-if="coin.addedByUser"> | Added by user</small>
+        <span style="float: right">
+          <small>{{ coin.balance }}</small>
+        </span>
+      </ul>
+    </div>
     <!-- </select> -->
     <hr />
     <button style="float: right" @click="closeDialog()">Close</button>
@@ -44,6 +46,7 @@ import { mapActions, mapGetters } from "vuex";
 // import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
+import swal from "sweetalert";
 
 // const ERC20 = require("../../../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 
@@ -52,34 +55,55 @@ export default {
   data() {
     return {
       newAddress: null,
+      showThese: [],
     };
   },
   methods: {
     ...mapActions({ closeDialog: "closeSwapDialog" }),
     async submitAddress(tokenAddress, action) {
+      this.$store.state.swap.pathExists = true;
       try {
         const accounts = await web3.eth.getAccounts();
         ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
-          this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
-          this.swapDialogVars.DialnumAdd[this.swapDialNum] = tokenAddress;
-          this.$store.dispatch("displayMaxTokenBalance", {
-            add: tokenAddress,
-            ind: this.swapDialNum,
-          });
-          if (action === 1) {
-            this.$store.state.coins.unshift({
-              name: data.name,
-              abbr: data.symbol,
-              address: tokenAddress,
-              balance: data.balance,
-              addedByUser: true,
+          if (data) {
+            // console.log("hi");
+            this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
+            this.swapDialogVars.DialnumAdd[this.swapDialNum] = tokenAddress;
+            this.$store.dispatch("displayMaxTokenBalance", {
+              add: tokenAddress,
+              ind: this.swapDialNum,
             });
+            if (action === 1) {
+              let addToken = true;
+              for (let i = 0; i < this.$store.state.coins.length; ++i) {
+                if (this.$store.state.coins[i].address === tokenAddress) {
+                  addToken = false;
+                }
+              }
+              // console.log(data);
+
+              if (addToken) {
+                this.$store.state.coins.unshift({
+                  name: data.name,
+                  abbr: data.symbol,
+                  address: tokenAddress,
+                  balance: data.balance,
+                  addedByUser: true,
+                });
+              }
+            }
+            this.$store.dispatch("checkIfPathExists");
+            this.$store.dispatch("displayReservesSwap");
+
+            this.$store.dispatch("conversionRateSwap");
+          } else {
+            swal("Error", "Enter a valid token address", "error");
           }
-          this.$store.dispatch("displayReservesSwap");
         });
         // console.log(this.coins);
         this.$store.dispatch("closeSwapDialog");
       } catch (err) {
+        // console.loh("bye");
         console.log("Invalid token address!");
       }
     },
@@ -89,6 +113,39 @@ export default {
       swapDialogVars: "getSwapDialog",
       swapTokenSymbolVal: "getSwapTokenSymbol",
     }),
+  },
+  mounted() {
+    for (let i = 0; i < this.$store.state.coins.length; i++) {
+      this.showThese.push(true);
+    }
+  },
+  watch: {
+    newAddress(newVal) {
+      this.showThese = [];
+      if (newVal.length) {
+        const filter = newVal.toUpperCase();
+        for (let i = 0; i < this.$store.state.coins.length; i++) {
+          const a = this.$store.state.coins[i].name;
+          if (a.toUpperCase().indexOf(filter) > -1) {
+            this.showThese.push(true);
+          } else {
+            this.showThese.push(false);
+            // const adc = this.$store.state.coins[i].address.length;
+            // if (
+            //   newVal.length === adc &&
+            //   adc.toUpperCase().indexOf(filter) > -1
+            // ) {
+            //   this.showThese[i] = true;
+            // }
+          }
+        }
+      } else {
+        for (let i = 0; i < this.$store.state.coins.length; i++) {
+          this.showThese.push(true);
+        }
+      }
+      // console.log(this.showThese);
+    },
   },
 };
 </script>

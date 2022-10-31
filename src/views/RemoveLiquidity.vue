@@ -79,6 +79,7 @@
 import { mapActions, mapGetters } from "vuex";
 import BalResSection from "../components/layout/BalResSecRemLiq.vue";
 import { defineAsyncComponent } from "vue";
+import swal from "sweetalert";
 
 const BaseRangeSlider = defineAsyncComponent(() =>
   import("../components/UI/BaseRangeSlider.vue")
@@ -124,8 +125,10 @@ export default {
     },
     "$store.state.remLiquidity.pairLiquidity"(newVal) {
       if (newVal < 1e-12) {
-        alert(
-          "Since you have removed the full share of Liquidity you added, you can no longer remove LP Tokens from this pool! Hence you are being redirected to the pools page!"
+        swal(
+          "Info",
+          "Since you have removed the full share of Liquidity you added, you can no longer remove LP Tokens from this pool! Hence you are being redirected to the pools page!",
+          "info"
         );
         this.$router.push("/pool");
       }
@@ -136,7 +139,7 @@ export default {
       next();
     } else {
       next(false);
-      alert("Please wait for the transaction to end!");
+      swal("Alert", "Please wait for the transaction to end!", "warning");
     }
   },
 };

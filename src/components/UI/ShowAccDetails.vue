@@ -26,6 +26,7 @@
 
 <script>
 import { mapActions } from "vuex";
+import swal from "sweetalert";
 
 export default {
   data() {
@@ -38,7 +39,7 @@ export default {
     disconnectWallet() {
       this.$router.push("/");
       this.revertState();
-      alert("Connect Wallet to use KajuSwap!");
+      swal("Connect Wallet to use KajuSwap!");
     },
     closeDialog() {
       this.$store.state.showAccDialog = false;
@@ -46,9 +47,9 @@ export default {
     async copyAdd(mytext) {
       try {
         await navigator.clipboard.writeText(mytext);
-        alert("Copied");
+        swal("Success", "Copied", "success");
       } catch ($e) {
-        alert("Cannot copy");
+        swal("Error", "Cannot copy", "error");
       }
     },
   },

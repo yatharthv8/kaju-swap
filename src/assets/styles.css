@@ -217,6 +217,7 @@ ul {
   width: 1rem;
   padding-left: 4px;
   height: auto;
+  cursor: pointer;
 }
 
 .right-header-display {

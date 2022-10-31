@@ -2,6 +2,7 @@ import web3 from "../ethereum/web3.js";
 // import detectEthereumProvider from "@metamask/detect-provider";
 
 import { ethers } from "ethers";
+import swal from "sweetalert";
 
 const ROUTER = require("../ethereum/contracts/artifacts/KajuswapRouter.json");
 const ERC20 = require("../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
@@ -26,6 +27,31 @@ export async function getAccount() {
     method: "eth_requestAccounts",
   });
   return accounts[0];
+}
+
+export function bfs(graph, start) {
+  let queue = {};
+  let dist = {};
+  let q = [];
+  q.push(start);
+  queue[start] = [];
+  queue[start].push(-1);
+  dist[start] = 0;
+  while (q.length > 0) {
+    let u = q.shift();
+    // console.log(graph[u]);
+    graph[u].forEach((v) => {
+      if (dist[v] === undefined || dist[v] > dist[u] + 1) {
+        dist[v] = dist[u] + 1;
+        q.push(v);
+        queue[v] = [];
+        queue[v].push(u);
+      } else if (dist[v] === dist[u] + 1) {
+        queue[v].push(u);
+      }
+    });
+  }
+  return queue;
 }
 
 /*-------------------------------SWAP PAGE-------------------------------------*/
@@ -63,6 +89,7 @@ export async function getBalanceandSymbol(accountAddress, address) {
       name: await token.methods.name().call(),
     };
   } catch (err) {
+    swal("Error", "Enter a valid token address", "error");
     console.log("The getBalanceAndSymbol function had an error!", err);
     return false;
   }
@@ -86,43 +113,13 @@ export async function getTokenBalance(address, accountAddress) {
 
 //Swap function
 export async function swapTokens(
-  token0Address,
-  token1Address,
+  path,
   amount,
   routerContract,
   accountAddress,
   slippageVal,
   deadline
 ) {
-  //swap auto-router testing
-  // const V3_SWAP_ROUTER_ADDRESS = VUE_APP_ROUTER;
-  // const web3Provider = await detectEthereumProvider();
-
-  // const router = new AlphaRouter({ chainId: 5, provider: web3Provider });
-
-  // const ETH = new Token(5, token0Address, 18, "ETH", "Ether");
-
-  // const UNI = new Token(5, token1Address, 18, "UNI", "UN//I");
-
-  // const typedValueParsed = "100000000000000000000";
-  // const ethAmount = CurrencyAmount.fromRawAmount(
-  //   currency,
-  //   JSBI.BigInt(typedValueParsed)
-  // );
-
-  // const route = await router.route(ethAmount, UNI, TradeType.EXACT_INPUT, {
-  //   recipient: myAddress,
-  //   slippageTolerance: new Percent(5, 100),
-  //   deadline: Math.floor(Date.now() / 1000 + 1800),
-  // });
-
-  // console.log(`Quote Exact In: ${route.quote.toFixed(2)}`);
-  // console.log(`Gas Adjusted Quote In: ${route.quoteGasAdjusted.toFixed(2)}`);
-  // console.log(`Gas Used USD: ${route.estimatedGasUsedUSD.toFixed(6)}`);
-  // console.log(`route: ${route}`);
-
-  //actual single token swapping
-  const path = [token0Address, token1Address];
   const time = ethers.BigNumber.from(
     Math.floor(Date.now() / 1000) + deadline * 60
   );
@@ -135,7 +132,10 @@ export async function swapTokens(
   const amountOut = await routerContract.methods
     .getAmountsOut(amountIn, path)
     .call();
-  const amountOutMin = slippageCalc(slippageVal, amountOut[1]);
+  const amountOutMin = slippageCalc(
+    slippageVal,
+    amountOut[amountOut.length - 1]
+  );
   // const token0 = new web3.eth.Contract(ERC20.abi, token0Address);
   console.log(
     "swapTokens->",
@@ -146,19 +146,16 @@ export async function swapTokens(
     accountAddress,
     time
   );
-  // await token0.methods
-  //   .approve(routerContract.options.address, amountIn)
-  //   .send({ from: accountAddress });
   try {
-    if (token0Address === process.env.VUE_APP_WETH) {
+    if (path[0] === process.env.VUE_APP_WETH) {
       await routerContract.methods
         .swapExactETHForTokens(amountOutMin, path, accountAddress, time)
         .send({ from: accountAddress, value: amountIn });
-    } else if (token1Address === process.env.VUE_APP_WETH) {
+    } else if (path[path.length - 1] === process.env.VUE_APP_WETH) {
       await routerContract.methods
         .swapExactTokensForETH(
-          String(amountIn),
-          String(amountOutMin),
+          amountIn,
+          amountOutMin,
           path,
           accountAddress,
           time
@@ -175,55 +172,46 @@ export async function swapTokens(
         )
         .send({ from: accountAddress });
     }
+    swal("Success!!", "Transaction was completed successfully", "success");
   } catch (err) {
-    alert("Something Happened! Transaction was not completed");
+    swal("Oops!", "Something Happened! Transaction was not completed", "error");
   }
 }
 
-export async function getAmountOut(
-  token0Address,
-  token1Address,
-  amountIn,
-  routerContract
-) {
+export async function getAmountOut(path, amountIn, routerContract) {
   try {
     const values_out = await routerContract.methods
-      .getAmountsOut(web3.utils.toWei(String(amountIn), "ether"), [
-        token0Address,
-        token1Address,
-      ])
+      .getAmountsOut(web3.utils.toWei(String(amountIn), "ether"), path)
       .call();
-    const amount_out = Number(web3.utils.fromWei(values_out[1], "ether"));
+    // console.log(values_out, path);
+    const amount_out = Number(
+      web3.utils.fromWei(values_out[values_out.length - 1], "ether")
+    );
     return amount_out;
   } catch {
     return false;
   }
 }
 
-export async function getAmountIn(
-  token0Address,
-  token1Address,
-  amountOut,
-  routerContract
-) {
+export async function getAmountIn(path, amountOut, routerContract) {
   try {
     const values_in = await routerContract.methods
-      .getAmountsIn(web3.utils.toWei(String(amountOut)), [
-        token0Address,
-        token1Address,
-      ])
+      .getAmountsIn(web3.utils.toWei(String(amountOut), "ether"), path)
       .call();
+    // console.log(values_in);
     const amount_in = Number(web3.utils.fromWei(values_in[0], "ether"));
     return amount_in;
   } catch {
-    alert(
-      `You have entered values greater than reserves. Please see the values of corresponding reserves at the bottom of the screen and then enter values accordingly!`
+    swal(
+      "Alert",
+      `You have entered values greater than reserves. Please see the values of corresponding reserves at the bottom of the screen and then enter values accordingly!`,
+      "warning"
     );
     return false;
   }
 }
 
-export async function getPairs(factory, accountAddress, graph) {
+export async function getPairs(factory, accountAddress) {
   try {
     const pairLength = await factory.methods.allPairsLength().call();
     let pairs = [];
@@ -235,13 +223,13 @@ export async function getPairs(factory, accountAddress, graph) {
         pairs.push(pair);
       }
     }
-    if (graph === 1) {
-      return allPairsForGraph;
-    }
+    // if (graph === 1) {
+    //   return allPairsForGraph;
+    // }
     // for (let i = 0; i < pairLength; ++i) {
     //   console.log(checkIfLiquidityExists(pairs[i], accountAddress));
     // }
-    return pairs;
+    return [pairs, allPairsForGraph];
   } catch (err) {
     console.log("No pairs found --->>", err);
   }
@@ -289,7 +277,7 @@ export async function fetchReserves(token0Address, token1Address, pair) {
     // })
   } catch (err) {
     console.log("No reserves found!");
-    alert("This pair does not exist! Add liquidity to create pair!");
+    // swal("No direct pair exists between these two tokens!!");
     return [0, 0];
   }
 }
@@ -588,9 +576,11 @@ export async function addLiquidity(
         )
         .send({ from: account });
     }
-    alert("Transaction Completed Successfully!");
+    swal("Hurray!!", "Transaction Completed Successfully!", "success");
+    return true;
   } catch (err) {
-    alert("Transaction was Unsuccessful!");
+    swal("Oops!", "Transaction was Unsuccessful!", "error");
+    return false;
   }
   // }
 }
@@ -688,9 +678,11 @@ export async function removeLiquidity(
         )
         .send({ from: account });
     }
-    alert("Liquidity Removed Successfully!");
+    swal("Hurray!!", "Liquidity Removed Successfully!", "success");
+    return true;
   } catch (err) {
-    alert("Liquidity Removal Unsuccessful!");
+    swal("Oops!", "Liquidity Removal Unsuccessful!", "error");
+    return false;
   }
   // }
 }

@@ -107,6 +107,7 @@
 import { mapActions, mapGetters } from "vuex";
 import * as ethFunc from "../ethereumFunctions.js";
 import InfoSvg from "../assets/svg/Info.vue";
+import swal from "sweetalert";
 
 export default {
   components: { InfoSvg },
@@ -174,7 +175,7 @@ export default {
         next();
       } else {
         next(false);
-        alert("Please connect to a wallet first!");
+        swal("Alert", "Please connect to a wallet first!", "warning");
       }
     } else {
       next();

@@ -111,6 +111,7 @@
 import { defineAsyncComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import BalResSection from "../components/layout/BalResSecLiq.vue";
+import swal from "sweetalert";
 
 const LiqDialog = defineAsyncComponent(() =>
   import("../components/Liquidity/LiqDialog.vue")
@@ -204,7 +205,7 @@ export default {
       next();
     } else {
       next(false);
-      alert("Please wait for the transaction to end!");
+      swal("Alert", "Please wait for the transaction to end!", "warning");
     }
   },
 };

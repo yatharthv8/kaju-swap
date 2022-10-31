@@ -20,6 +20,7 @@
 dialog {
   height: 25vh;
   width: 25vw;
+  z-index: 100;
 }
 
 .spinner {

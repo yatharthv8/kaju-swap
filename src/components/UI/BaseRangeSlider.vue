@@ -3,7 +3,7 @@
     <button @click="inputMiles(25)">25%</button>
     <button @click="inputMiles(50)">50%</button>
     <button @click="inputMiles(75)">75%</button>
-    <button @click="inputMiles(100)">100%</button>
+    <button @click="inputMiles(100)">Max</button>
   </div>
   <vue3-slider
     class="slider"
@@ -36,8 +36,11 @@ export default {
     };
   },
   methods: {
-    inputMiles(num) {
+    async inputMiles(num) {
       this.valueC = num;
+      setTimeout(() => {
+        this.calcVal();
+      }, 10);
     },
     calcVal() {
       let text = tooltipText[0].innerHTML;

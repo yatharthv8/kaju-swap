@@ -1,5 +1,6 @@
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
+import swal from "sweetalert";
 
 const ERC20 = require("../../../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 
@@ -76,9 +77,9 @@ export default {
           });
       }
       if (context.rootState.tokenApprovalInProcess === false) {
-        alert("Token approval Successful!");
+        swal("Success", "Token approval Successful!", "success");
       } else {
-        alert("Token approval Unsuccessful!");
+        swal("Oops!", "Token approval Unsuccessful!", "error");
       }
       context.dispatch("toggleOperationUnderProcess", {
         val: false,
@@ -90,7 +91,7 @@ export default {
         val: false,
         location: "ApprovTokL",
       });
-      alert("Token approval Unsuccessful!");
+      swal("Oops!", "Token approval Unsuccessful!", "error");
     }
   },
 
@@ -111,9 +112,11 @@ export default {
         context.rootState.account0,
         context.state.deadlineAddLiq
       )
-      .then(() => {
+      .then((data) => {
+        if (data === true) {
+          context.dispatch("registerExistingLiquidity");
+        }
         context.dispatch("displayReservesPool");
-        context.dispatch("registerExistingLiquidity");
         context.dispatch("toggleOperationUnderProcess", {
           val: false,
           location: "addLiq",
@@ -167,18 +170,28 @@ export default {
       ) {
         context.rootState.balance = context.getters.getLiqTokenBal[1];
       }
+
       context.dispatch("checkMaxLiqBal");
       context.dispatch("toggleOperationUnderProcess", {
         val: false,
         location: "DispResPool",
       });
+      if (context.rootState.coins === null) {
+        context.rootState.coins = JSON.parse(localStorage.getItem("coins"));
+      }
+      for (let i = 0; i < context.rootState.coins.length; ++i) {
+        context.rootState.coins[i].balance = await ethFunc.getTokenBalance(
+          context.rootState.coins[i].address,
+          context.rootState.account0
+        );
+      }
     } catch {
       console.log(
         "There seems to be some error retrieving Reserves! Sorry for the inconvenience caused!"
       );
-      alert(
-        "There seems to be some error retrieving Reserves! Sorry for the inconvenience caused!"
-      );
+      // alert(
+      //   "There seems to be some error retrieving Reserves! Sorry for the inconvenience caused!"
+      // );
       context.dispatch("toggleOperationUnderProcess", {
         val: false,
         location: "DispResPool",

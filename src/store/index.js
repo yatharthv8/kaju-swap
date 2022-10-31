@@ -35,6 +35,7 @@ const store = createStore({
       coins: JSON.parse(localStorage.getItem("coins")),
       pairsExistAndIs_SEL_Clicked: false,
       graph: new autoRouteGraph(),
+      symbolsGraph: new autoRouteGraph(),
       symLP: [],
     };
   },

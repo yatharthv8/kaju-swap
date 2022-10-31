@@ -14,6 +14,7 @@ import { mapGetters } from "vuex";
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheFooter from "./components/layout/TheFooter.vue";
 import * as COINS from "./constants/coins.js";
+import swal from "sweetalert";
 
 export default {
   components: { TheHeader, TheFooter },
@@ -29,7 +30,7 @@ export default {
   mounted() {
     ethereum.on("disconnect", () => {
       this.$router.push("/");
-      alert("Connect Wallet to use KajuSwap!");
+      swal("Alert", "Connect Wallet to use KajuSwap!", "warning");
     });
     ethereum.on("chainChanged", (_chainId) => {
       if (!(_chainId === "0x1" || _chainId === "0x5")) {

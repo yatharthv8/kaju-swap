@@ -1,6 +1,7 @@
 import web3 from "../../../ethereum/web3.js";
 import detectEthereumProvider from "@metamask/detect-provider";
 import * as chains from "../../constants/chains.js";
+import swal from "sweetalert";
 
 const { ethereum } = window;
 
@@ -27,7 +28,11 @@ export default {
                 chains.Hex[Number(networkHex[networkHex.length - 1])];
               if (networkHex != "0x5") {
                 // console.log(networkHex);
-                alert("Kindly change to GÖRLI Network to use the app!");
+                swal(
+                  "Alert",
+                  "Kindly change to GÖRLI Network to use the app!",
+                  "warning"
+                );
               }
             });
           context.rootState.account0 = accounts[0];
@@ -69,8 +74,10 @@ export default {
     } else {
       context.state.isLoading = false;
       console.log("Please install a Wallet Provider");
-      alert(
-        "Please install a Wallet Provider! Wallets other than Metamask are not supported at the moment! Sorry for the inconvinience caused."
+      swal(
+        "Info",
+        "Please install a Wallet Provider! Wallets other than Metamask are not supported at the moment! Sorry for the inconvinience caused.",
+        "info"
       );
     }
     if (context.state.isLoading === false && check) {

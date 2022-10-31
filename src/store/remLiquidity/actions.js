@@ -1,5 +1,6 @@
 import * as ethFunc from "../../ethereumFunctions.js";
 import web3 from "../../../ethereum/web3.js";
+import swal from "sweetalert";
 
 const PAIR = require("../../../ethereum/contracts/artifacts/KajuswapPair.json");
 
@@ -37,10 +38,10 @@ export default {
         .send({ from: context.rootState.account0 })
         .then(() => {
           context.rootState.tokenApprovalInProcess = false;
-          alert("LP Token approval Successful!");
+          swal("Success", "LP Token approval Successful!", "success");
         })
         .catch((err) => {
-          alert("Approval Unsuccessful!");
+          swal("Oops!", "Approval Unsuccessful!", "error");
         });
       context.dispatch("toggleOperationUnderProcess", {
         val: false,
@@ -125,12 +126,24 @@ export default {
         context.rootState.account0,
         context.state.deadlineRemLiq
       )
-      .then(() => {
-        context.dispatch("getDataForLiqRemPage", context.state.pairAddress);
+      .then(async (data) => {
+        if (data === true) {
+          context.dispatch("getDataForLiqRemPage", context.state.pairAddress);
+          context.dispatch("registerExistingLiquidity");
+        }
         context.dispatch("toggleOperationUnderProcess", {
           val: false,
           location: "RemLiq",
         });
+        if (context.rootState.coins === null) {
+          context.rootState.coins = JSON.parse(localStorage.getItem("coins"));
+        }
+        for (let i = 0; i < context.rootState.coins.length; ++i) {
+          context.rootState.coins[i].balance = await ethFunc.getTokenBalance(
+            context.rootState.coins[i].address,
+            context.rootState.account0
+          );
+        }
         context.rootState.canLeave = true;
       })
       .catch((err) => {

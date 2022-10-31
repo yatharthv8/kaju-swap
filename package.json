@@ -17,6 +17,7 @@
     "ethers": "^5.7.1",
     "ganache-cli": "^6.12.2",
     "keccak256": "^1.0.6",
+    "sweetalert": "^2.1.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vue3-slider": "^1.8.0",

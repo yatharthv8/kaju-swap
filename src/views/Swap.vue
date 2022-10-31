@@ -47,17 +47,51 @@
         <span class="max-amt" @click="fillInputWithMaxAmt(1)">MAX</span> :
         {{ tokenBalTextVal[1] }}</small
       >
-      <br />
-      <div v-if="swapActive" class="conv-impact">
-        <small
-          >1 {{ swapTokenSymbolVal[1] }} = {{ $store.state.swap.convertRate }}
-          {{ swapTokenSymbolVal[0] }}</small
-        >
-        <small>Price Impact : {{ $store.state.swap.priceImpVal }}%</small>
+      <button
+        @click="openDetails"
+        class="details"
+        v-if="$store.state.swap.pathExists"
+      >
+        <small>Details</small>
+        <img
+          class="expand-arrow"
+          src="https://img.icons8.com/ios-glyphs/30/000000/expand-arrow--v1.png"
+        />
+      </button>
+      <div class="details-dropdown" v-if="openD">
+        <div v-if="swapActive" class="conv-impact">
+          <small
+            >1 {{ swapTokenSymbolVal[0] }} =
+            {{ $store.state.swap.convertRate }}
+            {{ swapTokenSymbolVal[1] }}</small
+          >
+          <small>Price Impact : {{ $store.state.swap.priceImpVal }}%</small>
+        </div>
+        <small class="show-route">
+          Route :
+          <div
+            v-for="(symbol, index) in $store.state.swap.symbolsPath"
+            :key="index"
+          >
+            {{ symbol }} <span v-if="index != routeLen - 1"> --> </span>
+          </div>
+        </small>
       </div>
     </div>
     <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
+    </div>
+    <div v-else-if="!$store.state.swap.pathExists">
+      <button
+        :disabled="!$store.state.swap.pathExists"
+        :class="{
+          'button-disabled': !$store.state.swap.pathExists,
+          'swap-button': true,
+        }"
+      >
+        No Routes for the trade
+        <span><small>(Add Liquidity First)</small></span>
+      </button>
     </div>
     <div v-else-if="$store.state.swap.insuffLiq">
       <button
@@ -127,6 +161,7 @@ import downArrow from "../assets/svg/downArrow.vue";
 import BalResSection from "../components/layout/BalResSection.vue";
 import * as ethFunc from "../ethereumFunctions.js";
 import web3 from "../../ethereum/web3.js";
+import swal from "sweetalert";
 
 const SwapDialogVue = defineAsyncComponent(() =>
   import("../components/Swapper/SwapDialog.vue")
@@ -138,6 +173,8 @@ export default {
     return {
       swapActive: false,
       symbolButtonIndex: null,
+      routeLen: this.$store.state.swap.symbolsPath.length,
+      openD: false,
     };
   },
   methods: {
@@ -147,24 +184,30 @@ export default {
       checkForBal0: "checkMaxBalFor0",
       checkForBal1: "checkMaxBalFor1",
     }),
+    openDetails() {
+      this.openD = !this.openD;
+    },
     async submitAddress(tokenAddress, index) {
       try {
         const accounts = await web3.eth.getAccounts();
+        this.swapDialogVars.DialnumAdd[index] = tokenAddress;
         ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
           this.swapTokenSymbolVal[index] = data.symbol;
-          this.swapDialogVars.DialnumAdd[index] = tokenAddress;
           this.$store.dispatch("displayMaxTokenBalance", {
             add: tokenAddress,
             ind: index,
           });
+          // this.$store.dispatch("checkIfPathExists");
         });
       } catch (err) {
         console.log("Invalid token address!");
       }
     },
     async openDialog(num) {
-      this.symbolButtonIndex = num;
-      this.$store.dispatch("openSwapDialog");
+      if (this.displayWalletStatus) {
+        this.symbolButtonIndex = num;
+        this.$store.dispatch("openSwapDialog");
+      }
     },
     fillInputWithMaxAmt(num) {
       if (num === 0) {
@@ -174,6 +217,10 @@ export default {
       }
     },
     swapInpBoxTokens() {
+      const addressT = this.swapDialogVars.DialnumAdd;
+      // console.log(addressT[0]);
+      this.submitAddress(addressT[1], 0);
+      this.submitAddress(addressT[0], 1);
       if (this.$store.state.swap.swapWatchInp) {
         this.$store.state.swap.amountToken1 =
           this.$store.state.swap.amountToken0;
@@ -181,10 +228,12 @@ export default {
         this.$store.state.swap.amountToken0 =
           this.$store.state.swap.amountToken1;
       }
-      const addressT = this.swapDialogVars.DialnumAdd;
-      // console.log(addressT[0]);
-      this.submitAddress(addressT[1], 0);
-      this.submitAddress(addressT[0], 1);
+      // console.log(this.$store.state.swap.path);
+      let p = this.$store.state.swap.path;
+      this.$store.state.swap.path = p.reverse();
+      let s = this.$store.state.swap.symbolsPath;
+      this.$store.state.swap.symbolsPath = s.reverse();
+      // console.log(this.$store.state.swap.path);
       setTimeout(() => {
         this.$store.dispatch("displayReservesSwap");
       }, 1000);
@@ -203,10 +252,13 @@ export default {
       if (newVal != null) {
         if (newVal > 0) {
           this.$store.dispatch("fillTokenAmount", 1);
-          this.$store.dispatch("converstionRateSwap");
+          this.$store.dispatch("conversionRateSwap");
         }
         this.checkForBal0();
-        if (this.$store.state.swap.amountToken0) {
+        if (
+          this.$store.state.swap.amountToken0 &&
+          this.$store.state.swap.pathExists
+        ) {
           this.swapActive = true;
         } else {
           this.swapActive = false;
@@ -222,7 +274,10 @@ export default {
           this.$store.dispatch("fillTokenAmount", 0);
         }
         this.checkForBal0();
-        if (this.$store.state.swap.amountToken1) {
+        if (
+          this.$store.state.swap.amountToken1 &&
+          this.$store.state.swap.pathExists
+        ) {
           this.swapActive = true;
         } else {
           this.swapActive = false;
@@ -232,13 +287,17 @@ export default {
         this.swapActive = false;
       }
     },
+    "$store.state.swap.symbolsPath.length"(newVal) {
+      this.routeLen = newVal;
+      // console.log(this.routeLen);
+    },
   },
   beforeRouteLeave(_, _2, next) {
     if (this.$store.state.canLeave == true) {
       next();
     } else {
       next(false);
-      alert("Please wait for the transaction to end!");
+      swal("Alert", "Please wait for the transaction to end!", "warning");
     }
   },
 };
@@ -250,8 +309,23 @@ export default {
 }
 
 .conv-impact {
+  padding: 0 0.4rem;
   display: flex;
   justify-content: space-between;
+  width: -webkit-fill-available;
+}
+.show-route {
+  padding: 0.5rem;
+  display: flex;
+  width: -webkit-fill-available;
+  background-color: rgb(222, 190, 148);
+  margin: 10px;
+  justify-content: center;
+}
+
+.details-dropdown {
+  display: flex;
+  flex-direction: column;
   width: -webkit-fill-available;
 }
 </style>
