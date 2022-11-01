@@ -16,11 +16,11 @@
       <div>
         <p>
           <span>{{ liqTokenSymbolVal[0] }}: </span>
-          {{ liqTokenResVal[0] }}
+          {{ liqTokenResVal[0].toFixed(4) }}
         </p>
         <p>
           <span>{{ liqTokenSymbolVal[1] }}: </span>
-          {{ liqTokenResVal[1] }}
+          {{ liqTokenResVal[1].toFixed(4) }}
         </p>
       </div>
       <div>

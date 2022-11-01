@@ -64,7 +64,8 @@ export default {
     context.state.pairAddress = payload;
     const resAndSymb = await ethFunc.getDataForPairs(
       context.rootState.account0,
-      payload
+      payload,
+      true
     );
     context.getters.getPairTokenAddress[0] = resAndSymb[2];
     context.getters.getPairTokenAddress[1] = resAndSymb[3];
@@ -141,7 +142,8 @@ export default {
         for (let i = 0; i < context.rootState.coins.length; ++i) {
           context.rootState.coins[i].balance = await ethFunc.getTokenBalance(
             context.rootState.coins[i].address,
-            context.rootState.account0
+            context.rootState.account0,
+            context.rootState.coins[i].marker
           );
         }
         context.rootState.canLeave = true;

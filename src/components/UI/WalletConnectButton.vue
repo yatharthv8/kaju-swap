@@ -66,6 +66,7 @@ export default {
       this.$store.dispatch("displayMaxTokenBalance", {
         add: this.swapDialogVars.DialnumAdd[0],
         ind: 0,
+        marker: true,
       });
       this.$store.dispatch("displayMaxTokenBalanceLiq", {
         add: this.liqDialogVal.DialnumAdd[0],
@@ -74,12 +75,13 @@ export default {
       this.$store.dispatch("displayMaxTokenBalance", {
         add: this.swapDialogVars.DialnumAdd[1],
         ind: 1,
+        marker: true,
       });
       this.$store.dispatch("displayMaxTokenBalanceLiq", {
         add: this.liqDialogVal.DialnumAdd[1],
         ind: 1,
       });
-      this.$store.state.symLP = [];
+      // this.$store.state.symLP = [];
       this.$store.dispatch("displayReservesSwap");
       this.$store.dispatch("displayReservesPool");
       // this.$store.dispatch("conversionRateSwap");

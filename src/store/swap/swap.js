@@ -27,6 +27,7 @@ export default {
       dispPriceImp: false,
       priceImpVal: null,
       priceImpValBack: null,
+      WrapUnwrap: null,
     };
   },
   mutations: mutations,

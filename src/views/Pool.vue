@@ -144,12 +144,12 @@ export default {
     async addMoreLiquidity(token0Address, token1Address) {
       // console.log("token addresses->", token0Address, token1Address);
       await ethFunc
-        .getBalanceandSymbol(this.$store.state.account0, token0Address)
+        .getBalanceandSymbol(this.$store.state.account0, token0Address, true)
         .then((data) => {
           this.liqTokenSymbolVal[0] = data.symbol;
         });
       await ethFunc
-        .getBalanceandSymbol(this.$store.state.account0, token1Address)
+        .getBalanceandSymbol(this.$store.state.account0, token1Address, true)
         .then((data) => {
           this.liqTokenSymbolVal[1] = data.symbol;
         });

@@ -23,7 +23,8 @@ export default {
   async displayMaxTokenBalanceLiq(context, payload) {
     context.getters.getLiqTokenBal[payload.ind] = await ethFunc.getTokenBalance(
       payload.add,
-      context.rootState.account0
+      context.rootState.account0,
+      true
     );
   },
 
@@ -152,14 +153,17 @@ export default {
       context.state.pairLiquidity = liqReserves[2];
       context.state.pairLiqPer = liqReserves[3];
       context.state.totalSupply = liqReserves[4];
+      context.state.LiqExists = liqReserves[5];
       // console.log("then inside displayReservesPool->", liqReserves);
       context.getters.getLiqTokenBal[0] = await ethFunc.getTokenBalance(
         context.getters.getLiqDialog.DialnumAdd[0],
-        context.rootState.account0
+        context.rootState.account0,
+        true
       );
       context.getters.getLiqTokenBal[1] = await ethFunc.getTokenBalance(
         context.getters.getLiqDialog.DialnumAdd[1],
-        context.rootState.account0
+        context.rootState.account0,
+        true
       );
       if (
         context.getters.getLiqDialog.DialnumAdd[0] === process.env.VUE_APP_WETH
@@ -182,7 +186,8 @@ export default {
       for (let i = 0; i < context.rootState.coins.length; ++i) {
         context.rootState.coins[i].balance = await ethFunc.getTokenBalance(
           context.rootState.coins[i].address,
-          context.rootState.account0
+          context.rootState.account0,
+          context.rootState.coins[i].marker
         );
       }
     } catch {
@@ -244,6 +249,7 @@ export default {
       amount =
         context.state.liqTokenAmount0 *
         (context.getters.getLiqTokenRes[1] / context.getters.getLiqTokenRes[0]);
+      // console.log("from fillAmt", context.state.liqTokenAmount0, amount);
       await ethFunc
         .quoteAddLiquidity(
           address0,

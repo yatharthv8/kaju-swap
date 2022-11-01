@@ -33,7 +33,8 @@ export default {
     for (let i = 0; i < context.state.allPairsForGraph.length; ++i) {
       const symb = await ethFunc.getDataForPairs(
         context.state.account0,
-        context.state.allPairsForGraph[i]
+        context.state.allPairsForGraph[i],
+        true
       );
       context.state.symbolsGraph.addPairAsEdges(symb[0], symb[1]);
       context.state.graph.addPairAsEdges(symb[2], symb[3]);
@@ -60,7 +61,8 @@ export default {
             // if (i != 0 && context.state.symLP.length < i) {
             const symb = await ethFunc.getDataForPairs(
               context.state.account0,
-              context.state.allPairs[i]
+              context.state.allPairs[i],
+              true
             );
             context.state.symLP.push({
               address: context.state.allPairs[i],

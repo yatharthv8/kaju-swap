@@ -50,7 +50,7 @@ export default {
     async submitAddress(tokenAddress) {
       try {
         await ethFunc
-          .getBalanceandSymbol(this.$store.state.account0, tokenAddress)
+          .getBalanceandSymbol(this.$store.state.account0, tokenAddress, true)
           .then((data) => {
             this.liqTokenSymbolVal[this.swapDialNum] = data.symbol;
             this.liqDialogVal.DialnumAdd[this.swapDialNum] = tokenAddress;

@@ -12,20 +12,23 @@ export let GÖRLICoins = [
     address: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
     balance: 0,
     addedByUser: false,
+    marker: true,
   },
-  // {
-  //   name: "Wrapped Ether",
-  //   abbr: "WETH",
-  //   address: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-  //   balance: 0,
-  // addedByUser: false,
-  // },
+  {
+    name: "Wrapped Ether",
+    abbr: "WETH",
+    address: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+    balance: 0,
+    addedByUser: false,
+    marker: false,
+  },
   {
     name: "Dai",
     abbr: "DAI",
     address: "0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844",
     balance: 0,
     addedByUser: false,
+    marker: false,
   },
   {
     name: "Uniswap",
@@ -33,6 +36,7 @@ export let GÖRLICoins = [
     address: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
     balance: 0,
     addedByUser: false,
+    marker: false,
   },
   {
     name: "Kaju Token",
@@ -40,6 +44,7 @@ export let GÖRLICoins = [
     address: "0x36200cA470824efab2581aa985B78152f38a4cd4",
     balance: 0,
     addedByUser: false,
+    marker: false,
   },
   {
     name: "Test Token",
@@ -47,6 +52,7 @@ export let GÖRLICoins = [
     address: "0x610146F3545b25B01D1C083aEF0355822f0D3514",
     balance: 0,
     addedByUser: false,
+    marker: false,
   },
 ];
 

@@ -14,11 +14,11 @@
   <div>
     <p>
       <span>{{ swapTokenSymbolVal[0] }}: </span>
-      {{ tokenReservesVal[0] }}
+      {{ tokenReservesVal[0].toFixed(4) }}
     </p>
     <p>
       <span>{{ swapTokenSymbolVal[1] }}: </span>
-      {{ tokenReservesVal[1] }}
+      {{ tokenReservesVal[1].toFixed(4) }}
     </p>
   </div>
 </template>

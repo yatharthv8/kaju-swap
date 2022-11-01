@@ -58,7 +58,10 @@
           src="https://img.icons8.com/ios-glyphs/30/000000/expand-arrow--v1.png"
         />
       </button>
-      <div class="details-dropdown" v-if="openD">
+      <div
+        class="details-dropdown"
+        v-if="openD && $store.state.swap.pathExists"
+      >
         <div v-if="swapActive" class="conv-impact">
           <small
             >1 {{ swapTokenSymbolVal[0] }} =
@@ -81,7 +84,12 @@
     <div v-if="!displayWalletStatus">
       <wallet-connect-button class="swap-button"></wallet-connect-button>
     </div>
-    <div v-else-if="!$store.state.swap.pathExists">
+
+    <div
+      v-else-if="
+        !$store.state.swap.pathExists && $store.state.swap.WrapUnwrap === null
+      "
+    >
       <button
         :disabled="!$store.state.swap.pathExists"
         :class="{
@@ -132,24 +140,46 @@
           Approve Kajuswap to use {{ swapTokenSymbolVal[0] }}
         </button>
       </div>
-      <button
-        :disabled="
-          $store.state.operationUnderProcess ||
-          $store.state.tokenApprovalInProcess
-        "
-        :class="{
-          'button-disabled':
+      <div v-if="$store.state.swap.WrapUnwrap === null">
+        <button
+          :disabled="
             $store.state.operationUnderProcess ||
-            $store.state.tokenApprovalInProcess,
-          'swap-button': true,
-        }"
-        @click="startSwap()"
-      >
-        Swap
-      </button>
+            $store.state.tokenApprovalInProcess
+          "
+          :class="{
+            'button-disabled':
+              $store.state.operationUnderProcess ||
+              $store.state.tokenApprovalInProcess,
+            'swap-button': true,
+          }"
+          @click="startSwap()"
+        >
+          Swap
+        </button>
+      </div>
+      <div v-else>
+        <button
+          :disabled="
+            $store.state.operationUnderProcess ||
+            $store.state.tokenApprovalInProcess
+          "
+          :class="{
+            'button-disabled':
+              $store.state.operationUnderProcess ||
+              $store.state.tokenApprovalInProcess,
+            'swap-button': true,
+          }"
+          @click="WrapOrUnwrap()"
+        >
+          {{ $store.state.swap.WrapUnwrap }}
+        </button>
+      </div>
     </div>
   </div>
-  <div v-if="displayWalletStatus" class="card">
+  <div
+    v-if="displayWalletStatus && $store.state.swap.WrapUnwrap === null"
+    class="card"
+  >
     <bal-res-section></bal-res-section>
   </div>
 </template>
@@ -187,18 +217,28 @@ export default {
     openDetails() {
       this.openD = !this.openD;
     },
-    async submitAddress(tokenAddress, index) {
+    WrapOrUnwrap() {
+      this.$store.dispatch("WETHnETHDealings");
+    },
+    async submitAddress(tokenAddress, index, EWE) {
       try {
         const accounts = await web3.eth.getAccounts();
         this.swapDialogVars.DialnumAdd[index] = tokenAddress;
-        ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
-          this.swapTokenSymbolVal[index] = data.symbol;
-          this.$store.dispatch("displayMaxTokenBalance", {
-            add: tokenAddress,
-            ind: index,
+        let TF = this.$store.state.marker;
+        if (EWE != null) {
+          TF = EWE === "W" ? false : true;
+        }
+        ethFunc
+          .getBalanceandSymbol(accounts[0], tokenAddress, TF)
+          .then((data) => {
+            this.swapTokenSymbolVal[index] = data.symbol;
+            this.$store.dispatch("displayMaxTokenBalance", {
+              add: tokenAddress,
+              ind: index,
+              marker: TF,
+            });
+            // this.$store.dispatch("checkIfPathExists");
           });
-          // this.$store.dispatch("checkIfPathExists");
-        });
       } catch (err) {
         console.log("Invalid token address!");
       }
@@ -218,25 +258,38 @@ export default {
     },
     swapInpBoxTokens() {
       const addressT = this.swapDialogVars.DialnumAdd;
-      // console.log(addressT[0]);
-      this.submitAddress(addressT[1], 0);
-      this.submitAddress(addressT[0], 1);
-      if (this.$store.state.swap.swapWatchInp) {
-        this.$store.state.swap.amountToken1 =
-          this.$store.state.swap.amountToken0;
+      if (this.$store.state.swap.WrapUnwrap === null) {
+        // console.log(addressT[0]);
+        this.submitAddress(addressT[1], 0, null);
+        this.submitAddress(addressT[0], 1, null);
+
+        if (this.$store.state.swap.swapWatchInp) {
+          this.$store.state.swap.amountToken1 =
+            this.$store.state.swap.amountToken0;
+        } else {
+          this.$store.state.swap.amountToken0 =
+            this.$store.state.swap.amountToken1;
+        }
+        // console.log(this.$store.state.swap.path);
+        let p = this.$store.state.swap.path;
+        this.$store.state.swap.path = p.reverse();
+        let s = this.$store.state.swap.symbolsPath;
+        this.$store.state.swap.symbolsPath = s.reverse();
+        setTimeout(() => {
+          this.$store.dispatch("displayReservesSwap");
+        }, 1000);
       } else {
-        this.$store.state.swap.amountToken0 =
-          this.$store.state.swap.amountToken1;
+        if (this.$store.state.swap.WrapUnwrap === "Wrap") {
+          this.submitAddress(addressT[1], 0, "W");
+          this.submitAddress(addressT[0], 1, "E");
+          this.$store.state.swap.WrapUnwrap = "Unwrap";
+        } else {
+          this.submitAddress(addressT[1], 0, "E");
+          this.submitAddress(addressT[0], 1, "W");
+          this.$store.state.swap.WrapUnwrap = "Wrap";
+        }
       }
       // console.log(this.$store.state.swap.path);
-      let p = this.$store.state.swap.path;
-      this.$store.state.swap.path = p.reverse();
-      let s = this.$store.state.swap.symbolsPath;
-      this.$store.state.swap.symbolsPath = s.reverse();
-      // console.log(this.$store.state.swap.path);
-      setTimeout(() => {
-        this.$store.dispatch("displayReservesSwap");
-      }, 1000);
     },
   },
   computed: {
@@ -249,7 +302,7 @@ export default {
   },
   watch: {
     "$store.state.swap.amountToken0"(newVal) {
-      if (newVal != null) {
+      if (newVal != null && this.$store.state.swap.WrapUnwrap === null) {
         if (newVal > 0) {
           this.$store.dispatch("fillTokenAmount", 1);
           this.$store.dispatch("conversionRateSwap");
@@ -264,12 +317,22 @@ export default {
           this.swapActive = false;
         }
         // console.log("Watcher->", newVal);
+      } else if (this.$store.state.swap.WrapUnwrap != null) {
+        if (newVal > 0) {
+          this.$store.dispatch("fillTokenAmount", 1);
+          this.checkForBal0();
+        }
+        if (this.$store.state.swap.amountToken0) {
+          this.swapActive = true;
+        } else {
+          this.swapActive = true;
+        }
       } else {
         this.swapActive = false;
       }
     },
     "$store.state.swap.amountToken1"(newVal) {
-      if (newVal != null) {
+      if (newVal != null && this.$store.state.swap.WrapUnwrap === null) {
         if (newVal > 0) {
           this.$store.dispatch("fillTokenAmount", 0);
         }
@@ -283,6 +346,16 @@ export default {
           this.swapActive = false;
         }
         // console.log("Watcher->", newVal);
+      } else if (this.$store.state.swap.WrapUnwrap != null) {
+        if (newVal > 0) {
+          this.$store.dispatch("fillTokenAmount", 0);
+          this.checkForBal1();
+        }
+        if (this.$store.state.swap.amountToken1) {
+          this.swapActive = true;
+        } else {
+          this.swapActive = true;
+        }
       } else {
         this.swapActive = false;
       }

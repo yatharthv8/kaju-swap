@@ -14,14 +14,14 @@
       name="address"
       id="address"
       v-model.trim="newAddress"
-      @keyup.enter="submitAddress(newAddress, 1)"
+      @keyup.enter="submitAddress(newAddress, 1, null)"
     />
     <hr />
     <!-- <select name="tokens" id="tokens" hidden> -->
     <div
       v-for="(coin, index) in $store.state.coins"
       :key="coin.address"
-      @click="submitAddress(coin.address, 0)"
+      @click="submitAddress(coin.address, 0, coin.abbr)"
     >
       <ul v-if="showThese[index]">
         {{
@@ -60,52 +60,108 @@ export default {
   },
   methods: {
     ...mapActions({ closeDialog: "closeSwapDialog" }),
-    async submitAddress(tokenAddress, action) {
-      this.$store.state.swap.pathExists = true;
-      try {
-        const accounts = await web3.eth.getAccounts();
-        ethFunc.getBalanceandSymbol(accounts[0], tokenAddress).then((data) => {
-          if (data) {
-            // console.log("hi");
-            this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
-            this.swapDialogVars.DialnumAdd[this.swapDialNum] = tokenAddress;
-            this.$store.dispatch("displayMaxTokenBalance", {
-              add: tokenAddress,
-              ind: this.swapDialNum,
+    async submitAddress(tokenAddress, action, abbr) {
+      const NSDN = this.swapDialNum ? 0 : 1;
+      if (
+        (abbr === "ETH" && this.swapTokenSymbolVal[NSDN] === "WETH") ||
+        (abbr === "WETH" && this.swapTokenSymbolVal[NSDN] === "ETH")
+      ) {
+        this.$store.state.swap.pathExists = false;
+        // console.log(NSDN);
+        if (this.swapTokenSymbolVal[0] === "ETH") {
+          this.$store.state.swap.WrapUnwrap = "Wrap";
+        } else {
+          this.$store.state.swap.WrapUnwrap = "Unwrap";
+        }
+        let TF = true;
+        if (abbr === "WETH") {
+          TF = false;
+        }
+        try {
+          const accounts = await web3.eth.getAccounts();
+          ethFunc
+            .getBalanceandSymbol(accounts[0], tokenAddress, TF)
+            .then((data) => {
+              this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
+              this.swapDialogVars.DialnumAdd[this.swapDialNum] = tokenAddress;
+              this.$store.dispatch("displayMaxTokenBalance", {
+                add: tokenAddress,
+                ind: this.swapDialNum,
+                marker: TF,
+              });
             });
-            if (action === 1) {
-              let addToken = true;
-              for (let i = 0; i < this.$store.state.coins.length; ++i) {
-                if (this.$store.state.coins[i].address === tokenAddress) {
-                  addToken = false;
-                }
-              }
-              // console.log(data);
-
-              if (addToken) {
-                this.$store.state.coins.unshift({
-                  name: data.name,
-                  abbr: data.symbol,
-                  address: tokenAddress,
-                  balance: data.balance,
-                  addedByUser: true,
-                });
-              }
-            }
-            this.$store.dispatch("checkIfPathExists");
-            this.$store.dispatch("displayReservesSwap");
-
-            this.$store.dispatch("conversionRateSwap");
+        } catch (err) {
+          console.log("Something went wrong!");
+        }
+      } else {
+        this.$store.state.swap.WrapUnwrap = null;
+        if (abbr === "WETH") {
+          this.$store.state.marker = false;
+        } else if (abbr === "ETH") {
+          this.$store.state.marker = true;
+        } else {
+          if (this.swapTokenSymbolVal[NSDN] === "WETH") {
+            this.$store.state.marker = false;
           } else {
-            swal("Error", "Enter a valid token address", "error");
+            this.$store.state.marker = true;
           }
-        });
-        // console.log(this.coins);
-        this.$store.dispatch("closeSwapDialog");
-      } catch (err) {
-        // console.loh("bye");
-        console.log("Invalid token address!");
+        }
+        // console.log(this.$store.state.marker);
+        this.$store.state.swap.pathExists = true;
+        try {
+          const accounts = await web3.eth.getAccounts();
+          ethFunc
+            .getBalanceandSymbol(
+              accounts[0],
+              tokenAddress,
+              this.$store.state.marker
+            )
+            .then((data) => {
+              if (data) {
+                // console.log("hi");
+                this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
+                this.swapDialogVars.DialnumAdd[this.swapDialNum] = tokenAddress;
+                this.$store.dispatch("displayMaxTokenBalance", {
+                  add: tokenAddress,
+                  ind: this.swapDialNum,
+                  marker: this.$store.state.marker,
+                });
+                if (action === 1) {
+                  let addToken = true;
+                  for (let i = 0; i < this.$store.state.coins.length; ++i) {
+                    if (this.$store.state.coins[i].address === tokenAddress) {
+                      addToken = false;
+                    }
+                  }
+                  // console.log(data);
+
+                  if (addToken) {
+                    this.$store.state.coins.unshift({
+                      name: data.name,
+                      abbr: data.symbol,
+                      address: tokenAddress,
+                      balance: data.balance,
+                      addedByUser: true,
+                      marker: false,
+                    });
+                  }
+                }
+                this.$store.dispatch("checkIfPathExists");
+                this.$store.dispatch("displayReservesSwap");
+
+                this.$store.dispatch("conversionRateSwap");
+              } else {
+                swal("Error", "Enter a valid token address", "error");
+              }
+            });
+          // console.log(this.coins);
+        } catch (err) {
+          // console.loh("bye");
+          console.log("Invalid token address!");
+        }
       }
+      // console.log(this.$store.state.swap.WrapUnwrap);
+      this.$store.dispatch("closeSwapDialog");
     },
   },
   computed: {

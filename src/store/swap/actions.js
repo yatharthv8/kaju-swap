@@ -6,6 +6,7 @@ const ERC20 = require("../../../ethereum/.deps/npm/@rari-capital/solmate/src/tok
 
 const router = ethFunc.getRouter(process.env.VUE_APP_ROUTER);
 const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
+const weth = ethFunc.getWeth(process.env.VUE_APP_WETH);
 
 export default {
   checkMaxBalFor0(context) {
@@ -73,6 +74,7 @@ export default {
       location: "swapTok",
     });
     context.rootState.canLeave = false;
+    // context.dispatch("WETHnETHDealings", "Wap");
     await ethFunc
       .swapTokens(
         context.state.path,
@@ -80,7 +82,8 @@ export default {
         router,
         context.rootState.account0,
         context.state.slippage,
-        context.state.deadline
+        context.state.deadline,
+        context.rootState.marker
       )
       .then(() => {
         context.dispatch("displayReservesSwap");
@@ -100,9 +103,64 @@ export default {
       });
   },
 
+  async WETHnETHDealings(context) {
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "WUw",
+    });
+    try {
+      if (context.state.WrapUnwrap === "Wrap") {
+        //Wrap
+        await weth.methods.deposit().send({
+          from: context.rootState.account0,
+          value: web3.utils.toWei(String(context.state.amountToken0), "ether"),
+        });
+        await weth.methods
+          .transfer(
+            context.rootState.account0,
+            web3.utils.toWei(String(context.state.amountToken0), "ether")
+          )
+          .call();
+      } else {
+        await weth.methods
+          .withdraw(
+            web3.utils.toWei(String(context.state.amountToken0), "ether")
+          )
+          .send({
+            from: context.rootState.account0,
+          });
+      }
+      context.dispatch("displayReservesSwap");
+      swal(
+        "Success!!",
+        `Token ${context.state.WrapUnwrap}ing Successful`,
+        "success"
+      );
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "WUw",
+      });
+    } catch (err) {
+      console.log(`${context.state.WrapUnwrap}ing was not possible`);
+      swal(
+        "Oops!",
+        `Token ${context.state.WrapUnwrap}ing Unsuccessful`,
+        "error"
+      );
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "WUw",
+      });
+    }
+  },
+
   async displayMaxTokenBalance(context, payload) {
     context.getters.getTokenBalText[payload.ind] =
-      await ethFunc.getTokenBalance(payload.add, context.rootState.account0);
+      await ethFunc.getTokenBalance(
+        payload.add,
+        context.rootState.account0,
+        payload.marker
+      );
     context.commit("checkMaxBal");
   },
 
@@ -114,10 +172,18 @@ export default {
     //   context.rootState.symbolsGraph.sides,
     //   context.rootState.graph.sides
     // );
-    const gSymb = ethFunc.bfs(
-      context.rootState.symbolsGraph.sides,
-      context.state.swapTokenSymbol[0]
-    );
+    let gSymb;
+    if (
+      context.rootState.marker === false &&
+      context.state.swapTokenSymbol[0] === "WETH"
+    ) {
+      gSymb = ethFunc.bfs(context.rootState.symbolsGraph.sides, "ETH");
+    } else {
+      gSymb = ethFunc.bfs(
+        context.rootState.symbolsGraph.sides,
+        context.state.swapTokenSymbol[0]
+      );
+    }
     if (gAdd[address1] === undefined) {
       context.state.pathExists = false;
     } else {
@@ -134,10 +200,23 @@ export default {
     let p = [address1];
     let s = [context.state.swapTokenSymbol[1]];
     let add = address1;
-    let sy = context.state.swapTokenSymbol[1];
+    let sy;
+    if (
+      context.rootState.marker === false &&
+      context.state.swapTokenSymbol[1] === "WETH"
+    ) {
+      sy = "ETH";
+    } else {
+      sy = context.state.swapTokenSymbol[1];
+    }
     while (add != address0) {
       p.push(payload.Add[add][0]);
-      s.push(payload.Symb[sy][0]);
+      // console.log(payload.Symb[sy]);
+      if (context.rootState.marker === false && payload.Symb[sy][0] === "ETH") {
+        s.push("WETH");
+      } else {
+        s.push(payload.Symb[sy][0]);
+      }
       add = payload.Add[add][0];
       sy = payload.Symb[sy][0];
     }
@@ -224,6 +303,19 @@ export default {
         }, 2000);
         // console.log("inside 2nd");
       }
+    } else if (context.state.WrapUnwrap != null) {
+      // --------
+      context.state.insuffLiq = false;
+      context.state.dispPriceImp = false;
+      if (payload === 1) {
+        context.state.amountToken1 = context.state.amountToken0;
+      } else {
+        context.state.amountToken0 = context.state.amountToken1;
+      }
+      context.dispatch("toggleOperationUnderProcess", {
+        val: false,
+        location: "fillTokAmt",
+      });
     } else {
       swal(
         "Alert",
@@ -278,31 +370,43 @@ export default {
         context.getters.getTokenReserves[1] = swapReserves[1];
         // console.log(context.getters.getTokenReserves);
       });
+    let TF = context.rootState.marker;
+    if (context.state.WrapUnwrap != null) {
+      if (context.state.WrapUnwrap === "Wrap") {
+        TF = true;
+      } else {
+        TF = false;
+      }
+    }
     context.getters.getTokenBalText[0] = await ethFunc.getTokenBalance(
       context.getters.getSwapDialog.DialnumAdd[0],
-      context.rootState.account0
+      context.rootState.account0,
+      TF
     );
+    if (context.state.WrapUnwrap != null) {
+      if (context.state.WrapUnwrap === "Unwrap") {
+        TF = true;
+      } else {
+        TF = false;
+      }
+    }
     context.getters.getTokenBalText[1] = await ethFunc.getTokenBalance(
       context.getters.getSwapDialog.DialnumAdd[1],
-      context.rootState.account0
+      context.rootState.account0,
+      TF
     );
-    if (
-      context.getters.getSwapDialog.DialnumAdd[0] === process.env.VUE_APP_WETH
-    ) {
-      context.rootState.balance = context.getters.getTokenBalText[0];
-    } else if (
-      context.getters.getSwapDialog.DialnumAdd[1] === process.env.VUE_APP_WETH
-    ) {
-      context.rootState.balance = context.getters.getTokenBalText[1];
-    }
     if (context.rootState.coins === null) {
       context.rootState.coins = JSON.parse(localStorage.getItem("coins"));
     }
     for (let i = 0; i < context.rootState.coins.length; ++i) {
       context.rootState.coins[i].balance = await ethFunc.getTokenBalance(
         context.rootState.coins[i].address,
-        context.rootState.account0
+        context.rootState.account0,
+        context.rootState.coins[i].marker
       );
+      if (context.rootState.coins[i].marker) {
+        context.rootState.balance = context.rootState.coins[i].balance;
+      }
     }
     context.dispatch("toggleOperationUnderProcess", {
       val: false,

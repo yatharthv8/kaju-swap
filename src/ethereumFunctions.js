@@ -8,6 +8,7 @@ const ROUTER = require("../ethereum/contracts/artifacts/KajuswapRouter.json");
 const ERC20 = require("../ethereum/.deps/npm/@rari-capital/solmate/src/tokens/artifacts/ERC20.json");
 const FACTORY = require("../ethereum/contracts/artifacts/KajuswapFactory.json");
 const PAIR = require("../ethereum/contracts/artifacts/KajuswapPair.json");
+const WETH = require("../ethereum/contracts/artifacts/IWETH.json");
 const { ethereum } = window;
 
 export function getRouter(contractAddress) {
@@ -19,7 +20,7 @@ export function getFactory(contractAddress) {
 }
 
 export function getWeth(contractAddress) {
-  return new web3.eth.Contract(ERC20.abi, contractAddress);
+  return new web3.eth.Contract(WETH.abi, contractAddress);
 }
 
 export async function getAccount() {
@@ -70,9 +71,9 @@ export function doesTokenExist(ethAddress) {
 // and `symbol` which is the abbreviation of the token name. To work correctly it must be provided with 2 arguments:
 //    `accountAddress` - An Ethereum address of the current user's account
 //    `address` - An Ethereum address of the token to check for (either a token or WETH)
-export async function getBalanceandSymbol(accountAddress, address) {
+export async function getBalanceandSymbol(accountAddress, address, mark) {
   try {
-    if (address === process.env.VUE_APP_WETH) {
+    if (address === process.env.VUE_APP_WETH && mark) {
       return {
         balance: parseFloat(
           web3.utils.fromWei(await web3.eth.getBalance(accountAddress), "ether")
@@ -80,10 +81,14 @@ export async function getBalanceandSymbol(accountAddress, address) {
         symbol: "ETH",
       };
     }
+    const accounts = await web3.eth.getAccounts();
     const token = new web3.eth.Contract(ERC20.abi, address);
     return {
       balance: parseFloat(
-        web3.utils.fromWei(await web3.eth.getBalance(accountAddress), "ether")
+        web3.utils.fromWei(
+          await token.methods.balanceOf(accounts[0]).call(),
+          "ether"
+        )
       ).toFixed(4),
       symbol: await token.methods.symbol().call(),
       name: await token.methods.name().call(),
@@ -95,8 +100,8 @@ export async function getBalanceandSymbol(accountAddress, address) {
   }
 }
 
-export async function getTokenBalance(address, accountAddress) {
-  if (address === process.env.VUE_APP_WETH) {
+export async function getTokenBalance(address, accountAddress, mark) {
+  if (address === process.env.VUE_APP_WETH && mark) {
     return parseFloat(
       web3.utils.fromWei(await web3.eth.getBalance(accountAddress), "ether")
     ).toFixed(4);
@@ -118,7 +123,8 @@ export async function swapTokens(
   routerContract,
   accountAddress,
   slippageVal,
-  deadline
+  deadline,
+  mark
 ) {
   const time = ethers.BigNumber.from(
     Math.floor(Date.now() / 1000) + deadline * 60
@@ -147,11 +153,11 @@ export async function swapTokens(
     time
   );
   try {
-    if (path[0] === process.env.VUE_APP_WETH) {
+    if (path[0] === process.env.VUE_APP_WETH && mark) {
       await routerContract.methods
         .swapExactETHForTokens(amountOutMin, path, accountAddress, time)
         .send({ from: accountAddress, value: amountIn });
-    } else if (path[path.length - 1] === process.env.VUE_APP_WETH) {
+    } else if (path[path.length - 1] === process.env.VUE_APP_WETH && mark) {
       await routerContract.methods
         .swapExactTokensForETH(
           amountIn,
@@ -291,11 +297,14 @@ export async function getReserves(
   const pairAddress = await factory.methods
     .getPair(token0Address, token1Address)
     .call();
+  let LiqExists = false;
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
   const reservesRaw = await fetchReserves(token0Address, token1Address, pair);
+  // console.log(reservesRaw);
   if (pairAddress === "0x0000000000000000000000000000000000000000") {
     return [Number(reservesRaw[0]), Number(reservesRaw[1]), 0];
   } else {
+    LiqExists = true;
     const liquidityTokens_BN = await pair.methods
       .balanceOf(accountAddress)
       .call();
@@ -316,25 +325,34 @@ export async function getReserves(
     }
     // console.log("getReserves LT->", liquidityTokens);
     return [
-      Number(reservesRaw[0]).toFixed(4),
-      Number(reservesRaw[1]).toFixed(4),
+      Number(reservesRaw[0]),
+      Number(reservesRaw[1]),
       Number(liquidityTokens) - 0.00000000000001,
       Number(liquidityTokensPercentage),
       Number(totalSuplyOfLiquidity),
+      LiqExists,
     ];
   }
 }
 
 /*-------------------------------LIQUIDITY PAGE-------------------------------------*/
 
-export async function getDataForPairs(accountAddress, pairAddress) {
+export async function getDataForPairs(accountAddress, pairAddress, mark) {
   const pair = new web3.eth.Contract(PAIR.abi, pairAddress);
   const token0Address = await pair.methods.token0().call();
   const token1Address = await pair.methods.token1().call();
-  const token0Symbol = await getBalanceandSymbol(accountAddress, token0Address);
-  const token1Symbol = await getBalanceandSymbol(accountAddress, token1Address);
-  const token0Bal = await getTokenBalance(token0Address, accountAddress);
-  const token1Bal = await getTokenBalance(token1Address, accountAddress);
+  const token0Symbol = await getBalanceandSymbol(
+    accountAddress,
+    token0Address,
+    mark
+  );
+  const token1Symbol = await getBalanceandSymbol(
+    accountAddress,
+    token1Address,
+    mark
+  );
+  const token0Bal = await getTokenBalance(token0Address, accountAddress, mark);
+  const token1Bal = await getTokenBalance(token1Address, accountAddress, mark);
   const liqTokens = await CGIfLiquidityExists(
     pairAddress,
     accountAddress,

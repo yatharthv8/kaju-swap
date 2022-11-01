@@ -23,13 +23,13 @@
       <div>
         <p>
           Amount of {{ symbolVal[0] }} to be recieved :
-          {{ RemLiqPredictedVal[1] }}
+          {{ RemLiqPredictedVal[1].toFixed(6) }}
         </p>
         <p>
           Amount of {{ symbolVal[1] }} to be recieved :
-          {{ RemLiqPredictedVal[2] }}
+          {{ RemLiqPredictedVal[2].toFixed(6) }}
         </p>
-        <p>Liquidity decrement : {{ RemLiqPredictedVal[0] }}</p>
+        <p>Liquidity decrement : {{ RemLiqPredictedVal[0].toFixed(6) }}</p>
       </div>
     </div>
   </div>

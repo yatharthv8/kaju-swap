@@ -23,6 +23,7 @@ export default {
       insufficientLiqBal: false,
       slippageAddLiq: 15,
       deadlineAddLiq: 10,
+      LiqExists: false,
     };
   },
   mutations: mutations,
