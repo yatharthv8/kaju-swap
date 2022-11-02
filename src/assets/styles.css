@@ -126,9 +126,9 @@ header {
   position: fixed;
   background: var(--blur-bg);
   backdrop-filter: blur(1rem);
-  /* -webkit-backdrop-filter: blur(10px); */
   border-radius: 0 0 1rem 1rem;
   display: flex;
+  z-index: 2;
   justify-content: space-between;
   align-items: center;
   width: 100vw;
@@ -168,7 +168,7 @@ dialog {
   position: fixed;
   top: 2rem;
   background-color: var(--background-color);
-  z-index: 2;
+  z-index: 10;
   border-radius: 1rem;
   width: calc(var(--card-element-width) + 1rem);
   height: 55vh;
