@@ -1,6 +1,20 @@
 <template>
   <div class="liquidity">
     <div class="card">
+      <div>Liquidity burned:</div>
+      <div>
+        <p>
+          Amount of {{ symbolVal[0] }} to be recieved :
+          {{ RemLiqPredictedVal[1] }}
+        </p>
+        <p>
+          Amount of {{ symbolVal[1] }} to be recieved :
+          {{ RemLiqPredictedVal[2] }}
+        </p>
+        <p>Liquidity decrement : {{ RemLiqPredictedVal[0] }}</p>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom: 4rem">
       <div>Your Balances :</div>
       <div>
         <p>
@@ -16,20 +30,6 @@
       <div>
         Your share of LP Tokens in pool:
         <span>{{ $store.state.remLiquidity.pairLiquidityPer }}%</span>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom: 3rem">
-      <div>Liquidity burned:</div>
-      <div>
-        <p>
-          Amount of {{ symbolVal[0] }} to be recieved :
-          {{ RemLiqPredictedVal[1] }}
-        </p>
-        <p>
-          Amount of {{ symbolVal[1] }} to be recieved :
-          {{ RemLiqPredictedVal[2] }}
-        </p>
-        <p>Liquidity decrement : {{ RemLiqPredictedVal[0] }}</p>
       </div>
     </div>
   </div>
@@ -53,6 +53,10 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+}
 @media screen and (min-width: 700px) {
   .liquidity {
     display: flex;
@@ -63,12 +67,9 @@ export default {
 @media screen and (max-width: 700px) {
   .liquidity {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-around;
     flex-wrap: wrap;
   }
-}
-.card {
-  margin: 1rem;
 }
 </style>

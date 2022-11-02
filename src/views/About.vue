@@ -13,7 +13,7 @@
 
 <style>
 .about-me {
-  padding-top: 10rem;
-  height: 100vh;
+  padding-top: 4rem;
+  margin-top: 6rem;
 }
 </style>

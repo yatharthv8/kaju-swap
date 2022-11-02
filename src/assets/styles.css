@@ -6,12 +6,13 @@
   --button-normal-color: #b08968;
   --button-active-color: #75523b;
   --button-inactive-color: #7a7068;
-  --button-hover-color: #9c6644;
+  --button-hover-color: rgb(156, 102, 68);
   --nav-container-color: #c9a077;
   --card-element-width: 30rem;
   --input-element-font-size: 2rem;
   --input-translucent-bg: #fafafa5c;
   --input-box-outline: rgb(111, 110, 110);
+  --blur-bg: rgba(201, 160, 119, 0.5);
 }
 
 @media screen and (min-width: 600px) and (max-width: 970px) {
@@ -95,6 +96,21 @@ button:focus {
   color: var(--button-text-hover-color);
 }
 
+.swal-button {
+  background-color: var(--nav-container-color);
+}
+.swal-button:hover {
+  color: var(--button-text-hover-color);
+}
+.swal-button:focus {
+  background-color: var(--button-normal-color);
+  color: var(--button-text-hover-color);
+}
+.swal-button:not([disabled]):hover {
+  background-color: var(--button-normal-color);
+  color: var(--button-text-hover-color);
+}
+
 a.router-link-active {
   background-color: var(--button-active-color);
   color: var(--button-text-hover-color);
@@ -107,13 +123,17 @@ a.router-link-active {
 }
 
 header {
-  /* position: fixed; */
+  position: fixed;
+  background: var(--blur-bg);
+  backdrop-filter: blur(1rem);
+  /* -webkit-backdrop-filter: blur(10px); */
+  border-radius: 0 0 1rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100vw;
-  padding: 0;
-  margin: 0;
+  padding: 0.5rem 0;
+  margin-top: -6rem;
 }
 
 input {
@@ -145,6 +165,7 @@ a:hover {
 }
 
 dialog {
+  position: fixed;
   top: 2rem;
   background-color: var(--background-color);
   z-index: 2;
@@ -152,13 +173,29 @@ dialog {
   width: calc(var(--card-element-width) + 1rem);
   height: 55vh;
   overflow-y: auto;
-  padding-bottom: 10px;
+  padding: 1rem;
 }
 
 ul {
   padding-inline-start: 1rem;
   cursor: pointer;
   padding: 0.5rem 1rem;
+}
+
+.dialog-top {
+  position: inherit;
+  border-radius: 1rem 1rem 0 0;
+  background: var(--blur-bg);
+  backdrop-filter: blur(1rem);
+  /* position: fixed; */
+  padding: inherit;
+  margin-top: -1rem;
+  margin-left: -1rem;
+  width: calc(var(--card-element-width) + 0.8rem);
+}
+
+.dialog-token {
+  margin-top: 9rem;
 }
 
 /*----------------------Header Styling------------------------------*/
@@ -291,7 +328,7 @@ ul {
   border-radius: 1.2rem;
   padding: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
-  margin: 2rem auto;
+  margin: 6rem auto -4rem;
   background-color: var(--background-color);
   width: var(--card-element-width);
 }
@@ -337,6 +374,7 @@ select {
 /*----------------------Pools Page Styling------------------------------*/
 
 .pools-page-container {
+  margin-top: -2rem;
   display: flex;
   flex-direction: column;
   width: max-content;

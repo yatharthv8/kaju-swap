@@ -21,7 +21,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 8rem;
-  height: 95vh;
+  padding-top: 4rem;
+  margin-top: 6rem;
 }
 </style>

@@ -148,6 +148,13 @@ export default {
         factory,
         context.rootState.account0
       );
+      if (!liqReserves[6]) {
+        swal(
+          "New pair can be created!",
+          "Seems like you are the first one to discover this pair! Add liquidity to create pair and get a staggering 100% owernership of this pool",
+          "info"
+        );
+      }
       context.getters.getLiqTokenRes[0] = liqReserves[0];
       context.getters.getLiqTokenRes[1] = liqReserves[1];
       context.state.pairLiquidity = liqReserves[2];

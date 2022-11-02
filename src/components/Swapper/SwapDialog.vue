@@ -1,41 +1,41 @@
 <template>
   <dialog open>
-    <br />
-    <span>Select Tokens</span>
-    <span style="float: right; cursor: pointer" @click="closeDialog()"
-      >&times;</span
-    >
-    <br />
-    <br />
-    <hr />
-    <label for="address">New token:</label>
-    <input
-      placeholder="custom token"
-      name="address"
-      id="address"
-      v-model.trim="newAddress"
-      @keyup.enter="submitAddress(newAddress, 1, null)"
-    />
-    <hr />
-    <!-- <select name="tokens" id="tokens" hidden> -->
-    <div
-      v-for="(coin, index) in $store.state.coins"
-      :key="coin.address"
-      @click="submitAddress(coin.address, 0, coin.abbr)"
-    >
-      <ul v-if="showThese[index]">
-        {{
-          coin.abbr
-        }}
-        <br />
-        <small>{{ coin.name }}</small>
-        <small class="ABU" v-if="coin.addedByUser"> | Added by user</small>
-        <span style="float: right">
-          <small>{{ coin.balance }}</small>
-        </span>
-      </ul>
+    <div class="dialog-top">
+      <br />
+      <span>Select Tokens</span>
+      <span style="float: right; cursor: pointer" @click="closeDialog()"
+        >&times;</span
+      >
+      <br />
+      <hr />
+      <label for="address">New token:</label>
+      <input
+        placeholder="custom token"
+        name="address"
+        id="address"
+        v-model.trim="newAddress"
+        @keyup.enter="submitAddress(newAddress, 1, null)"
+      />
     </div>
-    <!-- </select> -->
+    <div class="dialog-token">
+      <div
+        v-for="(coin, index) in $store.state.coins"
+        :key="coin.address"
+        @click="submitAddress(coin.address, 0, coin.abbr)"
+      >
+        <ul v-if="showThese[index]">
+          {{
+            coin.abbr
+          }}
+          <br />
+          <small>{{ coin.name }}</small>
+          <small class="ABU" v-if="coin.addedByUser"> | Added by user</small>
+          <span style="float: right">
+            <small>{{ coin.balance }}</small>
+          </span>
+        </ul>
+      </div>
+    </div>
     <hr />
     <button style="float: right" @click="closeDialog()">Close</button>
   </dialog>

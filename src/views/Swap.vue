@@ -179,6 +179,7 @@
   <div
     v-if="displayWalletStatus && $store.state.swap.WrapUnwrap === null"
     class="card"
+    style="margin-bottom: 3rem"
   >
     <bal-res-section></bal-res-section>
   </div>

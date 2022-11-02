@@ -186,6 +186,7 @@ export default {
 
 <style scoped>
 .pools {
+  margin: 6rem 0 5rem;
   display: flex;
   justify-content: center;
   height: 100vh;

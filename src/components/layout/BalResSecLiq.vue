@@ -1,6 +1,23 @@
 <template>
   <div class="liquidity">
     <div class="card">
+      <div>Token amounts and liquidity that will be added:</div>
+      <div>
+        <p>
+          Amount of {{ liqTokenSymbolVal[0] }} to be added :
+          {{ $store.state.addLiquidity.predictedLiq[0] }}
+        </p>
+        <p>
+          Amount of {{ liqTokenSymbolVal[1] }} to be added :
+          {{ $store.state.addLiquidity.predictedLiq[1] }}
+        </p>
+        <p>
+          Liquidity increament :
+          {{ $store.state.addLiquidity.predictedLiq[2] }}
+        </p>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom: 3rem">
       <div>Your Balances :</div>
       <div>
         <p>
@@ -28,23 +45,6 @@
         <span>{{ $store.state.addLiquidity.pairLiqPer }}%</span>
       </div>
     </div>
-    <div class="card" style="margin-bottom: 3rem">
-      <div>Token amounts and liquidity that will be added:</div>
-      <div>
-        <p>
-          Amount of {{ liqTokenSymbolVal[0] }} to be added :
-          {{ $store.state.addLiquidity.predictedLiq[0] }}
-        </p>
-        <p>
-          Amount of {{ liqTokenSymbolVal[1] }} to be added :
-          {{ $store.state.addLiquidity.predictedLiq[1] }}
-        </p>
-        <p>
-          Liquidity increament :
-          {{ $store.state.addLiquidity.predictedLiq[2] }}
-        </p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -70,17 +70,21 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+}
 @media screen and (min-width: 700px) {
   .liquidity {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-around;
   }
 }
 @media screen and (max-width: 700px) {
   .liquidity {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-around;
     flex-wrap: wrap;
   }

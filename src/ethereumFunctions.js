@@ -302,7 +302,7 @@ export async function getReserves(
   const reservesRaw = await fetchReserves(token0Address, token1Address, pair);
   // console.log(reservesRaw);
   if (pairAddress === "0x0000000000000000000000000000000000000000") {
-    return [Number(reservesRaw[0]), Number(reservesRaw[1]), 0];
+    return [Number(reservesRaw[0]), Number(reservesRaw[1]), 0, 0, 0, 0, false];
   } else {
     LiqExists = true;
     const liquidityTokens_BN = await pair.methods
@@ -331,6 +331,7 @@ export async function getReserves(
       Number(liquidityTokensPercentage),
       Number(totalSuplyOfLiquidity),
       LiqExists,
+      true,
     ];
   }
 }

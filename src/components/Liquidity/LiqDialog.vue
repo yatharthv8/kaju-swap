@@ -1,7 +1,12 @@
 <template>
   <dialog open>
-    <div>
-      <p>Select Tokens</p>
+    <div class="dialog-top">
+      <br />
+      <span>Select Tokens</span>
+      <span style="float: right; cursor: pointer" @click="closeDialog()"
+        >&times;</span
+      >
+      <br />
       <hr />
       <label for="address">New token:</label>
       <input
@@ -9,26 +14,31 @@
         name="address"
         id="address"
         v-model.trim="newAddress"
-        @keyup.enter="submitAddress(newAddress)"
+        @keyup.enter="submitAddress(newAddress, 1)"
       />
       <!-- <select name="tokens" id="tokens" hidden> -->
-      <ul
-        v-for="coin in $store.state.coins"
-        :key="coin.address"
-        @click="submitAddress(coin.address)"
-      >
-        {{
-          coin.abbr
-        }}
-        <br />
-        <small>{{ coin.name }}</small>
-        <span style="float: right">
-          <small>{{ coin.balance }}</small>
-        </span>
-      </ul>
-      <!-- </select> -->
-      <button style="float: right" @click="closeDialog()">Close</button>
     </div>
+    <div class="dialog-token">
+      <div
+        v-for="(coin, index) in $store.state.coins"
+        :key="coin.address"
+        @click="submitAddress(coin.address, 0)"
+      >
+        <ul v-if="showThese[index]">
+          {{
+            coin.abbr
+          }}
+          <br />
+          <small>{{ coin.name }}</small>
+          <small class="ABU" v-if="coin.addedByUser"> | Added by user</small>
+          <span style="float: right">
+            <small>{{ coin.balance }}</small>
+          </span>
+        </ul>
+      </div>
+    </div>
+    <hr />
+    <button style="float: right" @click="closeDialog()">Close</button>
   </dialog>
 </template>
 
@@ -37,33 +47,59 @@ import { mapActions, mapGetters } from "vuex";
 // import * as COINS from "../../constants/coins.js";
 import * as ethFunc from "../../ethereumFunctions.js";
 // import web3 from "../../../ethereum/web3.js";
+import swal from "sweetalert";
 
 export default {
   props: ["swapDialNum"],
   data() {
     return {
       newAddress: null,
+      showThese: [],
     };
   },
   methods: {
     ...mapActions({ closeDialog: "closeLiqDialog" }),
-    async submitAddress(tokenAddress) {
+    async submitAddress(tokenAddress, action) {
       try {
         await ethFunc
           .getBalanceandSymbol(this.$store.state.account0, tokenAddress, true)
           .then((data) => {
-            this.liqTokenSymbolVal[this.swapDialNum] = data.symbol;
-            this.liqDialogVal.DialnumAdd[this.swapDialNum] = tokenAddress;
-            this.$store.dispatch("displayMaxTokenBalanceLiq", {
-              add: tokenAddress,
-              ind: this.swapDialNum,
-            });
-            this.$store.dispatch("displayReservesPool");
+            if (data) {
+              this.liqTokenSymbolVal[this.swapDialNum] = data.symbol;
+              this.liqDialogVal.DialnumAdd[this.swapDialNum] = tokenAddress;
+              this.$store.dispatch("displayMaxTokenBalanceLiq", {
+                add: tokenAddress,
+                ind: this.swapDialNum,
+              });
+              if (action === 1) {
+                let addToken = true;
+                for (let i = 0; i < this.$store.state.coins.length; ++i) {
+                  if (this.$store.state.coins[i].address === tokenAddress) {
+                    addToken = false;
+                  }
+                }
+                // console.log(data);
+
+                if (addToken) {
+                  this.$store.state.coins.unshift({
+                    name: data.name,
+                    abbr: data.symbol,
+                    address: tokenAddress,
+                    balance: data.balance,
+                    addedByUser: true,
+                    marker: false,
+                  });
+                }
+              }
+              this.$store.dispatch("displayReservesPool");
+            } else {
+              swal("Error", "Enter a valid token address", "error");
+            }
           });
-        this.$store.dispatch("closeLiqDialog");
       } catch (err) {
         console.log("Invalid token address!");
       }
+      this.$store.dispatch("closeLiqDialog");
     },
   },
   computed: {
@@ -72,17 +108,55 @@ export default {
       liqDialogVal: "getLiqDialog",
     }),
   },
+  mounted() {
+    for (let i = 0; i < this.$store.state.coins.length; i++) {
+      this.showThese.push(true);
+    }
+  },
+  watch: {
+    newAddress(newVal) {
+      this.showThese = [];
+      if (newVal.length) {
+        const filter = newVal.toUpperCase();
+        for (let i = 0; i < this.$store.state.coins.length; i++) {
+          const a = this.$store.state.coins[i].name;
+          if (a.toUpperCase().indexOf(filter) > -1) {
+            this.showThese.push(true);
+          } else {
+            this.showThese.push(false);
+            // const adc = this.$store.state.coins[i].address.length;
+            // if (
+            //   newVal.length === adc &&
+            //   adc.toUpperCase().indexOf(filter) > -1
+            // ) {
+            //   this.showThese[i] = true;
+            // }
+          }
+        }
+      } else {
+        for (let i = 0; i < this.$store.state.coins.length; i++) {
+          this.showThese.push(true);
+        }
+      }
+      // console.log(this.showThese);
+    },
+  },
 };
 </script>
 
 <style scoped>
 input {
   font-size: 1rem;
-  width: 26rem;
   height: 2rem;
 }
 
 ul:hover {
   background-color: rgb(226, 177, 118);
+}
+
+.ABU {
+  font-size: 0.8rem;
+  color: #333333;
+  font-weight: 400;
 }
 </style>
