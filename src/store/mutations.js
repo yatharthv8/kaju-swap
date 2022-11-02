@@ -2,13 +2,18 @@ export default {
   toggleOperationUnderProcess(state, payload) {
     // console.log("ok1", payload.val, payload.location);
     if (payload.val === true) {
-      // if (state.OUP_TrueVal != "regPairs") {
-      state.OUP_TrueVal = payload.location;
-      state.operationUnderProcess = payload.val;
-      // }
+      if (!state.waitToLoad) {
+        state.OUP_TrueVal = payload.location;
+        state.operationUnderProcess = payload.val;
+      }
+      if (payload.location === "getP") {
+        state.waitToLoad = true;
+      }
     } else {
       if (payload.location === state.OUP_TrueVal) {
+        // console.log(payload.location);
         state.operationUnderProcess = payload.val;
+        state.waitToLoad = false;
       }
     }
     // console.log(state, payload);

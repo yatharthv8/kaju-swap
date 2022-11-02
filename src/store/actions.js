@@ -4,7 +4,10 @@ const factory = ethFunc.getFactory(process.env.VUE_APP_FACTORY);
 
 export default {
   async getPairsFromFactory(context) {
-    // if (!localStorage.getItem("pairs")) {
+    context.dispatch("toggleOperationUnderProcess", {
+      val: true,
+      location: "getP",
+    });
     const returnedPairs = await ethFunc.getPairs(
       factory,
       context.rootState.account0
@@ -13,7 +16,6 @@ export default {
     context.state.allPairs = returnedPairs[0];
     context.state.allPairsForGraph = returnedPairs[1];
     context.dispatch("registerAllPairs");
-    // }
   },
 
   toggleOperationUnderProcess(context, payload) {
@@ -26,10 +28,6 @@ export default {
   },
 
   async registerAllPairs(context) {
-    context.dispatch("toggleOperationUnderProcess", {
-      val: true,
-      location: "regPairs",
-    });
     for (let i = 0; i < context.state.allPairsForGraph.length; ++i) {
       const symb = await ethFunc.getDataForPairs(
         context.state.account0,
@@ -42,7 +40,7 @@ export default {
     console.log("pairs registered!");
     context.dispatch("toggleOperationUnderProcess", {
       val: false,
-      location: "regPairs",
+      location: "getP",
     });
   },
 

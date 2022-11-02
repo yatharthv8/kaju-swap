@@ -38,6 +38,7 @@ const store = createStore({
       symbolsGraph: new autoRouteGraph(),
       symLP: [],
       marker: true,
+      waitToLoad: false,
     };
   },
   mutations: rootMutations,
