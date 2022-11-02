@@ -27,7 +27,7 @@ export default {
 }
 @media screen and (max-width: 800px) {
   .nav-item-container-bottom {
-    position: sticky;
+    position: fixed;
     display: flex;
     bottom: 0;
     width: 100%;

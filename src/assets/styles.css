@@ -29,7 +29,7 @@
     --input-element-font-size: 1.8rem;
   }
 }
-@media screen and (max-width: 700px) {
+/* @media screen and (max-width: 700px) {
   .wrapper {
     height: 100vh;
   }
@@ -44,7 +44,7 @@
     align-items: center;
     height: 100vh;
   }
-}
+} */
 
 body,
 html {
@@ -60,6 +60,8 @@ html {
   margin: 0;
   font-weight: 600;
   font-size: var(--global-font-size);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 * {
@@ -67,6 +69,10 @@ html {
 }
 
 /*----------------------Global Styling------------------------------*/
+.wrapper {
+  align-items: center;
+  height: auto;
+}
 
 button {
   cursor: pointer;
@@ -101,6 +107,7 @@ a.router-link-active {
 }
 
 header {
+  /* position: fixed; */
   display: flex;
   justify-content: space-between;
   align-items: center;
