@@ -8,13 +8,26 @@ export default {
       val: true,
       location: "getP",
     });
-    const returnedPairs = await ethFunc.getPairs(
-      factory,
-      context.rootState.account0
-    );
-    // console.log(returnedPairs);
-    context.state.allPairs = returnedPairs[0];
-    context.state.allPairsForGraph = returnedPairs[1];
+    if (context.state.loadAllPairsByFetch) {
+      // console.log("liquidity added or pairs not in storage");
+      const returnedPairs = await ethFunc.getPairs(
+        factory,
+        context.state.account0
+      );
+      context.state.allPairs = returnedPairs[0];
+      context.state.allPairsForGraph = returnedPairs[1];
+      context.state.loadAllPairsByFetch = false;
+    } else {
+      context.state.allPairsForGraph = JSON.parse(
+        localStorage.getItem("allPairs")
+      );
+      context.state.allPairs = JSON.parse(localStorage.getItem("userPairs"));
+    }
+    // console.log(
+    //   "pairs->>",
+    //   context.state.allPairsForGraph,
+    //   context.state.allPairs
+    // );
     context.dispatch("registerAllPairs");
   },
 

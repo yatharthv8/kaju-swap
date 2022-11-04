@@ -39,6 +39,7 @@ const store = createStore({
       symLP: [],
       marker: true,
       waitToLoad: false,
+      loadAllPairsByFetch: false,
     };
   },
   mutations: rootMutations,

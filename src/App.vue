@@ -28,6 +28,12 @@ export default {
     }
   },
   mounted() {
+    if (
+      !localStorage.getItem("allPairs") ||
+      !localStorage.getItem("userPairs")
+    ) {
+      this.$store.state.loadAllPairsByFetch = true;
+    }
     ethereum.on("disconnect", () => {
       this.$router.push("/");
       swal("Alert", "Connect Wallet to use KajuSwap!", "warning");
@@ -77,6 +83,18 @@ export default {
     "$store.state.coins": {
       handler(newVal) {
         localStorage.setItem("coins", JSON.stringify(newVal));
+      },
+      deep: true,
+    },
+    "$store.state.allPairsForGraph": {
+      handler(newVal) {
+        localStorage.setItem("allPairs", JSON.stringify(newVal));
+      },
+      deep: true,
+    },
+    "$store.state.allPairs": {
+      handler(newVal) {
+        localStorage.setItem("userPairs", JSON.stringify(newVal));
       },
       deep: true,
     },

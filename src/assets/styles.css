@@ -12,7 +12,7 @@
   --input-element-font-size: 2rem;
   --input-translucent-bg: #fafafa5c;
   --input-box-outline: rgb(111, 110, 110);
-  --blur-bg: rgba(201, 160, 119, 0.5);
+  --blur-bg: rgba(201, 160, 119, 0.4);
 }
 
 @media screen and (min-width: 600px) and (max-width: 970px) {
@@ -46,6 +46,21 @@
     height: 100vh;
   }
 } */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--input-translucent-bg);
+  border-radius: 2rem;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-color);
+  border-radius: 1rem;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--button-active-color);
+}
 
 body,
 html {
@@ -125,7 +140,7 @@ a.router-link-active {
 header {
   position: fixed;
   background: var(--blur-bg);
-  backdrop-filter: blur(1rem);
+  backdrop-filter: blur(0.8rem);
   border-radius: 0 0 1rem 1rem;
   display: flex;
   z-index: 2;
@@ -186,7 +201,7 @@ ul {
   position: inherit;
   border-radius: 1rem 1rem 0 0;
   background: var(--blur-bg);
-  backdrop-filter: blur(1rem);
+  backdrop-filter: blur(0.8rem);
   /* position: fixed; */
   padding: inherit;
   margin-top: -1rem;
@@ -196,6 +211,8 @@ ul {
 
 .dialog-token {
   margin-top: 9rem;
+  /* overflow: scroll;
+  height: -webkit-fill-available; */
 }
 
 /*----------------------Header Styling------------------------------*/

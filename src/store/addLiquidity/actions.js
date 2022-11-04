@@ -115,8 +115,10 @@ export default {
       )
       .then((data) => {
         if (data === true) {
+          context.rootState.loadAllPairsByFetch = true;
           context.dispatch("registerExistingLiquidity");
         }
+        // console.log("here", context.rootState.loadAllPairsByFetch);
         context.dispatch("displayReservesPool");
         context.dispatch("toggleOperationUnderProcess", {
           val: false,
@@ -125,6 +127,7 @@ export default {
 
         context.rootState.canLeave = true;
         context.commit("resetAddLiqState");
+        context.rootState.loadAllPairsByFetch = false;
       })
       .catch((err) => {
         context.dispatch("toggleOperationUnderProcess", {

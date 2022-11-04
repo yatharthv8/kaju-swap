@@ -33,7 +33,7 @@ export default {
     width: 100%;
     justify-content: space-around;
     background: var(--blur-bg);
-    backdrop-filter: blur(1rem);
+    backdrop-filter: blur(0.8rem);
     /* -webkit-backdrop-filter: blur(10px); */
     border-radius: 1rem 1rem 0 0;
     align-items: center;
