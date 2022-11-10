@@ -38,21 +38,26 @@ export function bfs(graph, start) {
   queue[start] = [];
   queue[start].push(-1);
   dist[start] = 0;
-  while (q.length > 0) {
-    let u = q.shift();
-    // console.log(graph[u]);
-    graph[u].forEach((v) => {
-      if (dist[v] === undefined || dist[v] > dist[u] + 1) {
-        dist[v] = dist[u] + 1;
-        q.push(v);
-        queue[v] = [];
-        queue[v].push(u);
-      } else if (dist[v] === dist[u] + 1) {
-        queue[v].push(u);
-      }
-    });
+  try {
+    while (q.length > 0) {
+      let u = q.shift();
+      // console.log(graph[u]);
+      graph[u].forEach((v) => {
+        if (dist[v] === undefined || dist[v] > dist[u] + 1) {
+          dist[v] = dist[u] + 1;
+          q.push(v);
+          queue[v] = [];
+          queue[v].push(u);
+        } else if (dist[v] === dist[u] + 1) {
+          queue[v].push(u);
+        }
+      });
+    }
+    return queue;
+  } catch (err) {
+    // console.log(err);
+    return false;
   }
-  return queue;
 }
 
 /*-------------------------------SWAP PAGE-------------------------------------*/
@@ -624,20 +629,13 @@ export async function removeLiquidity(
   account,
   deadline
 ) {
-  const liquidity = web3.utils.toWei(String(liquidity_tokens), "ether");
+  const liquidity = web3.utils.toWei(
+    String(liquidity_tokens.toFixed(18)),
+    "ether"
+  );
+  const amount0Min = web3.utils.toWei(String(amount0min.toFixed(18)), "ether");
+  const amount1Min = web3.utils.toWei(String(amount1min.toFixed(18)), "ether");
 
-  let amount0Min;
-  if (amount0min > 0.001) {
-    amount0Min = web3.utils.toWei(String(amount0min), "ether");
-  } else {
-    amount0Min = toWei(amount0min);
-  }
-  let amount1Min;
-  if (amount1min > 0.001) {
-    amount1Min = web3.utils.toWei(String(amount1min), "ether");
-  } else {
-    amount1Min = toWei(amount1min);
-  }
   const time = ethers.BigNumber.from(
     Math.floor(Date.now() / 1000) + deadline * 60
   );

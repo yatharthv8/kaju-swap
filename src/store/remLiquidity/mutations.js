@@ -9,4 +9,11 @@ export default {
       state.insufficientRemLiqBal = false;
     }
   },
+  resetRemLiqState(state) {
+    state.pairLiqInp = null;
+    state.pairLiquidityPer = null;
+    state.predictedValues = [];
+    state.remLiqTokenBal = [0, 0];
+    // state.pairLiquidity = 0;
+  },
 };

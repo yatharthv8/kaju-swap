@@ -40,6 +40,7 @@ const store = createStore({
       marker: true,
       waitToLoad: false,
       loadAllPairsByFetch: false,
+      count: false,
     };
   },
   mutations: rootMutations,

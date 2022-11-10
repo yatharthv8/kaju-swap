@@ -23,7 +23,18 @@
         :key="coin.address"
         @click="submitAddress(coin.address, 0, coin.abbr)"
       >
-        <ul v-if="showThese[index]">
+        <ul v-if="showThese[index] && this.tok != coin.abbr">
+          {{
+            coin.abbr
+          }}
+          <br />
+          <small>{{ coin.name }}</small>
+          <small class="ABU" v-if="coin.addedByUser"> | Added by user</small>
+          <span style="float: right">
+            <small>{{ coin.balance }}</small>
+          </span>
+        </ul>
+        <ul v-else-if="showThese[index]" class="show-unselectable">
           {{
             coin.abbr
           }}
@@ -56,112 +67,119 @@ export default {
     return {
       newAddress: null,
       showThese: [],
+      NSDN: this.swapDialNum ? 0 : 1,
+      tok: 1,
     };
   },
   methods: {
     ...mapActions({ closeDialog: "closeSwapDialog" }),
     async submitAddress(tokenAddress, action, abbr) {
-      const NSDN = this.swapDialNum ? 0 : 1;
-      if (
-        (abbr === "ETH" && this.swapTokenSymbolVal[NSDN] === "WETH") ||
-        (abbr === "WETH" && this.swapTokenSymbolVal[NSDN] === "ETH")
-      ) {
-        this.$store.state.swap.pathExists = false;
-        // console.log(NSDN);
-        if (this.swapTokenSymbolVal[0] === "ETH") {
-          this.$store.state.swap.WrapUnwrap = "Wrap";
-        } else {
-          this.$store.state.swap.WrapUnwrap = "Unwrap";
-        }
-        let TF = true;
-        if (abbr === "WETH") {
-          TF = false;
-        }
-        try {
-          const accounts = await web3.eth.getAccounts();
-          ethFunc
-            .getBalanceandSymbol(accounts[0], tokenAddress, TF)
-            .then((data) => {
-              this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
-              this.swapDialogVars.DialnumAdd[this.swapDialNum] = tokenAddress;
-              this.$store.dispatch("displayMaxTokenBalance", {
-                add: tokenAddress,
-                ind: this.swapDialNum,
-                marker: TF,
-              });
-            });
-        } catch (err) {
-          console.log("Something went wrong!");
-        }
+      if (abbr === this.swapTokenSymbolVal[this.NSDN]) {
+        // swal("Alert", "You cannot select the same token", "warning");
+        // console.log("You cannot select the same token");
       } else {
-        this.$store.state.swap.WrapUnwrap = null;
-        if (abbr === "WETH") {
-          this.$store.state.marker = false;
-        } else if (abbr === "ETH") {
-          this.$store.state.marker = true;
-        } else {
-          if (this.swapTokenSymbolVal[NSDN] === "WETH") {
-            this.$store.state.marker = false;
+        if (
+          (abbr === "ETH" && this.swapTokenSymbolVal[this.NSDN] === "WETH") ||
+          (abbr === "WETH" && this.swapTokenSymbolVal[this.NSDN] === "ETH")
+        ) {
+          this.$store.state.swap.pathExists = false;
+          if (this.swapTokenSymbolVal[0] === "ETH") {
+            this.$store.state.swap.WrapUnwrap = "Wrap";
           } else {
-            this.$store.state.marker = true;
+            this.$store.state.swap.WrapUnwrap = "Unwrap";
           }
-        }
-        // console.log(this.$store.state.marker);
-        this.$store.state.swap.pathExists = true;
-        try {
-          const accounts = await web3.eth.getAccounts();
-          ethFunc
-            .getBalanceandSymbol(
-              accounts[0],
-              tokenAddress,
-              this.$store.state.marker
-            )
-            .then((data) => {
-              if (data) {
-                // console.log("hi");
+          let TF = true;
+          if (abbr === "WETH") {
+            TF = false;
+          }
+          try {
+            const accounts = await web3.eth.getAccounts();
+            ethFunc
+              .getBalanceandSymbol(accounts[0], tokenAddress, TF)
+              .then((data) => {
                 this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
                 this.swapDialogVars.DialnumAdd[this.swapDialNum] = tokenAddress;
                 this.$store.dispatch("displayMaxTokenBalance", {
                   add: tokenAddress,
                   ind: this.swapDialNum,
-                  marker: this.$store.state.marker,
+                  marker: TF,
                 });
-                if (action === 1) {
-                  let addToken = true;
-                  for (let i = 0; i < this.$store.state.coins.length; ++i) {
-                    if (this.$store.state.coins[i].address === tokenAddress) {
-                      addToken = false;
+              });
+          } catch (err) {
+            console.log("Something went wrong!");
+          }
+        } else {
+          this.$store.state.swap.WrapUnwrap = null;
+          if (abbr === "WETH") {
+            this.$store.state.marker = false;
+          } else if (abbr === "ETH") {
+            this.$store.state.marker = true;
+          } else {
+            if (this.swapTokenSymbolVal[this.NSDN] === "WETH") {
+              this.$store.state.marker = false;
+            } else {
+              this.$store.state.marker = true;
+            }
+          }
+          // console.log(this.$store.state.marker);
+          this.$store.state.swap.pathExists = true;
+          try {
+            const accounts = await web3.eth.getAccounts();
+            ethFunc
+              .getBalanceandSymbol(
+                accounts[0],
+                tokenAddress,
+                this.$store.state.marker
+              )
+              .then((data) => {
+                if (data) {
+                  // console.log("hi");
+                  this.swapTokenSymbolVal[this.swapDialNum] = data.symbol;
+                  this.swapDialogVars.DialnumAdd[this.swapDialNum] =
+                    tokenAddress;
+                  this.$store.dispatch("displayMaxTokenBalance", {
+                    add: tokenAddress,
+                    ind: this.swapDialNum,
+                    marker: this.$store.state.marker,
+                  });
+                  if (action === 1) {
+                    let addToken = true;
+                    for (let i = 0; i < this.$store.state.coins.length; ++i) {
+                      if (this.$store.state.coins[i].address === tokenAddress) {
+                        addToken = false;
+                      }
+                    }
+                    // console.log(data);
+
+                    if (addToken) {
+                      this.$store.state.coins.unshift({
+                        name: data.name,
+                        abbr: data.symbol,
+                        address: tokenAddress,
+                        balance: data.balance,
+                        addedByUser: true,
+                        marker: false,
+                      });
                     }
                   }
-                  // console.log(data);
+                  this.$store.dispatch("checkIfPathExists");
+                  this.$store.dispatch("displayReservesSwap");
 
-                  if (addToken) {
-                    this.$store.state.coins.unshift({
-                      name: data.name,
-                      abbr: data.symbol,
-                      address: tokenAddress,
-                      balance: data.balance,
-                      addedByUser: true,
-                      marker: false,
-                    });
-                  }
+                  this.$store.dispatch("conversionRateSwap");
+                } else {
+                  swal("Error", "Enter a valid token address", "error");
                 }
-                this.$store.dispatch("checkIfPathExists");
-                this.$store.dispatch("displayReservesSwap");
-
-                this.$store.dispatch("conversionRateSwap");
-              } else {
-                swal("Error", "Enter a valid token address", "error");
-              }
-            });
-          // console.log(this.coins);
-        } catch (err) {
-          // console.loh("bye");
-          console.log("Invalid token address!");
+              });
+            // console.log(this.coins);
+          } catch (err) {
+            // console.loh("bye");
+            console.log("Invalid token address!");
+          }
         }
+        // console.log(this.$store.state.swap.WrapUnwrap);
+        this.$store.dispatch("closeSwapDialog");
+        this.$store.commit("resetSwapState");
       }
-      // console.log(this.$store.state.swap.WrapUnwrap);
-      this.$store.dispatch("closeSwapDialog");
     },
   },
   computed: {
@@ -171,6 +189,7 @@ export default {
     }),
   },
   mounted() {
+    this.tok = this.swapTokenSymbolVal[this.NSDN];
     for (let i = 0; i < this.$store.state.coins.length; i++) {
       this.showThese.push(true);
     }
@@ -220,5 +239,15 @@ ul:hover {
   font-size: 0.8rem;
   color: #333333;
   font-weight: 400;
+}
+.show-unselectable {
+  color: rgba(44, 41, 41, 0.507);
+  border-radius: 1rem;
+  cursor: auto;
+}
+.show-unselectable:hover {
+  color: rgba(44, 41, 41, 0.507);
+  background: content-box;
+  border-radius: 1rem;
 }
 </style>

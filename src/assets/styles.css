@@ -195,6 +195,7 @@ ul {
   padding-inline-start: 1rem;
   cursor: pointer;
   padding: 0.5rem 1rem;
+  border-radius: 1rem;
 }
 
 .dialog-top {

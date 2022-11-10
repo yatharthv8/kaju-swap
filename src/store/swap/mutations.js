@@ -1,10 +1,6 @@
 export default {
   swapDialog(state, payload) {
     state.swapDialog.bool = payload;
-    // if (payload === false) {
-    //   state.liqTokenAmount0 = null;
-    //   state.liqTokenAmount1 = null;
-    // }
   },
   checkMaxBal(state, payload) {
     if (payload === 0) {
@@ -26,6 +22,12 @@ export default {
         state.insufficientBal = false;
       }
     }
+  },
+
+  resetSwapState(state) {
+    state.amountToken0 = null;
+    state.amountToken1 = null;
+    state.watchInputs = [false, false];
   },
 
   calcPriceImp(state, payload) {

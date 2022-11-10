@@ -128,6 +128,7 @@ export default {
         context.state.deadlineRemLiq
       )
       .then(async (data) => {
+        context.commit("resetRemLiqState");
         if (data === true) {
           context.dispatch("getDataForLiqRemPage", context.state.pairAddress);
           context.dispatch("registerExistingLiquidity");

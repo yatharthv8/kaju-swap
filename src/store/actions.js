@@ -9,7 +9,7 @@ export default {
       location: "getP",
     });
     if (context.state.loadAllPairsByFetch) {
-      // console.log("liquidity added or pairs not in storage");
+      console.log("liquidity added or pairs not in storage");
       const returnedPairs = await ethFunc.getPairs(
         factory,
         context.state.account0

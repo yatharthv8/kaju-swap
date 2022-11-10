@@ -136,6 +136,7 @@ export default {
   },
   beforeRouteLeave(_, _2, next) {
     if (this.$store.state.canLeave == true) {
+      this.$store.commit("resetRemLiqState");
       next();
     } else {
       next(false);

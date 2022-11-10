@@ -28,6 +28,13 @@ export default {
     }
   },
   mounted() {
+    if (!localStorage.getItem("count")) {
+      localStorage.removeItem("allPairs");
+      localStorage.removeItem("userPairs");
+      localStorage.removeItem("coins");
+      console.log(this.$store.state.count);
+      localStorage.setItem("count", JSON.stringify(this.$store.state.count));
+    }
     if (
       !localStorage.getItem("allPairs") ||
       !localStorage.getItem("userPairs")
@@ -46,6 +53,7 @@ export default {
       }
     });
     ethereum.on("accountsChanged", () => {
+      localStorage.removeItem("userPairs");
       // this.$store.dispatch("registerExistingLiquidity");
       // console.log("new Account ->", accounts);
       // this.onConnect();

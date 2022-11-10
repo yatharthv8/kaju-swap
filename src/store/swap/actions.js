@@ -91,6 +91,7 @@ export default {
           val: false,
           location: "swapTok",
         });
+        context.commit("resetSwapState");
         context.rootState.canLeave = true;
       })
       .catch((err) => {
@@ -167,11 +168,11 @@ export default {
   checkIfPathExists(context) {
     const address0 = context.getters.getSwapDialog.DialnumAdd[0];
     const address1 = context.getters.getSwapDialog.DialnumAdd[1];
-    const gAdd = ethFunc.bfs(context.rootState.graph.sides, address0);
     // console.log(
     //   context.rootState.symbolsGraph.sides,
     //   context.rootState.graph.sides
     // );
+    const gAdd = ethFunc.bfs(context.rootState.graph.sides, address0);
     let gSymb;
     if (
       context.rootState.marker === false &&
@@ -189,6 +190,7 @@ export default {
     } else {
       context.state.pathExists = true;
     }
+    // console.log(gAdd, context.state.pathExists);
     if (context.state.pathExists) {
       context.dispatch("makePath", { Add: gAdd, Symb: gSymb });
     }

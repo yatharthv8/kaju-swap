@@ -350,7 +350,7 @@ export default {
       } else if (this.$store.state.swap.WrapUnwrap != null) {
         if (newVal > 0) {
           this.$store.dispatch("fillTokenAmount", 0);
-          this.checkForBal1();
+          // this.checkForBal1();
         }
         if (this.$store.state.swap.amountToken1) {
           this.swapActive = true;
@@ -368,6 +368,7 @@ export default {
   },
   beforeRouteLeave(_, _2, next) {
     if (this.$store.state.canLeave == true) {
+      this.$store.commit("resetSwapState");
       next();
     } else {
       next(false);
