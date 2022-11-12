@@ -232,19 +232,23 @@ export default {
       val: true,
       location: "fillTokAmt",
     });
-    let address0 = context.getters.getSwapDialog.DialnumAdd[0];
-    // let address1 = context.getters.getSwapDialog.DialnumAdd[1];
-    const token0 = new web3.eth.Contract(ERC20.abi, address0);
-    const approvedAmt = web3.utils.fromWei(
-      await token0.methods
-        .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
-        .call(),
-      "ether"
-    );
-    if (approvedAmt < context.state.amountToken0) {
-      context.rootState.tokenApprovalInProcess = true;
-    } else {
+    if (context.getters.getSwapTokenSymbol[0] === "ETH") {
       context.rootState.tokenApprovalInProcess = false;
+    } else {
+      let address0 = context.getters.getSwapDialog.DialnumAdd[0];
+      // let address1 = context.getters.getSwapDialog.DialnumAdd[1];
+      const token0 = new web3.eth.Contract(ERC20.abi, address0);
+      const approvedAmt = web3.utils.fromWei(
+        await token0.methods
+          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+          .call(),
+        "ether"
+      );
+      if (approvedAmt < context.state.amountToken0) {
+        context.rootState.tokenApprovalInProcess = true;
+      } else {
+        context.rootState.tokenApprovalInProcess = false;
+      }
     }
     if (context.state.pathExists) {
       if (

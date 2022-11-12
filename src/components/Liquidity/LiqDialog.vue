@@ -86,6 +86,16 @@ export default {
             .getBalanceandSymbol(this.$store.state.account0, tokenAddress, true)
             .then((data) => {
               if (data) {
+                if (this.swapDialNum === 1) {
+                  this.$route.params.add1 = tokenAddress;
+                } else {
+                  this.$route.params.add2 = tokenAddress;
+                }
+                this.path =
+                  "/addLiquidity/" +
+                  this.$route.params.add1 +
+                  "/" +
+                  this.$route.params.add2;
                 this.$store.commit("resetAddLiqState");
                 this.liqTokenSymbolVal[this.swapDialNum] = data.symbol;
                 this.liqDialogVal.DialnumAdd[this.swapDialNum] = tokenAddress;
@@ -101,7 +111,6 @@ export default {
                     }
                   }
                   // console.log(data);
-
                   if (addToken) {
                     this.$store.state.coins.unshift({
                       name: data.name,
@@ -113,6 +122,8 @@ export default {
                     });
                   }
                 }
+                // this.$router.push(path);
+                // console.log(this.$router);
                 this.$store.dispatch("displayReservesPool");
               } else {
                 swal("Error", "Enter a valid token address", "error");

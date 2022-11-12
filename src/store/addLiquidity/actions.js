@@ -33,6 +33,13 @@ export default {
       val: true,
       location: "ApprovTokL",
     });
+    let isETH = false;
+    if (
+      context.getters.getLiqTokenSymbol[0] === "ETH" ||
+      context.getters.getLiqTokenSymbol[1] === "ETH"
+    ) {
+      isETH = true;
+    }
     try {
       const token0 = new web3.eth.Contract(
         ERC20.abi,
@@ -42,40 +49,88 @@ export default {
         ERC20.abi,
         context.getters.getLiqDialog.DialnumAdd[1]
       );
-      const allowance0 = web3.utils.fromWei(
-        await token0.methods
-          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
-          .call(),
-        "ether"
-      );
-      const allowance1 = web3.utils.fromWei(
-        await token1.methods
-          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
-          .call(),
-        "ether"
-      );
-      if (allowance0 < context.state.liqTokenAmount0) {
-        await token0.methods
-          .approve(
-            router.options.address,
-            web3.utils.toWei("10000000000", "ether")
-          )
-          .send({ from: context.rootState.account0 })
-          .then(() => {
-            if (allowance1 > context.state.liqTokenAmount1)
+      if (
+        context.getters.getLiqDialog.DialnumAdd[0] ===
+          process.env.VUE_APP_WETH &&
+        isETH
+      ) {
+        const allowance1 = web3.utils.fromWei(
+          await token1.methods
+            .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+            .call(),
+          "ether"
+        );
+        if (allowance1 < context.state.liqTokenAmount1) {
+          await token1.methods
+            .approve(
+              router.options.address,
+              web3.utils.toWei("10000000000", "ether")
+            )
+            .send({ from: context.rootState.account0 })
+            .then(() => {
               context.rootState.tokenApprovalInProcess = false;
-          });
-      }
-      if (allowance1 < context.state.liqTokenAmount1) {
-        await token1.methods
-          .approve(
-            router.options.address,
-            web3.utils.toWei("10000000000", "ether")
-          )
-          .send({ from: context.rootState.account0 })
-          .then(() => {
-            context.rootState.tokenApprovalInProcess = false;
-          });
+            });
+        }
+      } else if (
+        context.getters.getLiqDialog.DialnumAdd[1] ===
+          process.env.VUE_APP_WETH &&
+        isETH
+      ) {
+        const allowance0 = web3.utils.fromWei(
+          await token0.methods
+            .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+            .call(),
+          "ether"
+        );
+        if (allowance0 < context.state.liqTokenAmount0) {
+          await token0.methods
+            .approve(
+              router.options.address,
+              web3.utils.toWei("10000000000", "ether")
+            )
+            .send({ from: context.rootState.account0 })
+            .then(() => {
+              // if (allowance1 > context.state.liqTokenAmount1)
+              context.rootState.tokenApprovalInProcess = false;
+            });
+        }
+      } else {
+        const allowance0 = web3.utils.fromWei(
+          await token0.methods
+            .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+            .call(),
+          "ether"
+        );
+        const allowance1 = web3.utils.fromWei(
+          await token1.methods
+            .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+            .call(),
+          "ether"
+        );
+        if (allowance0 < context.state.liqTokenAmount0) {
+          await token0.methods
+            .approve(
+              router.options.address,
+              web3.utils.toWei("10000000000", "ether")
+            )
+            .send({ from: context.rootState.account0 })
+            .then(() => {
+              if (allowance1 > context.state.liqTokenAmount1) {
+                context.rootState.tokenApprovalInProcess = false;
+              }
+            });
+        }
+        if (allowance1 < context.state.liqTokenAmount1) {
+          await token1.methods
+            .approve(
+              router.options.address,
+              web3.utils.toWei("10000000000", "ether")
+            )
+            .send({ from: context.rootState.account0 })
+            .then(() => {
+              context.rootState.tokenApprovalInProcess = false;
+            });
+        }
       }
       if (context.rootState.tokenApprovalInProcess === false) {
         swal("Success", "Token approval Successful!", "success");
@@ -215,29 +270,64 @@ export default {
   },
 
   async tokensAreApproved(context) {
+    let isETH = false;
+    if (
+      context.getters.getLiqTokenSymbol[0] === "ETH" ||
+      context.getters.getLiqTokenSymbol[1] === "ETH"
+    ) {
+      isETH = true;
+    }
     let address0 = context.getters.getLiqDialog.DialnumAdd[0];
     let address1 = context.getters.getLiqDialog.DialnumAdd[1];
-    const token0 = new web3.eth.Contract(ERC20.abi, address0);
-    const token1 = new web3.eth.Contract(ERC20.abi, address1);
-    const approvedAmt0 = web3.utils.fromWei(
-      await token0.methods
-        .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
-        .call(),
-      "ether"
-    );
-    const approvedAmt1 = web3.utils.fromWei(
-      await token1.methods
-        .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
-        .call(),
-      "ether"
-    );
-    if (
-      approvedAmt0 < context.state.liqTokenAmount0 ||
-      approvedAmt1 < context.state.liqTokenAmount1
-    ) {
-      context.rootState.tokenApprovalInProcess = true;
+    if (address0 === process.env.VUE_APP_WETH && isETH) {
+      const token1 = new web3.eth.Contract(ERC20.abi, address1);
+      let approvedAmt1 = web3.utils.fromWei(
+        await token1.methods
+          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+          .call(),
+        "ether"
+      );
+      if (Number(approvedAmt1) < Number(context.state.liqTokenAmount1)) {
+        context.rootState.tokenApprovalInProcess = true;
+      } else {
+        context.rootState.tokenApprovalInProcess = false;
+      }
+    } else if (address1 === process.env.VUE_APP_WETH && isETH) {
+      const token0 = new web3.eth.Contract(ERC20.abi, address0);
+      let approvedAmt0 = web3.utils.fromWei(
+        await token0.methods
+          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+          .call(),
+        "ether"
+      );
+      if (Number(approvedAmt0) < Number(context.state.liqTokenAmount0)) {
+        context.rootState.tokenApprovalInProcess = true;
+      } else {
+        context.rootState.tokenApprovalInProcess = false;
+      }
     } else {
-      context.rootState.tokenApprovalInProcess = false;
+      const token0 = new web3.eth.Contract(ERC20.abi, address0);
+      let approvedAmt0 = web3.utils.fromWei(
+        await token0.methods
+          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+          .call(),
+        "ether"
+      );
+      const token1 = new web3.eth.Contract(ERC20.abi, address1);
+      let approvedAmt1 = web3.utils.fromWei(
+        await token1.methods
+          .allowance(context.rootState.account0, process.env.VUE_APP_ROUTER)
+          .call(),
+        "ether"
+      );
+      if (
+        Number(approvedAmt0) < Number(context.state.liqTokenAmount0) ||
+        Number(approvedAmt1) < Number(context.state.liqTokenAmount1)
+      ) {
+        context.rootState.tokenApprovalInProcess = true;
+      } else {
+        context.rootState.tokenApprovalInProcess = false;
+      }
     }
   },
 

@@ -200,6 +200,13 @@ export default {
       }
     },
   },
+  mounted() {
+    if (this.$store.state.addLiquidity.dispPool === false) {
+      this.$store.dispatch("displayReservesPool");
+    } else {
+      this.$store.state.addLiquidity.dispPool = false;
+    }
+  },
   beforeRouteLeave(_, _2, next) {
     if (this.$store.state.canLeave == true) {
       this.$store.commit("resetAddLiqState");

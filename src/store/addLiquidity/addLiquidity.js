@@ -24,6 +24,7 @@ export default {
       slippageAddLiq: 15,
       deadlineAddLiq: 10,
       LiqExists: false,
+      dispPool: false,
     };
   },
   mutations: mutations,

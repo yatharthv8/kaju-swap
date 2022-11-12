@@ -142,7 +142,8 @@ export default {
       return true;
     },
     async addMoreLiquidity(token0Address, token1Address) {
-      // console.log("token addresses->", token0Address, token1Address);
+      // console.log("het");
+      this.$store.state.addLiquidity.dispPool = true;
       await ethFunc
         .getBalanceandSymbol(this.$store.state.account0, token0Address, true)
         .then((data) => {
