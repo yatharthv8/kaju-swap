@@ -177,8 +177,12 @@ export default {
           }
         }
         // console.log(this.$store.state.swap.WrapUnwrap);
+        const val = this.$store.state.swap.amountToken0;
         this.$store.dispatch("closeSwapDialog");
         this.$store.commit("resetSwapState");
+        setTimeout(() => {
+          this.$store.state.swap.amountToken0 = val;
+        }, 1000);
       }
     },
   },
